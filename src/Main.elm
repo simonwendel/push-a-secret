@@ -33,9 +33,11 @@ update msg model =
 
 main : Program () Model Msg
 main =
-    Browser.document
-        { init = \_ -> ( { page = Home }, Cmd.none )
+    Browser.application
+        { init = \_ _ _ -> ( { page = Home }, Cmd.none )
         , subscriptions = \_ -> Sub.none
         , update = update
         , view = view
+        , onUrlChange = \_ -> Debug.todo "Url changes"
+        , onUrlRequest = \_ -> Debug.todo "Url request"
         }
