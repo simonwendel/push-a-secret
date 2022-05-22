@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Navigation as Nav
-import Html exposing (text)
+import Html as Html
 import Page.Create as Create exposing (view)
 import Page.Delete as Delete exposing (Model, init, view)
 import Page.Home as Home exposing (Model, Msg, init, update, view)
