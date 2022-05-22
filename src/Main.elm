@@ -1,43 +1,100 @@
 module Main exposing (main)
 
-import Browser exposing (Document)
-import Html exposing (Html, text)
+import Browser exposing (Document, UrlRequest(..))
+import Browser.Navigation as Nav
+import Html exposing (text)
+import Url exposing (Url)
+import Url.Parser as Parser exposing ((</>), Parser, s)
 
 
 type alias Model =
-    { page : Page }
+    { page : Page, key : Nav.Key }
 
 
 type Msg
-    = Nothing
+    = ClickedLink UrlRequest
+    | ChangedUrl Url
 
 
 type Page
     = Home
-    | New
-    | View
-    | Delete
+    | Create
+    | View String
+    | Delete String
+    | NotFound
+
+
+route : Parser (Page -> a) a
+route =
+    Parser.oneOf
+        [ Parser.map Home Parser.top
+        , Parser.map Create (s "create")
+        , Parser.map View (s "view" </> Parser.string)
+        , Parser.map Delete (s "delete" </> Parser.string)
+        ]
+
+
+toRoute : Url -> Page
+toRoute url =
+    Parser.parse route url |> Maybe.withDefault NotFound
+
+
+init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init _ url key =
+    ( { page = toRoute url, key = key }, Cmd.none )
 
 
 view : Model -> Document Msg
-view model =
-    { title = "Decerno Secret Push"
-    , body = [ text "Cool beans!" ]
-    }
+view { page } =
+    case page of
+        Home ->
+            { title = "Decerno Secret Pusher"
+            , body = [ text "Welcome!" ]
+            }
+
+        Create ->
+            { title = "Push a Secret"
+            , body = [ text "Create a new secret!" ]
+            }
+
+        View key ->
+            { title = "View a Secret"
+            , body = [ "Viewing secret with key: " ++ key |> text ]
+            }
+
+        Delete key ->
+            { title = "Delete a Secret"
+            , body = [ "Deleting secret with key: " ++ key |> text ]
+            }
+
+        NotFound ->
+            { title = "Not Found"
+            , body = [ text "Oops, nothing here!" ]
+            }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        ClickedLink urlRequest ->
+            case urlRequest of
+                External url ->
+                    ( model, Nav.load url )
+
+                Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
+
+        ChangedUrl url ->
+            ( { model | page = toRoute url }, Cmd.none )
 
 
 main : Program () Model Msg
 main =
     Browser.application
-        { init = \_ _ _ -> ( { page = Home }, Cmd.none )
+        { init = init
         , subscriptions = \_ -> Sub.none
         , update = update
         , view = view
-        , onUrlChange = \_ -> Debug.todo "Url changes"
-        , onUrlRequest = \_ -> Debug.todo "Url request"
+        , onUrlChange = ChangedUrl
+        , onUrlRequest = ClickedLink
         }
