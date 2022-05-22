@@ -1,6 +1,6 @@
-module Page.Home exposing (Msg, Model, init, update, view)
+module Page.Home exposing (Model, Msg, init, update, view)
 
-import Html exposing (Html, button, h1, input, p, text, div)
+import Html exposing (Html, button, div, h1, input, p, text)
 import Html.Attributes exposing (type_)
 import Html.Events exposing (onClick, onInput)
 
