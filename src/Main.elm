@@ -3,74 +3,77 @@ module Main exposing (main)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Navigation as Nav
 import Html exposing (text)
+import Page.Home as Home exposing (..)
+import Route exposing (Route(..), toRoute)
+import Tuple exposing (first)
 import Url exposing (Url)
-import Url.Parser as Parser exposing ((</>), Parser, s)
 
 
 type alias Model =
     { page : Page, key : Nav.Key }
 
 
-type Msg
-    = ClickedLink UrlRequest
-    | ChangedUrl Url
-
-
 type Page
-    = Home
+    = Home Home.Model
     | Create
     | View String
     | Delete String
     | NotFound
 
 
-route : Parser (Page -> a) a
-route =
-    Parser.oneOf
-        [ Parser.map Home Parser.top
-        , Parser.map Create (s "create")
-        , Parser.map View (s "view" </> Parser.string)
-        , Parser.map Delete (s "delete" </> Parser.string)
-        ]
-
-
-toRoute : Url -> Page
-toRoute url =
-    Parser.parse route url |> Maybe.withDefault NotFound
+type Msg
+    = ClickedLink UrlRequest
+    | ChangedUrl Url
+    | GotHomeMsg Home.Msg
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
-    ( { page = toRoute url, key = key }, Cmd.none )
+    ( { page = getPage url, key = key }, Cmd.none )
+
+
+getPage : Url -> Page
+getPage url =
+    case toRoute url of
+        Nothing ->
+            NotFound
+
+        Just HomeRoute ->
+            Home (Home.init () |> first)
+
+        Just CreateRoute ->
+            Create
+
+        Just (ViewRoute id) ->
+            View id
+
+        Just (DeleteRoute id) ->
+            Delete id
 
 
 view : Model -> Document Msg
 view { page } =
-    case page of
-        Home ->
-            { title = "Decerno Secret Pusher"
-            , body = [ text "Welcome!" ]
-            }
+    let
+        content =
+            case page of
+                Home model ->
+                    Home.view model |> Html.map GotHomeMsg
 
-        Create ->
-            { title = "Push a Secret"
-            , body = [ text "Create a new secret!" ]
-            }
+                Create ->
+                    text "Create a new secret!"
 
-        View key ->
-            { title = "View a Secret"
-            , body = [ "Viewing secret with key: " ++ key |> text ]
-            }
+                View id ->
+                    "Viewing secret with key: " ++ id |> text
 
-        Delete key ->
-            { title = "Delete a Secret"
-            , body = [ "Deleting secret with key: " ++ key |> text ]
-            }
+                Delete id ->
+                    "Deleting secret with key: " ++ id |> text
 
-        NotFound ->
-            { title = "Not Found"
-            , body = [ text "Oops, nothing here!" ]
-            }
+                NotFound ->
+                    text "Oops, nothing here!"
+    in
+    { title = "Push a Secret"
+    , body = [ content ]
+    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -85,7 +88,20 @@ update msg model =
                     ( model, Nav.pushUrl model.key (Url.toString url) )
 
         ChangedUrl url ->
-            ( { model | page = toRoute url }, Cmd.none )
+            ( { model | page = getPage url }, Cmd.none )
+
+        GotHomeMsg homeMsg ->
+            case model.page of
+                Home homeModel ->
+                    toHome model (Home.update homeMsg homeModel)
+
+                _ ->
+                    ( model, Cmd.none )
+
+
+toHome : Model -> ( Home.Model, Cmd Home.Msg ) -> ( Model, Cmd Msg )
+toHome model ( home, cmd ) =
+    ( { model | page = Home home }, Cmd.map GotHomeMsg cmd )
 
 
 main : Program () Model Msg
