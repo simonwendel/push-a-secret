@@ -1,8 +1,9 @@
 const CONFIGURATION = {
-    outputDirectory: 'dist/',
-    elmFiles: 'src/**/*.elm',
+    elmProgram: 'src/Main.elm',
+    elmSources: 'src/**/*.elm',
+    elmBundleFile: 'app.js',
     staticAssets: 'index.html',
-    elmBundleFile: 'app.js'
+    outputDirectory: 'dist/'
 }
 
 const { src, dest, series, watch } = require('gulp');
@@ -19,7 +20,7 @@ function copyStaticAssets() {
 }
 
 function makeElmBundle() {
-    return src(CONFIGURATION.elmFiles)
+    return src(CONFIGURATION.elmProgram)
         .pipe(elm.bundle(CONFIGURATION.elmBundleFile))
         .pipe(dest(CONFIGURATION.outputDirectory));
 }
@@ -27,6 +28,6 @@ function makeElmBundle() {
 const buildChain = series(cleanDistFolder, copyStaticAssets, makeElmBundle);
 exports.default = buildChain;
 exports.watch = function () {
-    watch(CONFIGURATION.elmFiles, buildChain);
+    watch(CONFIGURATION.elmSources, buildChain);
     watch(CONFIGURATION.staticAssets, buildChain);
 }
