@@ -2,14 +2,13 @@ module Main exposing (main)
 
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Navigation as Nav
-import Html as Html
-import Page.Create as Create exposing (view)
-import Page.Delete as Delete exposing (Model, init, view)
+import Html
+import Page.Create as Create exposing (Model, Msg, init, subscriptions, update, view)
+import Page.Delete as Delete exposing (Model, Msg, init, update, view)
 import Page.Home as Home exposing (Model, Msg, init, update, view)
 import Page.NotFound as NotFound exposing (view)
-import Page.View as View exposing (Model, init, view)
+import Page.View as View exposing (Model, Msg, init, update, view)
 import Route exposing (Route(..), toRoute)
-import Tuple exposing (first)
 import Url exposing (Url)
 
 
@@ -19,7 +18,7 @@ type alias Model =
 
 type Page
     = Home Home.Model
-    | Create
+    | Create Create.Model
     | View View.Model
     | Delete Delete.Model
     | NotFound
@@ -29,13 +28,16 @@ type Msg
     = ClickedLink UrlRequest
     | ChangedUrl Url
     | GotHomeMsg Home.Msg
+    | GotCreateMsg Create.Msg
+    | GotViewMsg View.Msg
+    | GotDeleteMsg Delete.Msg
 
 
 main : Program () Model Msg
 main =
     Browser.application
         { init = init
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         , update = update
         , view = view
         , onUrlChange = ChangedUrl
@@ -43,9 +45,19 @@ main =
         }
 
 
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    case model.page of
+        Create createModel ->
+            Create.subscriptions createModel |> Sub.map GotCreateMsg
+
+        _ ->
+            Sub.none
+
+
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
-    ( { page = getPage url, key = key }, Cmd.none )
+    updateUrl url { page = NotFound, key = key }
 
 
 view : Model -> Document Msg
@@ -53,17 +65,17 @@ view { page } =
     let
         content =
             case page of
-                Home viewModel ->
-                    Home.view viewModel |> Html.map GotHomeMsg
+                Home homeModel ->
+                    Home.view homeModel |> Html.map GotHomeMsg
 
-                Create ->
-                    Create.view
+                Create createModel ->
+                    Create.view createModel |> Html.map GotCreateMsg
 
                 View viewModel ->
-                    View.view viewModel
+                    View.view viewModel |> Html.map GotViewMsg
 
-                Delete viewModel ->
-                    Delete.view viewModel
+                Delete deleteModel ->
+                    Delete.view deleteModel |> Html.map GotDeleteMsg
 
                 NotFound ->
                     NotFound.view
@@ -85,7 +97,7 @@ update msg model =
                     ( model, Nav.pushUrl model.key (Url.toString url) )
 
         ChangedUrl url ->
-            ( { model | page = getPage url }, Cmd.none )
+            updateUrl url model
 
         GotHomeMsg homeMsg ->
             case model.page of
@@ -95,26 +107,65 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        GotCreateMsg createMsg ->
+            case model.page of
+                Create createModel ->
+                    toCreate model (Create.update createMsg createModel)
+
+                _ ->
+                    ( model, Cmd.none )
+
+        GotViewMsg viewMsg ->
+            case model.page of
+                View viewModel ->
+                    toView model (View.update viewMsg viewModel)
+
+                _ ->
+                    ( model, Cmd.none )
+
+        GotDeleteMsg deleteMsg ->
+            case model.page of
+                Delete deleteModel ->
+                    toDelete model (Delete.update deleteMsg deleteModel)
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 toHome : Model -> ( Home.Model, Cmd Home.Msg ) -> ( Model, Cmd Msg )
-toHome model ( home, cmd ) =
-    ( { model | page = Home home }, Cmd.map GotHomeMsg cmd )
+toHome model ( homeModel, cmd ) =
+    ( { model | page = Home homeModel }, Cmd.map GotHomeMsg cmd )
 
 
-getPage : Url -> Page
-getPage url =
+toCreate : Model -> ( Create.Model, Cmd Create.Msg ) -> ( Model, Cmd Msg )
+toCreate model ( createModel, cmd ) =
+    ( { model | page = Create createModel }, Cmd.map GotCreateMsg cmd )
+
+
+toView : Model -> ( View.Model, Cmd View.Msg ) -> ( Model, Cmd Msg )
+toView model ( viewModel, cmd ) =
+    ( { model | page = View viewModel }, Cmd.map GotViewMsg cmd )
+
+
+toDelete : Model -> ( Delete.Model, Cmd Delete.Msg ) -> ( Model, Cmd Msg )
+toDelete model ( deleteModel, cmd ) =
+    ( { model | page = Delete deleteModel }, Cmd.map GotDeleteMsg cmd )
+
+
+updateUrl : Url -> Model -> ( Model, Cmd Msg )
+updateUrl url model =
     case toRoute url of
         Nothing ->
-            NotFound
+            ( { model | page = NotFound }, Cmd.none )
 
         Just HomeRoute ->
-            Home (Home.init () |> first)
+            toHome model (Home.init ())
 
         Just CreateRoute ->
-            Create
+            toCreate model (Create.init Nothing)
 
         Just (ViewRoute id) ->
-            View (View.init id |> first)
+            toView model (View.init (Just id))
 
         Just (DeleteRoute id) ->
-            Delete (Delete.init id |> first)
+            toDelete model (Delete.init (Just id))
