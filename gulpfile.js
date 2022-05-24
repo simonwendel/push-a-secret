@@ -2,7 +2,7 @@ const CONFIGURATION = {
     elmProgram: 'src/Main.elm',
     elmSources: 'src/**/*.elm',
     elmBundleFile: 'app.js',
-    staticAssets: 'index.html',
+    staticAssets: ['index.html', 'js/**/*.js'],
     outputDirectory: 'dist/'
 }
 
@@ -28,6 +28,8 @@ function makeElmBundle() {
 const buildChain = series(cleanDistFolder, copyStaticAssets, makeElmBundle);
 exports.default = buildChain;
 exports.watch = function () {
-    watch(CONFIGURATION.elmSources, buildChain);
-    watch(CONFIGURATION.staticAssets, buildChain);
+    watch(
+        [CONFIGURATION.elmSources].concat(CONFIGURATION.staticAssets),
+        { ignoreInitial: false },
+        buildChain);
 }
