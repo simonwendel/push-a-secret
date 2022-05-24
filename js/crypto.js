@@ -1,9 +1,8 @@
 export { generate, encrypt }
 
-import {strToUTF8Arr, base64EncArr} from '/mdn.b64.js'
+import { strToUTF8Arr, base64EncArr } from '/mdn.b64.js'
 
 const crypto = window.crypto.subtle;
-
 const settings = {
     key: {
         name: 'AES-GCM',
