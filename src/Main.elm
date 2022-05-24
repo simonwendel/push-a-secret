@@ -11,9 +11,14 @@ import Route exposing (Route(..), toRoute)
 import Url exposing (Url)
 
 
+type alias Flags =
+    { base_url : String }
+
+
 type alias Model =
     { page : Page
     , key : Nav.Key
+    , base_url : String
     }
 
 
@@ -32,7 +37,7 @@ type Msg
     | GotDeleteMsg Delete.Msg
 
 
-main : Program () Model Msg
+main : Program Flags Model Msg
 main =
     Browser.application
         { init = init
@@ -54,9 +59,9 @@ subscriptions model =
             Sub.none
 
 
-init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url key =
-    updateUrl url { page = NotFound, key = key }
+init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init { base_url } url key =
+    updateUrl url { page = NotFound, key = key, base_url = base_url }
 
 
 view : Model -> Document Msg
@@ -142,7 +147,7 @@ updateUrl url model =
             ( { model | page = NotFound }, Cmd.none )
 
         Just CreateRoute ->
-            toCreate model (Create.init ())
+            toCreate model (Create.init model.base_url)
 
         Just (ViewRoute id) ->
             toView model (View.init (Just id))

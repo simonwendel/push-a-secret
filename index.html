@@ -11,7 +11,11 @@
 
     import { generate, encrypt } from '/crypto.js'
 
-    const app = Elm.Main.init();
+    const app = Elm.Main.init({
+      flags: {
+        base_url: window.location.protocol + "//" + window.location.host
+      }
+    });
 
     app.ports.requestKey.subscribe(async () => {
       const exported = await generate();

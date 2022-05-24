@@ -8,13 +8,19 @@ module Page.Create exposing
     )
 
 import Crypto as Crypto
-import Html exposing (Html, button, div, h1, input, p, text)
-import Html.Attributes exposing (type_)
+import Html exposing (Html, a, br, button, div, h1, input, p, text)
+import Html.Attributes exposing (href, type_)
 import Html.Events exposing (onClick, onInput)
+import Url.Builder exposing (crossOrigin)
 
 
 type alias Model =
-    { visible : Bool, cleartext : String, key : Maybe Crypto.Key, encrypted : Maybe Crypto.EncryptedValue }
+    { visible : Bool
+    , cleartext : String
+    , key : Maybe Crypto.Key
+    , encrypted : Maybe Crypto.EncryptedValue
+    , base_url : String
+    }
 
 
 type Msg
@@ -25,9 +31,9 @@ type Msg
     | ReceivedEncrypted Crypto.EncryptedValue
 
 
-init : () -> ( Model, Cmd Msg )
-init () =
-    ( { visible = False, cleartext = "", key = Nothing, encrypted = Nothing }, Crypto.requestKey () )
+init : String -> ( Model, Cmd Msg )
+init base_url =
+    ( { base_url = base_url, visible = False, cleartext = "", key = Nothing, encrypted = Nothing }, Crypto.requestKey () )
 
 
 subscriptions : Model -> Sub Msg
@@ -39,10 +45,22 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view { visible, encrypted } =
+view { visible, encrypted, base_url } =
     case encrypted of
         Just value ->
-            h1 [] [ text value.ciphertext ]
+            let
+                link =
+                    crossOrigin base_url [ "view", value.key.key ] []
+            in
+            div []
+                [ h1 [] [ text "Secret created!" ]
+                , p []
+                    [ text "Please copy the following link and use it when distributing the secret:"
+                    , br [] []
+                    , br [] []
+                    , a [ href link ] [ text link ]
+                    ]
+                ]
 
         Nothing ->
             div []
