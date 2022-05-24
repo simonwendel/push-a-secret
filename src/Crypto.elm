@@ -1,9 +1,12 @@
 port module Crypto exposing
-    ( EncryptedValue
+    ( DecryptionRequest
     , EncryptionRequest
+    , EncryptionResponse
     , Key
-    , receiveEncrypted
+    , receiveDecryption
+    , receiveEncryption
     , receiveKey
+    , requestDecryption
     , requestEncryption
     , requestKey
     )
@@ -21,11 +24,18 @@ type alias EncryptionRequest =
     }
 
 
-type alias EncryptedValue =
-    { key : Key
-    , iv : String
+type alias EncryptionResponse =
+    { iv : String
     , ciphertext : String
     }
+
+
+type alias DecryptionRequest =
+    EncryptionResponse
+
+
+type alias DecryptionResponse =
+    { cleartext : String }
 
 
 port requestKey : () -> Cmd msg
@@ -37,4 +47,10 @@ port receiveKey : (Key -> msg) -> Sub msg
 port requestEncryption : EncryptionRequest -> Cmd msg
 
 
-port receiveEncrypted : (EncryptedValue -> msg) -> Sub msg
+port receiveEncryption : (EncryptionResponse -> msg) -> Sub msg
+
+
+port requestDecryption : DecryptionRequest -> Cmd msg
+
+
+port receiveDecryption : (DecryptionResponse -> msg) -> Sub msg

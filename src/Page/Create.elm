@@ -7,18 +7,20 @@ module Page.Create exposing
     , view
     )
 
-import Crypto as Crypto
+import Crypto
 import Html exposing (Html, a, br, button, div, h1, input, p, text)
 import Html.Attributes exposing (href, type_)
 import Html.Events exposing (onClick, onInput)
+import Storage
 import Url.Builder exposing (crossOrigin)
 
 
 type alias Model =
-    { visible : Bool
+    { id : Maybe String
     , cleartext : String
+    , visible : Bool
     , key : Maybe Crypto.Key
-    , encrypted : Maybe Crypto.EncryptedValue
+    , encrypted : Maybe Crypto.EncryptionResponse
     , base_url : String
     }
 
@@ -26,31 +28,33 @@ type alias Model =
 type Msg
     = ToggleVisibility
     | UpdateCleartext String
-    | EncryptCleartext
+    | RequestEncryption
     | ReceivedKey Crypto.Key
-    | ReceivedEncrypted Crypto.EncryptedValue
+    | ReceivedEncryption Crypto.EncryptionResponse
+    | StoredEncrypted Storage.StorageResponse
 
 
 init : String -> ( Model, Cmd Msg )
 init base_url =
-    ( { base_url = base_url, visible = False, cleartext = "", key = Nothing, encrypted = Nothing }, Crypto.requestKey () )
+    ( { base_url = base_url, visible = False, cleartext = "", id = Nothing, key = Nothing, encrypted = Nothing }, Crypto.requestKey () )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Crypto.receiveKey ReceivedKey
-        , Crypto.receiveEncrypted ReceivedEncrypted
+        , Crypto.receiveEncryption ReceivedEncryption
+        , Storage.receiveStorage StoredEncrypted
         ]
 
 
 view : Model -> Html Msg
-view { visible, encrypted, base_url } =
-    case encrypted of
-        Just value ->
+view { id, encrypted, visible, base_url, key } =
+    case ( id, encrypted, key ) of
+        ( Just idValue, Just encryptedValue, Just keyValue ) ->
             let
                 link =
-                    crossOrigin base_url [ "view", value.key.key ] []
+                    crossOrigin base_url [ "v", idValue, keyValue.key ] []
             in
             div []
                 [ h1 [] [ text "Secret created!" ]
@@ -62,7 +66,7 @@ view { visible, encrypted, base_url } =
                     ]
                 ]
 
-        Nothing ->
+        _ ->
             div []
                 [ h1 [] [ text "Create a new secret!" ]
                 , p []
@@ -76,7 +80,7 @@ view { visible, encrypted, base_url } =
                         ]
                         []
                     , button [ onClick ToggleVisibility ] [ text "Show" ]
-                    , button [ onClick EncryptCleartext ] [ text "Create" ]
+                    , button [ onClick RequestEncryption ] [ text "Create" ]
                     ]
                 ]
 
@@ -90,7 +94,7 @@ update msg model =
         UpdateCleartext newValue ->
             ( { model | cleartext = newValue }, Cmd.none )
 
-        EncryptCleartext ->
+        RequestEncryption ->
             case model.key of
                 Just key ->
                     ( model, Crypto.requestEncryption { key = key, cleartext = model.cleartext } )
@@ -101,5 +105,8 @@ update msg model =
         ReceivedKey key ->
             ( { model | key = Just key }, Cmd.none )
 
-        ReceivedEncrypted response ->
-            ( { model | encrypted = Just response }, Cmd.none )
+        ReceivedEncryption encrypted ->
+            ( { model | encrypted = Just encrypted }, Storage.requestStorage { iv = encrypted.iv, ciphertext = encrypted.ciphertext } )
+
+        StoredEncrypted { id } ->
+            ( { model | id = Just id }, Cmd.none )

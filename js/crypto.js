@@ -2,7 +2,7 @@ export { generate, encrypt }
 
 import { strToUTF8Arr, base64EncArr } from '/mdn.b64.js'
 
-const crypto = window.crypto.subtle;
+const subtle = window.crypto.subtle;
 const settings = {
     key: {
         name: 'AES-GCM',
@@ -14,7 +14,8 @@ const settings = {
     extractable: true
 };
 
-const getInitializationVector = () => window.crypto.getRandomValues(new Uint8Array(12))
+const getInitializationVector =
+    () => window.crypto.getRandomValues(new Uint8Array(12));
 
 const constructJwk = key => Object.create({
     alg: key.algorithm,
@@ -25,17 +26,17 @@ const constructJwk = key => Object.create({
 });
 
 const generate = async () => {
-    const key = await crypto.generateKey(
+    const key = await subtle.generateKey(
         settings.key,
         settings.extractable,
         settings.uses);
 
-    return await crypto.exportKey(settings.format, key);
-}
+    return await subtle.exportKey(settings.format, key);
+};
 
 const encrypt = async request => {
     const jwk = constructJwk(request.key);
-    const key = await crypto.importKey(
+    const key = await subtle.importKey(
         settings.format,
         jwk,
         settings.key.name,
@@ -45,7 +46,7 @@ const encrypt = async request => {
     const clearBuffer = strToUTF8Arr(request.cleartext);
 
     const ivBuffer = getInitializationVector();
-    const cipherBuffer = await crypto.encrypt({ name: settings.key.name, iv: ivBuffer }, key, clearBuffer);
+    const cipherBuffer = await subtle.encrypt({ name: settings.key.name, iv: ivBuffer }, key, clearBuffer);
 
     const iv = base64EncArr(ivBuffer);
     const ciphertext = base64EncArr(new Uint8Array(cipherBuffer));
@@ -54,4 +55,4 @@ const encrypt = async request => {
         iv: iv,
         ciphertext: ciphertext
     };
-}
+};

@@ -2,43 +2,58 @@ module Page.View exposing
     ( Model
     , Msg
     , init
+    , subscriptions
     , update
     , view
     )
 
 import Html exposing (Html, h1, text)
+import Page.NotFound as NotFound
+import Storage
 
 
 type alias Model =
-    { key : Maybe String
-    , secret : Maybe String
-    , encrypted : Maybe String
+    { id : Maybe String
+    , key : Maybe String
+    , lookup : Maybe Storage.LookupResponse
     }
 
 
 type Msg
-    = NoMsg
+    = ReceivedLookup Storage.LookupResponse
 
 
-init : Maybe String -> ( Model, Cmd msg )
-init key =
-    ( { key = key, secret = Nothing, encrypted = Nothing }, Cmd.none )
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Storage.receiveLookup ReceivedLookup
+
+
+init : Maybe String -> Maybe String -> ( Model, Cmd msg )
+init id key =
+    ( { id = id, key = key, lookup = Nothing }
+    , case id of
+        Just idValue ->
+            Storage.requestLookup { id = idValue }
+
+        Nothing ->
+            Cmd.none
+    )
 
 
 view : Model -> Html msg
 view model =
     h1 []
-        [ case model.key of
-            Just key ->
-                "Super secret key: " ++ key |> text
+        [ case model.lookup of
+            Just lookupValue ->
+                "Super secret stuff: (" ++ lookupValue.iv ++ ", " ++ lookupValue.ciphertext ++ ")" |> text
 
-            Nothing ->
-                "No key!" |> text
+            _ ->
+                NotFound.view
         ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoMsg ->
-            ( model, Cmd.none )
+        ReceivedLookup lookup ->
+            ( { model | lookup = Just lookup }, Cmd.none )

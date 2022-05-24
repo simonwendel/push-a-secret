@@ -55,6 +55,9 @@ subscriptions model =
         Create createModel ->
             Create.subscriptions createModel |> Sub.map GotCreateMsg
 
+        View viewModel ->
+            View.subscriptions viewModel |> Sub.map GotViewMsg
+
         _ ->
             Sub.none
 
@@ -149,8 +152,8 @@ updateUrl url model =
         Just CreateRoute ->
             toCreate model (Create.init model.base_url)
 
-        Just (ViewRoute id) ->
-            toView model (View.init (Just id))
+        Just (ViewRoute id key) ->
+            toView model (View.init (Just id) (Just key))
 
         Just (DeleteRoute id) ->
             toDelete model (Delete.init (Just id))

@@ -9,7 +9,7 @@
 <body>
   <script type="module">
 
-    import { generate, encrypt } from '/crypto.js'
+    import { wireCrypto, wireStorage } from '/ports.js'
 
     const app = Elm.Main.init({
       flags: {
@@ -17,22 +17,8 @@
       }
     });
 
-    app.ports.requestKey.subscribe(async () => {
-      const exported = await generate();
-      app.ports.receiveKey.send({
-        algorithm: exported.alg,
-        key: exported.k
-      });
-    });
-
-    app.ports.requestEncryption.subscribe(async request => {
-      const encrypted = await encrypt(request);
-      app.ports.receiveEncrypted.send({
-        key: request.key,
-        iv: encrypted.iv,
-        ciphertext: encrypted.ciphertext
-      });
-    })
+    wireCrypto(app);
+    wireStorage(app);
 
   </script>
 </body>
