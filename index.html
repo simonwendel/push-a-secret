@@ -2,29 +2,33 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <script src="/app.js"></script>
+  <meta charset='UTF-8'>
+  <script src='/app.js'></script>
 </head>
 
 <body>
-  <script>
+  <script type="module">
 
-    const crypto = window.crypto.subtle;
-    const defaultKeySettings = { name: "AES-GCM", length: 128 };
+    import { generate, encrypt } from '/crypto.js'
 
     const app = Elm.Main.init();
 
-    const generateKey = async () => {
-      let key = await crypto.generateKey(defaultKeySettings, true, ["encrypt", "decrypt"]);
-      let exported = await crypto.exportKey('jwk', key);
-
+    app.ports.requestKey.subscribe(async () => {
+      const exported = await generate();
       app.ports.receiveKey.send({
         algorithm: exported.alg,
         key: exported.k
       });
-    }
+    });
 
-    app.ports.requestKey.subscribe(generateKey);
+    app.ports.requestEncryption.subscribe(async request => {
+      const encrypted = await encrypt(request);
+      app.ports.receiveEncrypted.send({
+        key: request.key,
+        iv: encrypted.iv,
+        ciphertext: encrypted.ciphertext
+      });
+    })
 
   </script>
 </body>
