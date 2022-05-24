@@ -20,7 +20,6 @@ type alias Model =
     , cleartext : String
     , visible : Bool
     , key : Maybe Crypto.Key
-    , encrypted : Maybe Crypto.EncryptionResponse
     , base_url : String
     }
 
@@ -36,7 +35,7 @@ type Msg
 
 init : String -> ( Model, Cmd Msg )
 init base_url =
-    ( { base_url = base_url, visible = False, cleartext = "", id = Nothing, key = Nothing, encrypted = Nothing }, Crypto.requestKey () )
+    ( { base_url = base_url, visible = False, cleartext = "", id = Nothing, key = Nothing }, Crypto.requestKey () )
 
 
 subscriptions : Model -> Sub Msg
@@ -49,9 +48,9 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view { id, encrypted, visible, base_url, key } =
-    case ( id, encrypted, key ) of
-        ( Just idValue, Just encryptedValue, Just keyValue ) ->
+view { id, visible, base_url, key } =
+    case ( id, key ) of
+        ( Just idValue, Just keyValue ) ->
             let
                 link =
                     crossOrigin base_url [ "v", idValue, keyValue.key ] []
@@ -106,7 +105,7 @@ update msg model =
             ( { model | key = Just key }, Cmd.none )
 
         ReceivedEncryption encrypted ->
-            ( { model | encrypted = Just encrypted }, Storage.requestStorage { iv = encrypted.iv, ciphertext = encrypted.ciphertext } )
+            ( model , Storage.requestStorage { iv = encrypted.iv, ciphertext = encrypted.ciphertext } )
 
         StoredEncrypted { id } ->
             ( { model | id = Just id }, Cmd.none )
