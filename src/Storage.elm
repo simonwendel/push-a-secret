@@ -3,15 +3,16 @@ port module Storage exposing
     , LookupResponse
     , StorageRequest
     , StorageResponse
-    , receiveStorage
-    , requestStorage
-    , requestLookup
     , receiveLookup
+    , receiveStorage
+    , requestLookup
+    , requestStorage
     )
 
 
 type alias StorageRequest =
-    { iv : String
+    { algorithm : String
+    , iv : String
     , ciphertext : String
     }
 

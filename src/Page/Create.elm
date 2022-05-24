@@ -105,7 +105,12 @@ update msg model =
             ( { model | key = Just key }, Cmd.none )
 
         ReceivedEncryption encrypted ->
-            ( model , Storage.requestStorage { iv = encrypted.iv, ciphertext = encrypted.ciphertext } )
+            case model.key of
+                Just keyValue ->
+                    ( model, Storage.requestStorage { iv = encrypted.iv, ciphertext = encrypted.ciphertext, algorithm = keyValue.algorithm } )
+
+                Nothing ->
+                    ( model, Crypto.requestKey () ) |> Debug.log "Trying to fetch key again: "
 
         StoredEncrypted { id } ->
             ( { model | id = Just id }, Cmd.none )

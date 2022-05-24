@@ -15,6 +15,7 @@ const store = encrypted => {
 const retrieve = id => {
     const stored = JSON.parse(storage.getItem(id));
     return {
+        algorithm: stored.algorithm,
         iv: stored.iv,
         ciphertext: stored.ciphertext
     };

@@ -1,5 +1,6 @@
 port module Crypto exposing
     ( DecryptionRequest
+    , DecryptionResponse
     , EncryptionRequest
     , EncryptionResponse
     , Key
@@ -31,7 +32,10 @@ type alias EncryptionResponse =
 
 
 type alias DecryptionRequest =
-    EncryptionResponse
+    { key : Key
+    , iv : String
+    , ciphertext : String
+    }
 
 
 type alias DecryptionResponse =
