@@ -49,7 +49,7 @@ view model =
     h1 []
         [ case model.cleartext of
             Just cleartextValue ->
-                "Super secret stuff: " ++ cleartextValue |> text
+                cleartextValue |> text
 
             Nothing ->
                 NotFound.view
