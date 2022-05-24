@@ -1,4 +1,10 @@
-module Page.Delete exposing (Model, Msg, init, update, view)
+module Page.Delete exposing
+    ( Model
+    , Msg
+    , init
+    , update
+    , view
+    )
 
 import Html exposing (Html, h1, text)
 

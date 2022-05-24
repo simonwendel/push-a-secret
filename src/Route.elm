@@ -5,8 +5,7 @@ import Url.Parser as Parser exposing ((</>), Parser, s)
 
 
 type Route
-    = HomeRoute
-    | CreateRoute
+    = CreateRoute
     | ViewRoute String
     | DeleteRoute String
 
@@ -14,8 +13,7 @@ type Route
 route : Parser (Route -> a) a
 route =
     Parser.oneOf
-        [ Parser.map HomeRoute Parser.top
-        , Parser.map CreateRoute (s "create")
+        [ Parser.map CreateRoute Parser.top
         , Parser.map ViewRoute (s "view" </> Parser.string)
         , Parser.map DeleteRoute (s "delete" </> Parser.string)
         ]

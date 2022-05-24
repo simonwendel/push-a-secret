@@ -1,4 +1,10 @@
-module Page.View exposing (Model, Msg, init, view, update)
+module Page.View exposing
+    ( Model
+    , Msg
+    , init
+    , update
+    , view
+    )
 
 import Html exposing (Html, h1, text)
 

@@ -5,7 +5,6 @@ import Browser.Navigation as Nav
 import Html
 import Page.Create as Create exposing (Model, Msg, init, subscriptions, update, view)
 import Page.Delete as Delete exposing (Model, Msg, init, update, view)
-import Page.Home as Home exposing (Model, Msg, init, update, view)
 import Page.NotFound as NotFound exposing (view)
 import Page.View as View exposing (Model, Msg, init, update, view)
 import Route exposing (Route(..), toRoute)
@@ -13,12 +12,13 @@ import Url exposing (Url)
 
 
 type alias Model =
-    { page : Page, key : Nav.Key }
+    { page : Page
+    , key : Nav.Key
+    }
 
 
 type Page
-    = Home Home.Model
-    | Create Create.Model
+    = Create Create.Model
     | View View.Model
     | Delete Delete.Model
     | NotFound
@@ -27,7 +27,6 @@ type Page
 type Msg
     = ClickedLink UrlRequest
     | ChangedUrl Url
-    | GotHomeMsg Home.Msg
     | GotCreateMsg Create.Msg
     | GotViewMsg View.Msg
     | GotDeleteMsg Delete.Msg
@@ -65,9 +64,6 @@ view { page } =
     let
         content =
             case page of
-                Home homeModel ->
-                    Home.view homeModel |> Html.map GotHomeMsg
-
                 Create createModel ->
                     Create.view createModel |> Html.map GotCreateMsg
 
@@ -99,14 +95,6 @@ update msg model =
         ChangedUrl url ->
             updateUrl url model
 
-        GotHomeMsg homeMsg ->
-            case model.page of
-                Home homeModel ->
-                    toHome model (Home.update homeMsg homeModel)
-
-                _ ->
-                    ( model, Cmd.none )
-
         GotCreateMsg createMsg ->
             case model.page of
                 Create createModel ->
@@ -132,11 +120,6 @@ update msg model =
                     ( model, Cmd.none )
 
 
-toHome : Model -> ( Home.Model, Cmd Home.Msg ) -> ( Model, Cmd Msg )
-toHome model ( homeModel, cmd ) =
-    ( { model | page = Home homeModel }, Cmd.map GotHomeMsg cmd )
-
-
 toCreate : Model -> ( Create.Model, Cmd Create.Msg ) -> ( Model, Cmd Msg )
 toCreate model ( createModel, cmd ) =
     ( { model | page = Create createModel }, Cmd.map GotCreateMsg cmd )
@@ -158,11 +141,8 @@ updateUrl url model =
         Nothing ->
             ( { model | page = NotFound }, Cmd.none )
 
-        Just HomeRoute ->
-            toHome model (Home.init ())
-
         Just CreateRoute ->
-            toCreate model (Create.init Nothing)
+            toCreate model (Create.init ())
 
         Just (ViewRoute id) ->
             toView model (View.init (Just id))
