@@ -16,8 +16,8 @@ import Url.Builder exposing (crossOrigin)
 
 
 type alias Model =
-    { id : Maybe String
-    , key : Maybe String
+    { id : String
+    , key : String
     , lookup : Maybe Storage.LookupResponse
     , cleartext : Maybe String
     , base_url : String
@@ -35,25 +35,20 @@ subscriptions _ =
         [ Storage.receiveLookup ReceivedLookup, Crypto.receiveDecryption ReceivedDecryption ]
 
 
-init : Maybe String -> Maybe String -> String -> ( Model, Cmd Msg )
+init : String -> String -> String -> ( Model, Cmd Msg )
 init id key base_url =
     ( { id = id, key = key, lookup = Nothing, cleartext = Nothing, base_url = base_url }
-    , case id of
-        Just idValue ->
-            Storage.requestLookup { id = idValue }
-
-        Nothing ->
-            Cmd.none
+    , Storage.requestLookup { id = id }
     )
 
 
 view : Model -> Html Msg
 view model =
-    case ( model.id, model.cleartext ) of
-        ( Just idValue, Just cleartextValue ) ->
+    case model.cleartext of
+        Just cleartextValue ->
             let
                 link =
-                    crossOrigin model.base_url [ "d", idValue ] []
+                    crossOrigin model.base_url [ "d", model.id ] []
             in
             div []
                 [ h1 [] [ cleartextValue |> text ]
@@ -65,7 +60,7 @@ view model =
                     ]
                 ]
 
-        _ ->
+        Nothing ->
             NotFound.view
 
 
@@ -73,21 +68,16 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ReceivedLookup lookup ->
-            case model.key of
-                Just keyValue ->
-                    ( { model | lookup = Just lookup }
-                    , Crypto.requestDecryption
-                        { key =
-                            { key = keyValue
-                            , algorithm = lookup.algorithm
-                            }
-                        , iv = lookup.iv
-                        , ciphertext = lookup.ciphertext
-                        }
-                    )
-
-                Nothing ->
-                    ( model, Cmd.none )
+            ( { model | lookup = Just lookup }
+            , Crypto.requestDecryption
+                { key =
+                    { key = model.key
+                    , algorithm = lookup.algorithm
+                    }
+                , iv = lookup.iv
+                , ciphertext = lookup.ciphertext
+                }
+            )
 
         ReceivedDecryption { cleartext } ->
             ( { model | cleartext = Just cleartext }, Cmd.none )

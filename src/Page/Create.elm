@@ -99,7 +99,7 @@ update msg model =
                     ( model, Crypto.requestEncryption { key = key, cleartext = model.cleartext } )
 
                 Nothing ->
-                    ( model, Crypto.requestKey () ) |> Debug.log "Trying to fetch key again: "
+                    ( model, Cmd.none )
 
         ReceivedKey key ->
             ( { model | key = Just key }, Cmd.none )
@@ -110,7 +110,7 @@ update msg model =
                     ( model, Storage.requestStorage { iv = encrypted.iv, ciphertext = encrypted.ciphertext, algorithm = keyValue.algorithm } )
 
                 Nothing ->
-                    ( model, Crypto.requestKey () ) |> Debug.log "Trying to fetch key again: "
+                    ( model, Cmd.none )
 
         StoredEncrypted { id } ->
             ( { model | id = Just id }, Cmd.none )

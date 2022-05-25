@@ -14,7 +14,7 @@ import Storage
 
 
 type alias Model =
-    { id : Maybe String
+    { id : String
     , exists : Maybe Bool
     , pleaseDelete : Maybe Bool
     , deleted : Bool
@@ -28,15 +28,10 @@ type Msg
     | ReceivedDeletion Storage.DeletionResponse
 
 
-init : Maybe String -> ( Model, Cmd Msg )
+init : String -> ( Model, Cmd Msg )
 init id =
     ( { id = id, pleaseDelete = Nothing, exists = Nothing, deleted = False }
-    , case id of
-        Just idValue ->
-            Storage.requestCheck { id = idValue }
-
-        Nothing ->
-            Cmd.none
+    , Storage.requestCheck { id = id }
     )
 
 
@@ -80,12 +75,7 @@ update msg model =
     case msg of
         DoDelete ->
             ( { model | pleaseDelete = Just True }
-            , case model.id of
-                Just idValue ->
-                    Storage.requestDeletion { id = idValue }
-
-                Nothing ->
-                    Cmd.none
+            , Storage.requestDeletion { id = model.id }
             )
 
         DontDelete ->

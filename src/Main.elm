@@ -156,7 +156,7 @@ updateUrl url model =
             toCreate model (Create.init model.base_url)
 
         Just (ViewRoute id key) ->
-            toView model (View.init (Just id) (Just key) model.base_url)
+            toView model (View.init id key model.base_url)
 
         Just (DeleteRoute id) ->
-            toDelete model (Delete.init (Just id))
+            toDelete model (Delete.init id)
