@@ -45,29 +45,27 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    h1 []
-        [ case ( model.pleaseDelete, model.exists, model.deleted ) of
-            ( Nothing, Just True, False ) ->
-                div []
-                    [ h1 [] [ text "Delete secret?" ]
-                    , p [] [ "Are you sure you want to delete this secret?" |> text ]
-                    , p []
-                        [ button [ onClick DoDelete ] [ text "Yes!" ]
-                        , button [ onClick DontDelete ] [ text "No!" ]
-                        ]
+    case ( model.pleaseDelete, model.exists, model.deleted ) of
+        ( Nothing, Just True, False ) ->
+            div []
+                [ h1 [] [ text "Delete secret?" ]
+                , p [] [ "Are you sure you want to delete this secret?" |> text ]
+                , p []
+                    [ button [ onClick DoDelete ] [ text "Yes!" ]
+                    , button [ onClick DontDelete ] [ text "No!" ]
                     ]
+                ]
 
-            ( Just True, Just True, True ) ->
-                div []
-                    [ h1 [] [ text "Secret Deleted!" ] ]
+        ( Just True, Just True, True ) ->
+            div []
+                [ h1 [] [ text "Secret Deleted!" ] ]
 
-            ( Just False, Just True, _ ) ->
-                div []
-                    [ h1 [] [ text "Secret Not Deleted!" ] ]
+        ( Just False, Just True, _ ) ->
+            div []
+                [ h1 [] [ text "Secret Not Deleted!" ] ]
 
-            _ ->
-                NotFound.view
-        ]
+        _ ->
+            NotFound.view
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
