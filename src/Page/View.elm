@@ -8,9 +8,11 @@ module Page.View exposing
     )
 
 import Crypto
-import Html exposing (Html, h1, text)
+import Html exposing (Html, a, br, div, h1, p, text)
+import Html.Attributes exposing (href)
 import Page.NotFound as NotFound
 import Storage
+import Url.Builder exposing (crossOrigin)
 
 
 type alias Model =
@@ -18,6 +20,7 @@ type alias Model =
     , key : Maybe String
     , lookup : Maybe Storage.LookupResponse
     , cleartext : Maybe String
+    , base_url : String
     }
 
 
@@ -32,9 +35,9 @@ subscriptions _ =
         [ Storage.receiveLookup ReceivedLookup, Crypto.receiveDecryption ReceivedDecryption ]
 
 
-init : Maybe String -> Maybe String -> ( Model, Cmd msg )
-init id key =
-    ( { id = id, key = key, lookup = Nothing, cleartext = Nothing }
+init : Maybe String -> Maybe String -> String -> ( Model, Cmd Msg )
+init id key base_url =
+    ( { id = id, key = key, lookup = Nothing, cleartext = Nothing, base_url = base_url }
     , case id of
         Just idValue ->
             Storage.requestLookup { id = idValue }
@@ -44,16 +47,26 @@ init id key =
     )
 
 
-view : Model -> Html msg
+view : Model -> Html Msg
 view model =
-    h1 []
-        [ case model.cleartext of
-            Just cleartextValue ->
-                cleartextValue |> text
+    case ( model.id, model.cleartext ) of
+        ( Just idValue, Just cleartextValue ) ->
+            let
+                link =
+                    crossOrigin model.base_url [ "d", idValue ] []
+            in
+            div []
+                [ h1 [] [ cleartextValue |> text ]
+                , p []
+                    [ text "Use the following link to delete this secret:"
+                    , br [] []
+                    , br [] []
+                    , a [ href link ] [ text link ]
+                    ]
+                ]
 
-            Nothing ->
-                NotFound.view
-        ]
+        _ ->
+            NotFound.view
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

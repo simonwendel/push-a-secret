@@ -3,10 +3,10 @@ module Main exposing (main)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Navigation as Nav
 import Html
-import Page.Create as Create exposing (Model, Msg, init, subscriptions, update, view)
-import Page.Delete as Delete exposing (Model, Msg, init, update, view)
-import Page.NotFound as NotFound exposing (view)
-import Page.View as View exposing (Model, Msg, init, update, view)
+import Page.Create as Create
+import Page.Delete as Delete
+import Page.NotFound as NotFound
+import Page.View as View
 import Route exposing (Route(..), toRoute)
 import Url exposing (Url)
 
@@ -57,6 +57,9 @@ subscriptions model =
 
         View viewModel ->
             View.subscriptions viewModel |> Sub.map GotViewMsg
+
+        Delete deleteModel ->
+            Delete.subscriptions deleteModel |> Sub.map GotDeleteMsg
 
         _ ->
             Sub.none
@@ -153,7 +156,7 @@ updateUrl url model =
             toCreate model (Create.init model.base_url)
 
         Just (ViewRoute id key) ->
-            toView model (View.init (Just id) (Just key))
+            toView model (View.init (Just id) (Just key) model.base_url)
 
         Just (DeleteRoute id) ->
             toDelete model (Delete.init (Just id))

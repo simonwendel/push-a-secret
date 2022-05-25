@@ -1,6 +1,6 @@
 export { wireCrypto, wireStorage }
 
-import { retrieve, store } from './storage.js';
+import { check, retrieve, store, remove } from './storage.js';
 import { generate, encrypt, decrypt } from '/crypto.js'
 
 const wireCrypto = app => {
@@ -29,6 +29,13 @@ const wireCrypto = app => {
 }
 
 const wireStorage = app => {
+    app.ports.requestCheck.subscribe(request => {
+        const exists = check(request.id);
+        app.ports.receiveCheck.send({
+            exists: exists
+        });
+    });
+
     app.ports.requestStorage.subscribe(request => {
         const stored = store(request);
         app.ports.receiveStorage.send({
@@ -42,6 +49,13 @@ const wireStorage = app => {
             algorithm: stored.algorithm,
             iv: stored.iv,
             ciphertext: stored.ciphertext
+        });
+    });
+    
+    app.ports.requestDeletion.subscribe(request => {
+        remove(request.id);
+        app.ports.receiveDeletion.send({
+            success: true
         });
     });
 }

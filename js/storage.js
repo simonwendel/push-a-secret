@@ -1,8 +1,10 @@
-export { store, retrieve }
+export { store, retrieve, remove, check }
 
 const storage = window.localStorage;
 
 const getId = () => (Math.round(Date.now())).toString(36);
+
+const check = id => storage.getItem(id) !== null;
 
 const store = encrypted => {
     const id = getId();
@@ -19,4 +21,8 @@ const retrieve = id => {
         iv: stored.iv,
         ciphertext: stored.ciphertext
     };
+};
+
+const remove = id => {
+    storage.removeItem(id);
 };
