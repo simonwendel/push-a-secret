@@ -17,7 +17,7 @@ render renderContent =
     let
         headerSettings =
             { logo =
-                { height = px 40 }
+                { width = px 180 }
             , title =
                 { fontSize = rem 3.5
                 }
@@ -40,7 +40,7 @@ render renderContent =
 
 type alias HeaderSettings a b c d =
     { logo :
-        { height : ExplicitLength a
+        { width : ExplicitLength a
         }
     , title :
         { fontSize : ExplicitLength b }
@@ -66,7 +66,7 @@ renderHeader title headerSettings =
             [ img
                 [ src "/logo.png"
                 , css
-                    [ height headerSettings.logo.height
+                    [ width headerSettings.logo.width
                     ]
                 ]
                 []
@@ -75,6 +75,7 @@ renderHeader title headerSettings =
             [ css
                 [ width (pct 100)
                 , textAlign center
+                , marginLeft (px (negate (headerSettings.logo.width.numericValue / 2.0)))
                 ]
             ]
             [ span
