@@ -2,11 +2,13 @@ module Main exposing (main)
 
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Navigation as Nav
-import Html
+import Html exposing (Html)
+import Html.Styled as Styled
 import Page.Create as Create
 import Page.Delete as Delete
 import Page.NotFound as NotFound
 import Page.View as View
+import Render exposing (render)
 import Route exposing (Route(..), toRoute)
 import Url exposing (Url)
 
@@ -73,22 +75,25 @@ init { base_url } url key =
 view : Model -> Document Msg
 view { page } =
     let
+        title =
+            "Push-a-Secret!"
+
         content =
             case page of
                 Create createModel ->
-                    Create.view createModel |> Html.map GotCreateMsg
+                    Create.view createModel |> Styled.map GotCreateMsg
 
                 View viewModel ->
-                    View.view viewModel |> Html.map GotViewMsg
+                    View.view viewModel |> Styled.map GotViewMsg
 
                 Delete deleteModel ->
-                    Delete.view deleteModel |> Html.map GotDeleteMsg
+                    Delete.view deleteModel |> Styled.map GotDeleteMsg
 
                 NotFound ->
                     NotFound.view
     in
-    { title = "Push-a-Secret"
-    , body = [ content ]
+    { title = title
+    , body = render { title = title, page = content } |> List.map Styled.toUnstyled
     }
 
 

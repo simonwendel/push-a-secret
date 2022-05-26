@@ -8,9 +8,9 @@ module Page.Create exposing
     )
 
 import Crypto
-import Html exposing (Html, a, br, button, div, h1, input, p, text)
-import Html.Attributes exposing (href, type_)
-import Html.Events exposing (onClick, onInput)
+import Html.Styled exposing (Html, a, br, button, div, h1, input, p, text)
+import Html.Styled.Attributes exposing (href, type_)
+import Html.Styled.Events exposing (onClick, onInput)
 import Storage
 import Url.Builder exposing (crossOrigin)
 

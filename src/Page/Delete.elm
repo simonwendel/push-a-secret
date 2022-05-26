@@ -7,8 +7,8 @@ module Page.Delete exposing
     , view
     )
 
-import Html exposing (Html, button, div, h1, p, text)
-import Html.Events exposing (onClick)
+import Html.Styled exposing (Html, button, div, h1, p, text)
+import Html.Styled.Events exposing (onClick)
 import Page.NotFound as NotFound
 import Storage
 

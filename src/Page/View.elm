@@ -8,8 +8,8 @@ module Page.View exposing
     )
 
 import Crypto
-import Html exposing (Html, a, br, div, h1, p, text)
-import Html.Attributes exposing (href)
+import Html.Styled exposing (Html, a, br, div, h1, p, text)
+import Html.Styled.Attributes exposing (href)
 import Page.NotFound as NotFound
 import Storage
 import Url.Builder exposing (crossOrigin)
