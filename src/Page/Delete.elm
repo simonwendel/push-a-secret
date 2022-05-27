@@ -7,8 +7,9 @@ module Page.Delete exposing
     , view
     )
 
-import Html.Styled exposing (Html, button, div, h1, p, text)
-import Html.Styled.Events exposing (onClick)
+import Html exposing (Html, button, div, h1, p, text)
+import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 import Page.NotFound as NotFound
 import Storage
 
@@ -51,8 +52,8 @@ view model =
                 [ h1 [] [ text "Delete secret?" ]
                 , p [] [ "Are you sure you want to delete this secret?" |> text ]
                 , p []
-                    [ button [ onClick DoDelete ] [ text "Yes!" ]
-                    , button [ onClick DontDelete ] [ text "No!" ]
+                    [ button [ onClick DoDelete, class "ok" ] [ text "✔" ]
+                    , button [ onClick DontDelete, class "cancel" ] [ text "╳" ]
                     ]
                 ]
 

@@ -1,147 +1,56 @@
 module Render exposing (render)
 
-import Css exposing (..)
-import Html exposing (Html)
-import Html.Styled as Styled exposing (a, div, footer, header, img, p, span, text)
-import Html.Styled.Attributes exposing (css, href, src, target)
+import Html exposing (Attribute, Html, a, div, footer, header, hr, img, node, p, span, text)
+import Html.Attributes exposing (alt, class, href, id, src, target)
 
 
 type alias RenderContent msg =
     { title : String
-    , page : Styled.Html msg
+    , page : Html msg
     }
 
 
-render : RenderContent msg -> List (Styled.Html msg)
-render renderContent =
-    let
-        headerSettings =
-            { logo =
-                { width = px 180 }
-            , title =
-                { fontSize = rem 3.5
-                }
-            , padding =
-                { vertical = px 40
-                , horizontal = px 90
-                }
-            }
+mainElement : List (Attribute msg) -> List (Html msg) -> Html msg
+mainElement =
+    node "main"
 
-        footerSettings =
-            { fontSize = rem 1.0
-            , symbolSize = rem 2.0
-            }
-    in
-    [ renderHeader renderContent.title headerSettings
-    , renderPage renderContent.page
-    , renderFooter footerSettings
+
+render : RenderContent msg -> List (Html msg)
+render renderContent =
+    [ div
+        [ id "app" ]
+        [ renderHeader renderContent.title
+        , hr [ class "accent-dark" ] []
+        , hr [ class "accent-light" ] []
+        , renderPage renderContent.page
+        , hr [ class "accent-light" ] []
+        , hr [ class "accent-dark" ] []
+        , renderFooter
+        ]
     ]
 
 
-type alias HeaderSettings a b c d =
-    { logo :
-        { width : ExplicitLength a
-        }
-    , title :
-        { fontSize : ExplicitLength b }
-    , padding :
-        { vertical : ExplicitLength c
-        , horizontal : ExplicitLength d
-        }
-    }
-
-
-renderHeader : String -> HeaderSettings a b c d -> Styled.Html msg
-renderHeader title headerSettings =
+renderHeader : String -> Html msg
+renderHeader title =
     header
-        [ css
-            [ paddingBottom headerSettings.padding.vertical
-            , paddingTop headerSettings.padding.vertical
-            , paddingLeft headerSettings.padding.horizontal
-            , paddingRight headerSettings.padding.horizontal
-            , width (pct 100)
-            ]
-        ]
-        [ div []
-            [ img
-                [ src "/logo.png"
-                , css
-                    [ width headerSettings.logo.width
-                    ]
-                ]
-                []
-            ]
-        , div
-            [ css
-                [ width (pct 100)
-                , textAlign center
-                , marginLeft (px (negate (headerSettings.logo.width.numericValue / 2.0)))
-                ]
-            ]
-            [ span
-                [ css
-                    [ fontSize headerSettings.title.fontSize
-                    , fontFamilies
-                        [ "Courier New"
-                        , "Courier"
-                        , "monospace"
-                        ]
-                    ]
-                ]
-                [ text title ]
-            ]
+        []
+        [ img [ id "logo", src "/logo.png" ] []
+        , a [ id "app-title", href "/", alt "Go push a secret!" ] [ text title ]
         ]
 
 
-renderPage : Styled.Html msg -> Styled.Html msg
+renderPage : Html msg -> Html msg
 renderPage pageContent =
-    div
-        [ css
-            [ backgroundColor (hex "#e8e8e8")
-            ]
-        ]
-        [ pageContent ]
+    mainElement [] [ pageContent ]
 
 
-type alias FooterSettings a b =
-    { fontSize : ExplicitLength a
-    , symbolSize : ExplicitLength b
-    }
-
-
-renderFooter : FooterSettings a b -> Styled.Html msg
-renderFooter footerSettings =
+renderFooter : Html msg
+renderFooter =
     footer
-        [ css
-            [ width (pct 100)
-            , textAlign center
-            , bottom (px 0)
-            , left (px 0)
-            , position fixed
-            ]
-        ]
-        [ span
-            [ css
-                [ fontSize footerSettings.fontSize
-                , lineHeight footerSettings.symbolSize
-                , verticalAlign middle
-                ]
-            ]
-            [ text "Made with " ]
+        []
+        [ span [] [ text "Made with " ]
         , span
-            [ css
-                [ fontSize footerSettings.symbolSize
-                , fontWeight bold
-                , verticalAlign middle
-                ]
-            ]
-            [ a [ href "https://elm-lang.org/", Html.Styled.Attributes.target "_blank", css [ textDecoration none ] ] [ text "♡" ] ]
-        , span
-            [ css
-                [ fontSize footerSettings.fontSize
-                , lineHeight footerSettings.symbolSize
-                , verticalAlign middle
-                ]
-            ]
-            [ text " by Simon Wendel" ]
+            [ id "footer-symbol" ]
+            [ a [ href "https://elm-lang.org/", target "_blank" ] [ text "♡" ] ]
+        , span [] [ text " by Simon Wendel" ]
         ]

@@ -1,0 +1,104 @@
+@import (inline) 'reset.css';
+
+@import (reference) 'colors.less';
+@import (reference) 'flex.less';
+@import (reference) 'tags.less';
+@import (reference) 'special.less';
+
+body {
+    .flex-container-col();
+
+    height: 100vh;
+    color: @default-font-color;
+    background-color: @default-background-color;
+}
+
+header {
+    .flex-item();
+    .flex-container-row();
+
+    .constructStyledLinks(@header-a-font-color-styled);
+
+    #logo {
+        .flex-item();
+        width: 180px;
+    }
+
+    #app-title {
+        .flex-item();
+        margin-left: auto;
+        font-size: 2.0rem;
+        font-family: Arial, Helvetica, sans-serif;
+        border-style: solid;
+        border-color: @app-title-border-color;
+        border-width: 1px;
+        border-radius: 5px;
+        padding: 10px;
+
+        &:hover {
+            background-color: @app-title-background-color-hover;
+        }
+    }
+
+    align-content: center;
+    align-items: center;
+    min-height: 60px;
+    padding-bottom: max(2%, 20px);
+    padding-top: max(2%, 20px);
+    padding-left: 90px;
+    padding-right: 90px;
+    background-color: @header-background-color;
+}
+
+main {
+    .flex-item();
+    .flex-grow();
+    .flex-container-col();
+
+    .constructSpinner();
+
+    section {
+        .flex-item();
+
+        width: min(75%, 600px);
+        min-height: 200px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: @main-section-background-color;
+        border: 3px solid @main-section-border-color;
+        border-radius: 10px;
+        padding: 30px;
+    }
+
+    .error {
+        color: @default-error-color;
+    }
+
+    height: 1fr;
+    padding: max(5%, 10px);
+}
+
+footer {
+    @footer-font-size: 1.0rem;
+    @footer-symbol-size: 2.0rem;
+
+    .flex-item();
+
+    .constructStyledLinks(@footer-a-font-color-styled);
+
+    #footer-symbol {
+        font-size: @footer-symbol-size;
+        font-weight: bold;
+    }
+
+    span {
+        font-size: @footer-font-size;
+        vertical-align: middle;
+        line-height: @footer-symbol-size; // we must match height of tallest node
+        font-style: italic;
+    }
+
+    color: @footer-font-color;
+    background-color: @footer-background-color;
+    text-align: center;
+}

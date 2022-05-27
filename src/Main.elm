@@ -2,8 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Navigation as Nav
-import Html exposing (Html)
-import Html.Styled as Styled
+import Html
 import Page.Create as Create
 import Page.Delete as Delete
 import Page.NotFound as NotFound
@@ -81,19 +80,19 @@ view { page } =
         content =
             case page of
                 Create createModel ->
-                    Create.view createModel |> Styled.map GotCreateMsg
+                    Create.view createModel |> Html.map GotCreateMsg
 
                 View viewModel ->
-                    View.view viewModel |> Styled.map GotViewMsg
+                    View.view viewModel |> Html.map GotViewMsg
 
                 Delete deleteModel ->
-                    Delete.view deleteModel |> Styled.map GotDeleteMsg
+                    Delete.view deleteModel |> Html.map GotDeleteMsg
 
                 NotFound ->
                     NotFound.view
     in
     { title = title
-    , body = render { title = title, page = content } |> List.map Styled.toUnstyled
+    , body = render { title = title, page = content }
     }
 
 

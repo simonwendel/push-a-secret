@@ -5,17 +5,18 @@
   <meta charset='UTF-8'>
   <!-- Favicon created using art from the awesome Twemoji project (https://twemoji.twitter.com/) -->
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
+  <link href='/app.css' rel='stylesheet'>
   <script src='/app.js'></script>
 </head>
 
 <body>
-  <script type="module">
+  <script type='module'>
 
     import { wireCrypto, wireStorage } from '/ports.js'
 
     const app = Elm.Main.init({
       flags: {
-        base_url: window.location.protocol + "//" + window.location.host
+        base_url: window.location.protocol + '//' + window.location.host
       }
     });
 

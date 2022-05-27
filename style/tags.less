@@ -1,0 +1,138 @@
+@import (reference) 'colors.less';
+
+@default-margin: 5px;
+
+/* body */
+body {
+    overflow: hidden;
+}
+
+/* headings */
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+/* content */
+em {
+    font-style: italic;
+}
+
+strong {
+    font-weight: bold;
+}
+
+p {
+    margin-top: 1.0rem;
+}
+
+.row-of-items {
+    margin-top: 1.0rem;
+}
+
+/* links */
+a {
+    color: @a-font-color;
+    text-decoration: underline;
+}
+
+.constructStyledLinks(@color) {
+    & a {
+        color: @color;
+        text-decoration: none;
+    }
+}
+
+/* dividers */
+hr {
+    height: max(1%, 5px);
+    border: 0px;
+
+    &.accent-light {
+        background-color: @hr-accent-light;
+    }
+
+    &.accent-dark {
+        background-color: @hr-accent-dark;
+    }
+}
+
+/* buttons */
+button {
+    .constructButtonClass(ok);
+    .constructButtonClass(cancel);
+    .constructButtonClass(neutral);
+
+    &:focus {
+        border-width: 2px;
+    }
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    display: inline-block;
+    cursor: pointer;
+    color: @button-font-color;
+    font-family: Arial;
+    font-size: 1.2rem;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    margin: @default-margin;
+}
+
+.constructButtonClass(@class) {
+    @border: '@{class}-button-border-color';
+    @background: '@{class}-button-background-color';
+    @hover: '@{class}-button-background-color-hover';
+
+    &.@{class} {
+        border-color: @@border;
+        background-color: @@background;
+
+        &:hover {
+            background-color: @@hover;
+        }
+    }
+}
+
+/* inputs */
+input {
+    .constructInput(40ch);
+}
+
+.constructInput(@width) {
+    .normalBorder() {
+        border-color: @input-border-color;
+    }
+
+    &:focus {
+        border-width: 2px;
+    }
+
+    &:invalid {
+        border-color: @input-invalid-border-color;
+    }
+
+    &:valid {
+        .normalBorder();
+    }
+
+    &:focus:invalid {
+        .normalBorder();
+    }
+
+    width: @width;
+    margin: @default-margin;
+    background-color: @input-background-color;
+    border-color: @input-border-color;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    height: 30px;
+    box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.06);
+    padding: 1ch;
+}

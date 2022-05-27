@@ -8,9 +8,9 @@ module Page.Create exposing
     )
 
 import Crypto
-import Html.Styled exposing (Html, a, br, button, div, h1, input, p, text)
-import Html.Styled.Attributes exposing (href, type_)
-import Html.Styled.Events exposing (onClick, onInput)
+import Html exposing (Html, a, br, button, div, h1, input, p, text)
+import Html.Attributes exposing (class, href, type_)
+import Html.Events exposing (onClick, onInput)
 import Storage
 import Url.Builder exposing (crossOrigin)
 
@@ -78,8 +78,8 @@ view { id, visible, base_url, key } =
                             type_ "password"
                         ]
                         []
-                    , button [ onClick ToggleVisibility ] [ text "Show" ]
-                    , button [ onClick RequestEncryption ] [ text "Create" ]
+                    , button [ onClick ToggleVisibility, class "neutral" ] [ text "👁" ]
+                    , button [ onClick RequestEncryption, class "ok" ] [ text "✔" ]
                     ]
                 ]
 
