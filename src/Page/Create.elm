@@ -8,12 +8,14 @@ module Page.Create exposing
     )
 
 import Crypto
-import Html exposing (Html, a, br, button, h1, input, p, text)
-import Html.Attributes exposing (class, href, type_)
+import Html exposing (Html, a, br, button, em, h1, input, label, p, strong, text)
+import Html.Attributes exposing (class, href, maxlength, minlength, name, type_)
 import Html.Events exposing (onClick, onInput)
 import Render exposing (renderContent, renderRow)
 import Storage
+import String exposing (fromInt)
 import Url.Builder exposing (crossOrigin)
+import Validation exposing (secretMaxLength, secretMinLength)
 
 
 type alias Model =
@@ -68,17 +70,38 @@ view { id, visible, base_url, key } =
 
         _ ->
             renderContent
-                [ h1 [] [ text "Create a new secret!" ]
-                , renderRow
-                    [ input
-                        [ onInput UpdateCleartext
-                        , if visible then
-                            type_ "text"
-
-                          else
-                            type_ "password"
+                [ h1 [] [ text "Create a secret!" ]
+                , p []
+                    [ text "Create your new secret by entering it in the password box below. A secret"
+                    , strong [] [ text " MUST " ]
+                    , "have a character length of at least "
+                        ++ fromInt secretMinLength
+                        ++ " and at most "
+                        ++ fromInt secretMaxLength
+                        ++ "."
+                        |> text
+                    ]
+                , p []
+                    [ em []
+                        [ text "HINT: Click the 'show' icon to view the hidden text or hit the checkmark to encrypt your secret."
                         ]
-                        []
+                    ]
+                , renderRow
+                    [ label []
+                        [ text "Secret: "
+                        , input
+                            [ onInput UpdateCleartext
+                            , minlength secretMinLength
+                            , maxlength secretMaxLength
+                            , name "secret"
+                            , if visible then
+                                type_ "text"
+
+                              else
+                                type_ "password"
+                            ]
+                            []
+                        ]
                     , button [ onClick ToggleVisibility, class "neutral" ] [ text "👁" ]
                     , button [ onClick RequestEncryption, class "ok" ] [ text "✔" ]
                     ]
