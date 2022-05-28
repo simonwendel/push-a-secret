@@ -59,13 +59,9 @@ view { id, visible, base_url, key } =
                     crossOrigin base_url [ "v", idValue, keyValue.key ] []
             in
             renderContent
-                [ h1 [] [ text "Secret created!" ]
-                , p []
-                    [ text "Please copy the following link and use it when distributing the secret:"
-                    , br [] []
-                    , br [] []
-                    , a [ href link ] [ text link ]
-                    ]
+                [ h1 [] [ text "Your secret has been created!" ]
+                , p [] [ text "Please copy the following link and use it when distributing the secret:" ]
+                , p [] [ a [ href link ] [ text link ] ]
                 ]
 
         _ ->
