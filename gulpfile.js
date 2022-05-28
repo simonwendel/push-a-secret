@@ -2,7 +2,7 @@ const CONFIGURATION = {
     elmProgram: 'src/Main.elm',
     elmSources: 'src/**/*.elm',
     elmBundleFile: 'app.js',
-    staticAssets: ['index.html', 'favicon.ico', 'logo.png', 'js/**/*.js'],
+    staticAssets: ['index.html', 'img/**/*', 'js/**/*.js'],
     lessFiles: ['style/**/*.less'],
     outputDirectory: 'dist/'
 }
