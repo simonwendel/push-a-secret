@@ -22,16 +22,13 @@ renderRow =
 
 renderApp : RenderContent msg -> List (Html msg)
 renderApp content =
-    [ div
-        [ id "app" ]
-        [ renderHeader content.title
-        , hr [ class "accent-dark" ] []
-        , hr [ class "accent-light" ] []
-        , renderPage content.page
-        , hr [ class "accent-light" ] []
-        , hr [ class "accent-dark" ] []
-        , renderFooter
-        ]
+    [ renderHeader content.title
+    , hr [ class "accent-dark" ] []
+    , hr [ class "accent-light" ] []
+    , renderPage content.page
+    , hr [ class "accent-light" ] []
+    , hr [ class "accent-dark" ] []
+    , renderFooter
     ]
 
 
