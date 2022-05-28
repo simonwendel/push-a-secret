@@ -51,7 +51,7 @@ view model =
         ( Nothing, Just True, False ) ->
             renderContent
                 [ h1 [] [ text "Delete secret?" ]
-                , p [] [ "Are you sure you want to delete this secret?" |> text ]
+                , p [] [ text "Are you sure you want to delete this secret?" ]
                 , renderRow
                     [ button [ onClick DoDelete, class "ok" ] [ text "✔" ]
                     , button [ onClick DontDelete, class "cancel" ] [ text "✖" ]
@@ -61,13 +61,27 @@ view model =
         ( Just True, Just True, True ) ->
             renderContent
                 [ h1 []
-                    [ text "Secret Deleted!" ]
+                    [ text "Secret deleted" ]
+                , p []
+                    [ text
+                        """
+                        Any old view link to this secret has now stopped working and we can't retrieve it for you,
+                        it would be pretty bad if we could.
+                        """
+                    ]
                 ]
 
         ( Just False, Just True, _ ) ->
             renderContent
                 [ h1 []
-                    [ text "Secret Not Deleted!" ]
+                    [ text "Secret not deleted" ]
+                , p []
+                    [ text
+                        """
+                        The secret is still in our database and any view link created for it should still work.
+                        We really hope you saved the link, or the key is lost forever.
+                        """
+                    ]
                 ]
 
         _ ->

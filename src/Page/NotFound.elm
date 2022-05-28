@@ -1,12 +1,26 @@
 module Page.NotFound exposing (view)
 
+import Html exposing (Html, a, h1, p, text)
+import Html.Attributes exposing (href)
 import Render exposing (renderContent)
-import Html exposing (Html, h1, text)
+
 
 view : Html msg
 view =
     renderContent
         [ h1 []
             [ text "Oops, nothing here!"
+            ]
+        , p []
+            [ text
+                """
+                There is nothing here. Either you entered a faulty URL or you tried to access some secret
+                you don't have the key for.
+                """
+            ]
+        , p []
+            [ text "Either way, your best bet is to try something different or "
+            , a [ href "/" ] [ text "create a secret" ]
+            , text " of your own to proudly give to friends..."
             ]
         ]
