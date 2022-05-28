@@ -8,8 +8,8 @@ module Page.Create exposing
     )
 
 import Crypto
-import Html exposing (Html, a, br, button, em, h1, input, label, p, strong, text)
-import Html.Attributes exposing (autofocus, class, href, maxlength, minlength, name, type_)
+import Html exposing (Html, a, button, em, h1, input, label, p, strong, text)
+import Html.Attributes exposing (autofocus, class, href, maxlength, minlength, required, type_)
 import Html.Events exposing (onClick, onInput)
 import Render exposing (renderContent, renderRow)
 import Storage
@@ -86,11 +86,11 @@ view { id, visible, base_url, key } =
                     [ label []
                         [ text "Secret: "
                         , input
-                            [ autofocus True
-                            , onInput UpdateCleartext
+                            [ onInput UpdateCleartext
+                            , autofocus True
+                            , required True
                             , minlength secretMinLength
                             , maxlength secretMaxLength
-                            , name "secret"
                             , if visible then
                                 type_ "text"
 
