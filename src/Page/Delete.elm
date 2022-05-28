@@ -53,7 +53,7 @@ view model =
                 , p [] [ "Are you sure you want to delete this secret?" |> text ]
                 , p []
                     [ button [ onClick DoDelete, class "ok" ] [ text "✔" ]
-                    , button [ onClick DontDelete, class "cancel" ] [ text "╳" ]
+                    , button [ onClick DontDelete, class "cancel" ] [ text "✖" ]
                     ]
                 ]
 

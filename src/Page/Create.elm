@@ -68,7 +68,7 @@ view { id, visible, base_url, key } =
         _ ->
             div []
                 [ h1 [] [ text "Create a new secret!" ]
-                , p []
+                , div [ class "row-of-items" ]
                     [ input
                         [ onInput UpdateCleartext
                         , if visible then

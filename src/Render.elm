@@ -1,6 +1,6 @@
 module Render exposing (render)
 
-import Html exposing (Attribute, Html, a, div, footer, header, hr, img, node, p, span, text)
+import Html exposing (Attribute, Html, a, div, footer, header, hr, img, node, span, text)
 import Html.Attributes exposing (alt, class, href, id, src, target)
 
 
@@ -41,7 +41,7 @@ renderHeader title =
 
 renderPage : Html msg -> Html msg
 renderPage pageContent =
-    mainElement [] [ pageContent ]
+    mainElement [] [ div [ id "page"] [ pageContent ] ]
 
 
 renderFooter : Html msg
@@ -52,5 +52,5 @@ renderFooter =
         , span
             [ id "footer-symbol" ]
             [ a [ href "https://elm-lang.org/", target "_blank" ] [ text "♡" ] ]
-        , span [] [ text " by Simon Wendel" ]
+        , span [] [ text " by Simon Wendel!" ]
         ]
