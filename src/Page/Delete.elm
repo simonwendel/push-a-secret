@@ -7,10 +7,11 @@ module Page.Delete exposing
     , view
     )
 
-import Html exposing (Html, button, div, h1, p, text)
+import Html exposing (Html, button, h1, p, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Page.NotFound as NotFound
+import Render exposing (renderContent, renderRow)
 import Storage
 
 
@@ -48,22 +49,26 @@ view : Model -> Html Msg
 view model =
     case ( model.pleaseDelete, model.exists, model.deleted ) of
         ( Nothing, Just True, False ) ->
-            div []
+            renderContent
                 [ h1 [] [ text "Delete secret?" ]
                 , p [] [ "Are you sure you want to delete this secret?" |> text ]
-                , p []
+                , renderRow
                     [ button [ onClick DoDelete, class "ok" ] [ text "✔" ]
                     , button [ onClick DontDelete, class "cancel" ] [ text "✖" ]
                     ]
                 ]
 
         ( Just True, Just True, True ) ->
-            div []
-                [ h1 [] [ text "Secret Deleted!" ] ]
+            renderContent
+                [ h1 []
+                    [ text "Secret Deleted!" ]
+                ]
 
         ( Just False, Just True, _ ) ->
-            div []
-                [ h1 [] [ text "Secret Not Deleted!" ] ]
+            renderContent
+                [ h1 []
+                    [ text "Secret Not Deleted!" ]
+                ]
 
         _ ->
             NotFound.view

@@ -1,6 +1,6 @@
-module Render exposing (render)
+module Render exposing (renderApp, renderContent, renderRow)
 
-import Html exposing (Attribute, Html, a, div, footer, header, hr, img, node, span, text)
+import Html exposing (Attribute, Html, a, div, footer, header, hr, img, node, section, span, text)
 import Html.Attributes exposing (alt, class, href, id, src, target)
 
 
@@ -10,19 +10,24 @@ type alias RenderContent msg =
     }
 
 
-mainElement : List (Attribute msg) -> List (Html msg) -> Html msg
-mainElement =
-    node "main"
+renderContent : List (Html msg) -> Html msg
+renderContent =
+    section [ class "content" ]
 
 
-render : RenderContent msg -> List (Html msg)
-render renderContent =
+renderRow : List (Html msg) -> Html msg
+renderRow =
+    div [ class "row-of-items" ]
+
+
+renderApp : RenderContent msg -> List (Html msg)
+renderApp content =
     [ div
         [ id "app" ]
-        [ renderHeader renderContent.title
+        [ renderHeader content.title
         , hr [ class "accent-dark" ] []
         , hr [ class "accent-light" ] []
-        , renderPage renderContent.page
+        , renderPage content.page
         , hr [ class "accent-light" ] []
         , hr [ class "accent-dark" ] []
         , renderFooter
@@ -40,8 +45,8 @@ renderHeader title =
 
 
 renderPage : Html msg -> Html msg
-renderPage pageContent =
-    mainElement [] [ div [ id "page"] [ pageContent ] ]
+renderPage page =
+    node "main" [] [ page ]
 
 
 renderFooter : Html msg

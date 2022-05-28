@@ -8,9 +8,10 @@ module Page.Create exposing
     )
 
 import Crypto
-import Html exposing (Html, a, br, button, div, h1, input, p, text)
+import Html exposing (Html, a, br, button, h1, input, p, text)
 import Html.Attributes exposing (class, href, type_)
 import Html.Events exposing (onClick, onInput)
+import Render exposing (renderContent, renderRow)
 import Storage
 import Url.Builder exposing (crossOrigin)
 
@@ -55,7 +56,7 @@ view { id, visible, base_url, key } =
                 link =
                     crossOrigin base_url [ "v", idValue, keyValue.key ] []
             in
-            div []
+            renderContent
                 [ h1 [] [ text "Secret created!" ]
                 , p []
                     [ text "Please copy the following link and use it when distributing the secret:"
@@ -66,9 +67,9 @@ view { id, visible, base_url, key } =
                 ]
 
         _ ->
-            div []
+            renderContent
                 [ h1 [] [ text "Create a new secret!" ]
-                , div [ class "row-of-items" ]
+                , renderRow
                     [ input
                         [ onInput UpdateCleartext
                         , if visible then

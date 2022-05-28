@@ -8,8 +8,8 @@ module Page.View exposing
     )
 
 import Crypto
-import Html exposing (Html, a, br, div, h1, p, text)
-import Html.Attributes exposing (href)
+import Html exposing (Html, a, br, h1, p, section, text)
+import Html.Attributes exposing (class, href)
 import Page.NotFound as NotFound
 import Storage
 import Url.Builder exposing (crossOrigin)
@@ -50,7 +50,7 @@ view model =
                 link =
                     crossOrigin model.base_url [ "d", model.id ] []
             in
-            div []
+            section [ class "content" ]
                 [ h1 [] [ cleartextValue |> text ]
                 , p []
                     [ text "Use the following link to delete this secret:"

@@ -7,7 +7,7 @@ import Page.Create as Create
 import Page.Delete as Delete
 import Page.NotFound as NotFound
 import Page.View as View
-import Render exposing (render)
+import Render exposing (renderApp)
 import Route exposing (Route(..), toRoute)
 import Url exposing (Url)
 
@@ -92,7 +92,7 @@ view { page } =
                     NotFound.view
     in
     { title = title
-    , body = render { title = title, page = content }
+    , body = renderApp { title = title, page = content }
     }
 
 
