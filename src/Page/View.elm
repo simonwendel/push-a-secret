@@ -10,6 +10,7 @@ module Page.View exposing
 import Crypto
 import Html exposing (Html, a, br, h1, p, section, text)
 import Html.Attributes exposing (class, href)
+import Page.Loading as Loading
 import Page.NotFound as NotFound
 import Storage
 import Url.Builder exposing (crossOrigin)
@@ -18,6 +19,7 @@ import Url.Builder exposing (crossOrigin)
 type alias Model =
     { id : String
     , key : String
+    , firstLoad : Bool
     , lookup : Maybe Storage.LookupResponse
     , cleartext : Maybe String
     , base_url : String
@@ -37,7 +39,7 @@ subscriptions _ =
 
 init : String -> String -> String -> ( Model, Cmd Msg )
 init id key base_url =
-    ( { id = id, key = key, lookup = Nothing, cleartext = Nothing, base_url = base_url }
+    ( { id = id, key = key, lookup = Nothing, cleartext = Nothing, base_url = base_url, firstLoad = True }
     , Storage.requestLookup { id = id }
     )
 
@@ -60,15 +62,19 @@ view model =
                     ]
                 ]
 
-        Nothing ->
-            NotFound.view
+        _ ->
+            if model.firstLoad then
+                Loading.view
+
+            else
+                NotFound.view
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ReceivedLookup lookup ->
-            ( { model | lookup = Just lookup }
+            ( { model | lookup = Just lookup, firstLoad = False }
             , Crypto.requestDecryption
                 { key =
                     { key = model.key

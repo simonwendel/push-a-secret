@@ -10,6 +10,7 @@ module Page.Delete exposing
 import Html exposing (Html, button, h1, p, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import Page.Loading as Loading
 import Page.NotFound as NotFound
 import Render exposing (renderContent, renderRow)
 import Storage
@@ -20,6 +21,7 @@ type alias Model =
     , exists : Maybe Bool
     , pleaseDelete : Maybe Bool
     , deleted : Bool
+    , firstLoad : Bool
     }
 
 
@@ -32,7 +34,7 @@ type Msg
 
 init : String -> ( Model, Cmd Msg )
 init id =
-    ( { id = id, pleaseDelete = Nothing, exists = Nothing, deleted = False }
+    ( { id = id, pleaseDelete = Nothing, exists = Nothing, deleted = False, firstLoad = True }
     , Storage.requestCheck { id = id }
     )
 
@@ -85,7 +87,11 @@ view model =
                 ]
 
         _ ->
-            NotFound.view
+            if model.firstLoad then
+                Loading.view
+
+            else
+                NotFound.view
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -100,7 +106,7 @@ update msg model =
             ( { model | pleaseDelete = Just False }, Cmd.none )
 
         ReceivedCheck { exists } ->
-            ( { model | exists = Just exists }, Cmd.none )
+            ( { model | exists = Just exists, firstLoad = False }, Cmd.none )
 
         ReceivedDeletion { success } ->
             ( { model | deleted = success }, Cmd.none )
