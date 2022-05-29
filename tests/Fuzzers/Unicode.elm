@@ -1,15 +1,18 @@
-module Fuzzers exposing (unicodeBasicLatin)
+module Fuzzers.Unicode exposing (basicMultilingual)
 
 import Fuzz exposing (Fuzzer)
 import Random exposing (Generator)
-import Random.Char exposing (basicLatin)
+import Random.Char
 import Random.String exposing (rangeLengthString)
 import Shrink
 
 
-unicodeBasicLatin : ( Int, Int ) -> Fuzzer String
-unicodeBasicLatin =
-    fuzzString basicLatin
+{-| Fuzzing strings of a certain length using characters from the Basic Multilingual Plane,
+including the unused range [2FE0, 2FEF].
+-}
+basicMultilingual : ( Int, Int ) -> Fuzzer String
+basicMultilingual =
+    fuzzString (Random.Char.char (Char.toCode '\u{0000}') (Char.toCode '\u{FFFF}'))
 
 
 fuzzString : Generator Char -> ( Int, Int ) -> Fuzzer String

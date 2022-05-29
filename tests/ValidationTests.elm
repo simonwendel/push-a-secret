@@ -1,7 +1,7 @@
 module ValidationTests exposing (validationModuleTests)
 
 import Expect exposing (atLeast, equal, err, ok)
-import Fuzzers exposing (unicodeBasicLatin)
+import Fuzzers.Unicode exposing (basicMultilingual)
 import Test exposing (Test, concat, describe, fuzz, test)
 import Validation as Sut
 
@@ -65,7 +65,7 @@ validationModuleTests =
                             |> Sut.validSecret
                             |> ok
                     )
-                , fuzz (unicodeBasicLatin ( Sut.secretConstraints.minLength, Sut.secretConstraints.maxLength ))
+                , fuzz (basicMultilingual ( Sut.secretConstraints.minLength, Sut.secretConstraints.maxLength ))
                     "secret with length within allowed range is valid"
                     (Sut.validSecret >> ok)
                 ]
