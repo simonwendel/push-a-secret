@@ -1,6 +1,6 @@
 module Render exposing (renderApp, renderContent, renderRow)
 
-import Html exposing (Attribute, Html, a, div, footer, header, hr, img, node, section, span, text)
+import Html exposing (Html, a, div, footer, header, hr, img, node, section, span, text)
 import Html.Attributes exposing (alt, class, href, id, src, target)
 
 

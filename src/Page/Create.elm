@@ -15,7 +15,7 @@ import Render exposing (renderContent, renderRow)
 import Storage
 import String exposing (fromInt)
 import Url.Builder exposing (crossOrigin)
-import Validation exposing (secretMaxLength, secretMinLength)
+import Validation exposing (secretConstraints)
 
 
 type alias Model =
@@ -71,9 +71,9 @@ view { id, visible, base_url, key } =
                     [ text "Create your new secret by entering it in the password box below. A secret"
                     , strong [] [ text " MUST " ]
                     , "have a character length of at least "
-                        ++ fromInt secretMinLength
+                        ++ fromInt secretConstraints.minLength
                         ++ " and at most "
-                        ++ fromInt secretMaxLength
+                        ++ fromInt secretConstraints.maxLength
                         ++ "."
                         |> text
                     ]
@@ -89,8 +89,8 @@ view { id, visible, base_url, key } =
                             [ onInput UpdateCleartext
                             , autofocus True
                             , required True
-                            , minlength secretMinLength
-                            , maxlength secretMaxLength
+                            , minlength secretConstraints.minLength
+                            , maxlength secretConstraints.maxLength
                             , if visible then
                                 type_ "text"
 
