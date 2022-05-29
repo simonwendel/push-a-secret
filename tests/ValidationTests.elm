@@ -1,11 +1,7 @@
 module ValidationTests exposing (validationModuleTests)
 
 import Expect exposing (atLeast, equal, err, ok)
-import Fuzz exposing (Fuzzer)
-import Random exposing (Generator)
-import Random.Char
-import Random.String
-import Shrink
+import Fuzzers exposing (unicodeBasicLatin)
 import Test exposing (Test, concat, describe, fuzz, test)
 import Validation as Sut
 
@@ -69,7 +65,7 @@ validationModuleTests =
                             |> Sut.validSecret
                             |> ok
                     )
-                , fuzz (basicLatin ( Sut.secretConstraints.minLength, Sut.secretConstraints.maxLength ))
+                , fuzz (unicodeBasicLatin ( Sut.secretConstraints.minLength, Sut.secretConstraints.maxLength ))
                     "secret with length within allowed range is valid"
                     (Sut.validSecret >> ok)
                 ]
@@ -83,17 +79,3 @@ validationModuleTests =
             , testValidSecrets
             ]
         ]
-
-
-basicLatin : ( Int, Int ) -> Fuzzer String
-basicLatin =
-    fuzzString Random.Char.basicLatin
-
-
-fuzzString : Generator Char -> ( Int, Int ) -> Fuzzer String
-fuzzString characterGenerator ( min, max ) =
-    let
-        stringGenerator =
-            Random.String.rangeLengthString min max characterGenerator
-    in
-    Fuzz.custom stringGenerator Shrink.string
