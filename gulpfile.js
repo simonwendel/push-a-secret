@@ -1,6 +1,7 @@
 const CONFIGURATION = {
     elmProgram: 'src/Main.elm',
     elmSources: 'src/**/*.elm',
+    elmTests: 'tests/**/*.elm',
     elmBundleFile: 'app.js',
     staticAssets: ['index.html', 'img/**/*', 'js/**/*.js'],
     lessFiles: ['style/**/*.less'],
@@ -12,7 +13,7 @@ const elm = require('gulp-elm');
 const less = require('gulp-less');
 const concat = require('gulp-concat');
 const del = require('del');
-
+const shell = require('gulp-shell');
 function cleanDistFolder() {
     return del(CONFIGURATION.outputDirectory + '**');
 }
@@ -35,11 +36,26 @@ function makeElmBundle() {
         .pipe(dest(CONFIGURATION.outputDirectory));
 }
 
-const buildChain = series(cleanDistFolder, copyStaticAssets, makeCssFiles, makeElmBundle);
-exports.default = buildChain;
-exports.watch = function () {
-    watch(
-        [CONFIGURATION.elmSources].concat(CONFIGURATION.staticAssets).concat(CONFIGURATION.lessFiles),
-        { ignoreInitial: false },
-        buildChain);
+function runTests() {
+    return shell.task('elm-test')();
 }
+
+function watchTests() {
+    return shell.task('elm-test --watch')();
+}
+
+const buildTask = series(cleanDistFolder, copyStaticAssets, makeCssFiles, makeElmBundle);
+exports.build = buildTask;
+
+const testTask = runTests;
+exports.test = testTask;
+
+const watchTask = () => {
+    const files = [CONFIGURATION.elmSources].concat(CONFIGURATION.staticAssets).concat(CONFIGURATION.lessFiles);
+    const settings = { ignoreInitial: false };
+    watch(files, settings, buildTask);
+    watchTests();
+};
+
+exports.watch = watchTask
+exports.default = series(runTests, buildTask);
