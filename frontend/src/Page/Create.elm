@@ -8,14 +8,14 @@ module Page.Create exposing
     )
 
 import Crypto
-import Html exposing (Html, a, button, em, h1, input, label, p, strong, text)
+import Html exposing (Html, a, button, em, h1, input, label, p, span, strong, text)
 import Html.Attributes exposing (autofocus, class, href, maxlength, minlength, required, type_)
 import Html.Events exposing (onClick, onInput)
 import Render exposing (renderContent, renderRow)
 import Storage
 import String exposing (fromInt)
 import Url.Builder exposing (crossOrigin)
-import Validation exposing (secretConstraints)
+import Validation exposing (secretConstraints, validateSecret)
 
 
 type alias Model =
@@ -24,6 +24,7 @@ type alias Model =
     , visible : Bool
     , key : Maybe Crypto.Key
     , base_url : String
+    , error_message : Maybe String
     }
 
 
@@ -38,7 +39,7 @@ type Msg
 
 init : String -> ( Model, Cmd Msg )
 init base_url =
-    ( { base_url = base_url, visible = False, cleartext = "", id = Nothing, key = Nothing }, Crypto.requestKey () )
+    ( { base_url = base_url, visible = False, cleartext = "", id = Nothing, key = Nothing, error_message = Nothing }, Crypto.requestKey () )
 
 
 subscriptions : Model -> Sub Msg
@@ -51,7 +52,7 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view { id, visible, base_url, key } =
+view { id, visible, base_url, key, error_message } =
     case ( id, key ) of
         ( Just idValue, Just keyValue ) ->
             let
@@ -65,7 +66,7 @@ view { id, visible, base_url, key } =
                 ]
 
         _ ->
-            renderContent
+            renderContent <|
                 [ h1 [] [ text "Create a secret!" ]
                 , p []
                     [ text "Create your new secret by entering it in the password box below. A secret"
@@ -103,6 +104,16 @@ view { id, visible, base_url, key } =
                     , button [ onClick RequestEncryption, class "ok" ] [ text "✔" ]
                     ]
                 ]
+                    ++ (case error_message of
+                            Just message ->
+                                [ p []
+                                    [ span [ class "error" ] [ text message ]
+                                    ]
+                                ]
+
+                            Nothing ->
+                                []
+                       )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -117,7 +128,12 @@ update msg model =
         RequestEncryption ->
             case model.key of
                 Just key ->
-                    ( model, Crypto.requestEncryption { key = key, cleartext = model.cleartext } )
+                    case validateSecret model.cleartext of
+                        Ok validCleartext ->
+                            ( model, Crypto.requestEncryption { key = key, cleartext = validCleartext } )
+
+                        Err message ->
+                            ( { model | error_message = Just message }, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
