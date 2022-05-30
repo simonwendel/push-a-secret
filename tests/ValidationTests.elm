@@ -1,6 +1,6 @@
 module ValidationTests exposing (validationModuleTests)
 
-import Expect exposing (atLeast, equal, err, ok)
+import Expect exposing (atLeast, err, ok)
 import Fuzzers.Unicode exposing (basicMultilingual)
 import Test exposing (Test, concat, describe, fuzz, test)
 import Validation as Sut
@@ -30,21 +30,21 @@ validationModuleTests =
                 [ test
                     "empty secret is not valid"
                     (\_ ->
-                        Sut.validSecret ""
+                        Sut.validateSecret ""
                             |> err
                     )
                 , test
                     "secret shorter than min length is not valid"
                     (\_ ->
                         String.repeat (Sut.secretConstraints.minLength - 1) "a"
-                            |> Sut.validSecret
+                            |> Sut.validateSecret
                             |> err
                     )
                 , test
                     "secret longer than max length is not valid"
                     (\_ ->
                         String.repeat (Sut.secretConstraints.maxLength + 1) "a"
-                            |> Sut.validSecret
+                            |> Sut.validateSecret
                             |> err
                     )
                 ]
@@ -55,26 +55,26 @@ validationModuleTests =
                     "secret with min length is valid"
                     (\_ ->
                         String.repeat Sut.secretConstraints.minLength "a"
-                            |> Sut.validSecret
+                            |> Sut.validateSecret
                             |> ok
                     )
                 , test
                     "secret with max length is valid"
                     (\_ ->
                         String.repeat Sut.secretConstraints.maxLength "a"
-                            |> Sut.validSecret
+                            |> Sut.validateSecret
                             |> ok
                     )
                 , fuzz (basicMultilingual ( Sut.secretConstraints.minLength, Sut.secretConstraints.maxLength ))
                     "secret with length within allowed range is valid"
-                    (Sut.validSecret >> ok)
+                    (Sut.validateSecret >> ok)
                 ]
     in
     concat
         [ describe "(constants)"
             [ testConstants
             ]
-        , describe "(function) validSecret"
+        , describe "(function) validateSecret"
             [ testInvalidSecrets
             , testValidSecrets
             ]

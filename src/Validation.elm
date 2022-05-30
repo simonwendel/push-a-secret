@@ -1,4 +1,4 @@
-module Validation exposing (secretConstraints, validSecret)
+module Validation exposing (secretConstraints, validateSecret)
 
 import Result exposing (Result)
 
@@ -8,8 +8,8 @@ secretConstraints =
     { minLength = 1, maxLength = 72 }
 
 
-validSecret : String -> Result String String
-validSecret string =
+validateSecret : String -> Result String String
+validateSecret string =
     let
         length =
             String.length string
