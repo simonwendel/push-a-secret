@@ -28,22 +28,22 @@ type alias Model =
 type Msg
     = DoDelete
     | DontDelete
-    | ReceivedCheck Storage.CheckResponse
-    | ReceivedDeletion Storage.DeletionResponse
+    | PeekedEncrypted Storage.PeekResponse
+    | DeletedEncrypted Storage.DeleteResponse
 
 
 init : String -> ( Model, Cmd Msg )
 init id =
     ( { id = id, pleaseDelete = Nothing, exists = Nothing, deleted = False, firstLoad = True }
-    , Storage.requestCheck { id = id }
+    , Storage.requestPeek { id = id }
     )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ Storage.receiveCheck ReceivedCheck
-        , Storage.receiveDeletion ReceivedDeletion
+        [ Storage.receivePeek PeekedEncrypted
+        , Storage.receiveDelete DeletedEncrypted
         ]
 
 
@@ -99,14 +99,14 @@ update msg model =
     case msg of
         DoDelete ->
             ( { model | pleaseDelete = Just True }
-            , Storage.requestDeletion { id = model.id }
+            , Storage.requestDelete { id = model.id }
             )
 
         DontDelete ->
             ( { model | pleaseDelete = Just False }, Cmd.none )
 
-        ReceivedCheck { exists } ->
+        PeekedEncrypted { exists } ->
             ( { model | exists = Just exists, firstLoad = False }, Cmd.none )
 
-        ReceivedDeletion { success } ->
+        DeletedEncrypted { success } ->
             ( { model | deleted = success }, Cmd.none )

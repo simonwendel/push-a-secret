@@ -1,77 +1,77 @@
 port module Storage exposing
-    ( CheckRequest
-    , CheckResponse
-    , DeletionRequest
-    , DeletionResponse
-    , LookupRequest
-    , LookupResponse
-    , StorageRequest
-    , StorageResponse
-    , receiveCheck
-    , receiveDeletion
-    , receiveLookup
-    , receiveStorage
-    , requestCheck
-    , requestDeletion
-    , requestLookup
-    , requestStorage
+    ( PeekRequest
+    , PeekResponse
+    , DeleteRequest
+    , DeleteResponse
+    , ReadRequest
+    , ReadResponse
+    , CreateRequest
+    , CreateResponse
+    , receivePeek
+    , receiveDelete
+    , receiveRead
+    , receiveCreate
+    , requestPeek
+    , requestDelete
+    , requestRead
+    , requestCreate
     )
 
 
-type alias StorageRequest =
+type alias CreateRequest =
     { algorithm : String
     , iv : String
     , ciphertext : String
     }
 
 
-type alias StorageResponse =
+type alias CreateResponse =
     { id : String }
 
 
-type alias LookupRequest =
-    StorageResponse
+type alias ReadRequest =
+    CreateResponse
 
 
-type alias LookupResponse =
-    StorageRequest
+type alias ReadResponse =
+    CreateRequest
 
 
-type alias DeletionRequest =
+type alias DeleteRequest =
     { id : String }
 
 
-type alias DeletionResponse =
+type alias DeleteResponse =
     { success : Bool }
 
 
-type alias CheckRequest =
-    DeletionRequest
+type alias PeekRequest =
+    CreateResponse
 
 
-type alias CheckResponse =
+type alias PeekResponse =
     { exists : Bool }
 
 
-port requestStorage : StorageRequest -> Cmd msg
+port requestCreate : CreateRequest -> Cmd msg
 
 
-port receiveStorage : (StorageResponse -> msg) -> Sub msg
+port receiveCreate : (CreateResponse -> msg) -> Sub msg
 
 
-port requestLookup : LookupRequest -> Cmd msg
+port requestRead : ReadRequest -> Cmd msg
 
 
-port receiveLookup : (LookupResponse -> msg) -> Sub msg
+port receiveRead : (ReadResponse -> msg) -> Sub msg
 
 
-port requestDeletion : DeletionRequest -> Cmd msg
+port requestDelete : DeleteRequest -> Cmd msg
 
 
-port receiveDeletion : (DeletionResponse -> msg) -> Sub msg
+port receiveDelete : (DeleteResponse -> msg) -> Sub msg
 
 
-port requestCheck : CheckRequest -> Cmd msg
+port requestPeek : PeekRequest -> Cmd msg
 
 
-port receiveCheck : (CheckResponse -> msg) -> Sub msg
+port receivePeek : (PeekResponse -> msg) -> Sub msg

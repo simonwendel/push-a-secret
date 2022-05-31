@@ -34,7 +34,7 @@ type Msg
     | RequestEncryption
     | ReceivedKey Crypto.Key
     | ReceivedEncryption Crypto.EncryptionResponse
-    | StoredEncrypted Storage.StorageResponse
+    | StoredEncrypted Storage.CreateResponse
 
 
 init : String -> ( Model, Cmd Msg )
@@ -47,7 +47,7 @@ subscriptions _ =
     Sub.batch
         [ Crypto.receiveKey ReceivedKey
         , Crypto.receiveEncryption ReceivedEncryption
-        , Storage.receiveStorage StoredEncrypted
+        , Storage.receiveCreate StoredEncrypted
         ]
 
 
@@ -144,7 +144,7 @@ update msg model =
         ReceivedEncryption encrypted ->
             case model.key of
                 Just keyValue ->
-                    ( model, Storage.requestStorage { iv = encrypted.iv, ciphertext = encrypted.ciphertext, algorithm = keyValue.algorithm } )
+                    ( model, Storage.requestCreate { iv = encrypted.iv, ciphertext = encrypted.ciphertext, algorithm = keyValue.algorithm } )
 
                 Nothing ->
                     ( model, Cmd.none )

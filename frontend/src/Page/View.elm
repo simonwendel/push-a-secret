@@ -20,27 +20,27 @@ type alias Model =
     { id : String
     , key : String
     , firstLoad : Bool
-    , lookup : Maybe Storage.LookupResponse
+    , lookup : Maybe Storage.ReadResponse
     , cleartext : Maybe String
     , base_url : String
     }
 
 
 type Msg
-    = ReceivedLookup Storage.LookupResponse
-    | ReceivedDecryption Crypto.DecryptionResponse
+    = ReadEncrypted Storage.ReadResponse
+    | DecryptedSecret Crypto.DecryptionResponse
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ Storage.receiveLookup ReceivedLookup, Crypto.receiveDecryption ReceivedDecryption ]
+        [ Storage.receiveRead ReadEncrypted, Crypto.receiveDecryption DecryptedSecret ]
 
 
 init : String -> String -> String -> ( Model, Cmd Msg )
 init id key base_url =
     ( { id = id, key = key, lookup = Nothing, cleartext = Nothing, base_url = base_url, firstLoad = True }
-    , Storage.requestLookup { id = id }
+    , Storage.requestRead { id = id }
     )
 
 
@@ -73,7 +73,7 @@ view model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ReceivedLookup lookup ->
+        ReadEncrypted lookup ->
             ( { model | lookup = Just lookup, firstLoad = False }
             , Crypto.requestDecryption
                 { key =
@@ -85,5 +85,5 @@ update msg model =
                 }
             )
 
-        ReceivedDecryption { cleartext } ->
+        DecryptedSecret { cleartext } ->
             ( { model | cleartext = Just cleartext }, Cmd.none )

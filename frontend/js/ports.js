@@ -29,32 +29,32 @@ const wireCrypto = app => {
 }
 
 const wireStorage = app => {
-    app.ports.requestCheck.subscribe(request => {
+    app.ports.requestPeek.subscribe(request => {
         const exists = check(request.id);
-        app.ports.receiveCheck.send({
+        app.ports.receivePeek.send({
             exists: exists
         });
     });
 
-    app.ports.requestStorage.subscribe(request => {
+    app.ports.requestCreate.subscribe(request => {
         const stored = store(request);
-        app.ports.receiveStorage.send({
+        app.ports.receiveCreate.send({
             id: stored.id
         });
     });
 
-    app.ports.requestLookup.subscribe(request => {
+    app.ports.requestRead.subscribe(request => {
         const stored = retrieve(request.id);
-        app.ports.receiveLookup.send({
+        app.ports.receiveRead.send({
             algorithm: stored.algorithm,
             iv: stored.iv,
             ciphertext: stored.ciphertext
         });
     });
     
-    app.ports.requestDeletion.subscribe(request => {
+    app.ports.requestDelete.subscribe(request => {
         remove(request.id);
-        app.ports.receiveDeletion.send({
+        app.ports.receiveDelete.send({
             success: true
         });
     });
