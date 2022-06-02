@@ -1,6 +1,6 @@
 ﻿namespace Storage;
 
-public class Base36Converter
+public class Base36Converter : IBase36Converter
 {
     private const string alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
     private const int radix = 36;
@@ -15,7 +15,7 @@ public class Base36Converter
         return ToBase36Recursive(number, string.Empty);
     }
 
-    private string ToBase36Recursive(long number, string results)
+    private static string ToBase36Recursive(long number, string results)
     {
         var quote = number / radix;
         var remainder = number % radix;
