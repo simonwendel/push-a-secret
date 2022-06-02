@@ -1,6 +1,6 @@
 ﻿namespace Storage;
 
-public class TimestampGenerator : ITimestampGenerator
+internal class TimestampGenerator : ITimestampGenerator
 {
     public long Generate() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 }

@@ -1,6 +1,6 @@
 ﻿namespace Storage;
 
-public class Base36Converter : IBase36Converter
+internal class Base36Converter : IBase36Converter
 {
     private const string alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
     private const int radix = 36;

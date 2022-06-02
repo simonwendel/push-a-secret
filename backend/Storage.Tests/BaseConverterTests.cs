@@ -17,7 +17,7 @@ public class BaseConverterTests
     [InlineAutoData(1337, "115")]
     [InlineAutoData(1654023319428, "l3uis1ac")]
     [InlineAutoData(long.MaxValue, "1y2p0ij32e8e7")]
-    public void ToBase36_GivenPositiveNumber_ReturnsStringInBase36(long number, string expected, Base36Converter sut)
+    internal void ToBase36_GivenPositiveNumber_ReturnsStringInBase36(long number, string expected, Base36Converter sut)
     {
         sut.ToBase36(number).Should().Be(expected);
     }
@@ -25,7 +25,7 @@ public class BaseConverterTests
     [Theory]
     [InlineAutoData(-1)]
     [InlineAutoData(long.MinValue)]
-    public void ToBase36_GivenNegativeNumber_ThrowsException(long number, Base36Converter sut)
+    internal void ToBase36_GivenNegativeNumber_ThrowsException(long number, Base36Converter sut)
     {
         Action converting = () => sut.ToBase36(number);
         converting.Should().Throw<ArgumentOutOfRangeException>();
