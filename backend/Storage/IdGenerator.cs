@@ -1,6 +1,6 @@
 ﻿namespace Storage;
 
-public class IdGenerator
+internal class IdGenerator : IIdGenerator
 {
     private readonly ITimestampGenerator timestampGenerator;
     private readonly IBase36Converter baseConverter;
