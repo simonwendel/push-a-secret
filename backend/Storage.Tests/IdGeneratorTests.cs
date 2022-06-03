@@ -20,7 +20,7 @@ public class IdGeneratorTests
         timestampGenerator.Setup(x => x.Generate()).Returns(timestamp);
         baseConverter.Setup(x => x.ToBase36(timestamp)).Returns(converted);
 
-        sut.Generate().Should().Be(converted);
+        sut.Generate().Should().Be(new Identifier(converted));
 
         timestampGenerator.VerifyAll();
         baseConverter.VerifyAll();

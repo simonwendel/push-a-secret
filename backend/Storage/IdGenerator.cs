@@ -11,10 +11,10 @@ internal class IdGenerator : IIdGenerator
         this.baseConverter = baseConverter;
     }
     
-    public string Generate()
+    public Identifier Generate()
     {
         var timestamp = timestampGenerator.Generate();
         var base36 = baseConverter.ToBase36(timestamp);
-        return base36;
+        return new Identifier(base36);
     }
 }
