@@ -19,7 +19,7 @@ public class NonEmptyStringValidatorTests
     }
 
     [Theory, AutoData]
-    public void Validate_GivenStringWithContents_ThrowsException(string value, NonEmptyStringValidator sut)
+    public void Validate_GivenStringWithContents_ReturnsValue(string value, NonEmptyStringValidator sut)
     {
         var untrusted = new UntrustedValue<string>(value);
         sut.Validate(untrusted).Should().Be(value);

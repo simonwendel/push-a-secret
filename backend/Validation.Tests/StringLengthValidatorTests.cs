@@ -49,4 +49,13 @@ public class StringLengthValidatorTests
         Action validating = () => sut.Validate(untrusted);
         validating.Should().Throw<ValidationException>();
     }
+
+    [Fact]
+    public void Validate_GivenStringWithinLengthRange_ReturnsValue()
+    {
+        var expected = "12345";
+        var untrusted = new UntrustedValue<string>(expected);
+        var sut = new StringLengthValidator(4, 6);
+        sut.Validate(untrusted).Should().Be(expected);
+    }
 }
