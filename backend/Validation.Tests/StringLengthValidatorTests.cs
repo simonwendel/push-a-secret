@@ -1,0 +1,52 @@
+﻿using System;
+using AutoFixture.Xunit2;
+using FluentAssertions;
+using Xunit;
+
+namespace Validation.Tests;
+
+public class StringLengthValidatorTests
+{
+    [Theory]
+    [InlineData(10, 9)]
+    [InlineData(1, 0)]
+    [InlineData(2, 1)]
+    public void Ctor_GivenInvalidBounds_ThrowsArgumentException(int minLength, int maxLength)
+    {
+        Action constructing = () => new StringLengthValidator(minLength, maxLength);
+        constructing.Should().Throw<ArgumentException>();
+    }
+
+    [Theory]
+    [InlineData(-1, 9)]
+    [InlineData(0, -1)]
+    public void Ctor_GivenNegativeBounds_ThrowsArgumentOutOfRangeException(int minLength, int maxLength)
+    {
+        Action constructing = () => new StringLengthValidator(minLength, maxLength);
+        constructing.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Theory]
+    [InlineAutoData("", 1)]
+    [InlineAutoData("_1_", 4)]
+    [InlineAutoData("abc", 6)]
+    public void Validate_GivenTooShortString_ThrowsException(string value, int minLength)
+    {
+        var untrusted = new UntrustedValue<string>(value);
+        var sut = new StringLengthValidator(minLength);
+        Action validating = () => sut.Validate(untrusted);
+        validating.Should().Throw<ValidationException>();
+    }
+
+    [Theory]
+    [InlineAutoData("12", 0, 1)]
+    [InlineAutoData("_1_2_3_4", 2, 4)]
+    [InlineAutoData("abcdefghijklmnopqrstuvxyz", 6, 20)]
+    public void Validate_GivenTooLongString_ThrowsException(string value, int minLength, int maxLength)
+    {
+        var untrusted = new UntrustedValue<string>(value);
+        var sut = new StringLengthValidator(minLength, maxLength);
+        Action validating = () => sut.Validate(untrusted);
+        validating.Should().Throw<ValidationException>();
+    }
+}
