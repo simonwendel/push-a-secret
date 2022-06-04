@@ -1,5 +1,6 @@
 using Conversion;
 using Storage;
+using Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -7,8 +8,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddStorageModule();
-builder.Services.AddConversionModule();
+builder.Services
+    .AddValidationModule()
+    .AddStorageModule()
+    .AddConversionModule();
 
 var app = builder.Build();
 app.UseSwagger();
