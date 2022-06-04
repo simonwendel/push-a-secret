@@ -6,6 +6,11 @@ public abstract class ValidatorPipelineBase<T> : ValidatorBase<T>
 
     private protected ValidatorPipelineBase(params ValidatorBase<T>[] validators)
     {
+        if (validators.Length == 0)
+        {
+            throw new ArgumentException("A pipeline without validators is pretty useless.");
+        }
+        
         this.validators = validators;
     }
 
