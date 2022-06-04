@@ -1,3 +1,4 @@
+using Conversion;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
@@ -13,7 +14,7 @@ public class StorageIntegrationTests
     public StorageIntegrationTests(ITestOutputHelper testOutputHelper)
     {
         this.testOutputHelper = testOutputHelper;
-        var idGenerator = new IdGenerator(new TimestampGenerator(), new Base36Converter());
+        var idGenerator = new IdGenerator(new TimestampGenerator(), new BaseConverter());
         var repository = TestMongoDbRepositoryFactory.Build(cleanAll: true);
         store = new Store(repository, idGenerator);
     }

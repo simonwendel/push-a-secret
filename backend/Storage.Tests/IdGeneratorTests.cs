@@ -1,4 +1,5 @@
 ﻿using AutoFixture.Xunit2;
+using Conversion;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -8,7 +9,7 @@ namespace Storage.Tests;
 public class IdGeneratorTests
 {
     private readonly Mock<ITimestampGenerator> timestampGenerator = new();
-    private readonly Mock<IBase36Converter> baseConverter = new();
+    private readonly Mock<IBaseConverter> baseConverter = new();
     private readonly IdGenerator sut;
 
     public IdGeneratorTests()

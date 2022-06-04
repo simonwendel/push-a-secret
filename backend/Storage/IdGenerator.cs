@@ -1,11 +1,13 @@
-﻿namespace Storage;
+﻿using Conversion;
+
+namespace Storage;
 
 internal class IdGenerator : IIdGenerator
 {
     private readonly ITimestampGenerator timestampGenerator;
-    private readonly IBase36Converter baseConverter;
+    private readonly IBaseConverter baseConverter;
 
-    public IdGenerator(ITimestampGenerator timestampGenerator, IBase36Converter baseConverter)
+    public IdGenerator(ITimestampGenerator timestampGenerator, IBaseConverter baseConverter)
     {
         this.timestampGenerator = timestampGenerator;
         this.baseConverter = baseConverter;
