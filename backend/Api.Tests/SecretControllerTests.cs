@@ -60,7 +60,7 @@ public class SecretControllerTests
         var request = new ReadRequest(id);
         store.Setup(x => x.Read(request)).Returns(new ReadResponse(Result.Err, null));
 
-        sut.Get(untrusted).Should().BeAssignableTo<NotFoundObjectResult>().Which.Value.Should().Be(request);
+        sut.Get(untrusted).Should().BeAssignableTo<NotFoundResult>();
 
         validator.VerifyAll();
         store.VerifyAll();
@@ -89,7 +89,7 @@ public class SecretControllerTests
         var request = new DeleteRequest(id);
         store.Setup(x => x.Delete(request)).Returns(new DeleteResponse(Result.Err));
 
-        sut.Delete(untrusted).Should().BeAssignableTo<NotFoundObjectResult>().Which.Value.Should().Be(request);
+        sut.Delete(untrusted).Should().BeAssignableTo<NotFoundResult>();
 
         validator.VerifyAll();
         store.VerifyAll();
@@ -111,7 +111,7 @@ public class SecretControllerTests
     {
         var untrusted = fixture.Create<UntrustedValue<string>>();
         validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
-        action(untrusted).Should().BeAssignableTo<BadRequestObjectResult>();
+        action(untrusted).Should().BeAssignableTo<BadRequestResult>();
         validator.VerifyAll();
         store.VerifyNoOtherCalls();
     }

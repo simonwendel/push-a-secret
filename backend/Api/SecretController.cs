@@ -18,53 +18,47 @@ public class SecretController : ControllerBase
 
     [HttpHead("{identifier}")]
     public IActionResult Head(UntrustedValue<string> identifier)
-        => HandleValidatedRequest(identifier, validatedId =>
-        {
-            var request = new PeekRequest(validatedId);
-            var response = store.Peek(request);
-            return response.Result switch
+        => ValidateRequestWithIdentifier<PeekRequest>(
+            identifier,
+            request => store.Peek(request).Result switch
             {
                 Result.OK => Ok(),
                 _ => NotFound()
-            };
-        });
+            });
 
     [HttpGet("{identifier}")]
     public IActionResult Get(UntrustedValue<string> identifier)
-        => HandleValidatedRequest(identifier, validatedId =>
-        {
-            var request = new ReadRequest(validatedId);
-            var response = store.Read(request);
-            return response switch
+        => ValidateRequestWithIdentifier<ReadRequest>(
+            identifier,
+            request => store.Read(request) switch
             {
-                (Result.OK, not null) => Ok(response.Secret),
-                _ => NotFound(request)
-            };
-        });
+                (Result.OK, not null) response => Ok(response.Secret),
+                _ => NotFound()
+            });
 
     [HttpDelete("{identifier}")]
     public IActionResult Delete(UntrustedValue<string> identifier)
-        => HandleValidatedRequest(identifier, validatedId =>
-        {
-            var request = new DeleteRequest(validatedId);
-            var response = store.Delete(request);
-            return response.Result switch
+        => ValidateRequestWithIdentifier<DeleteRequest>(
+            identifier,
+            request => store.Delete(request).Result switch
             {
                 Result.OK => NoContent(),
-                _ => NotFound(request)
-            };
-        });
+                _ => NotFound()
+            });
 
-    private IActionResult HandleValidatedRequest(UntrustedValue<string> identifier, Func<string, IActionResult> handle)
+    private IActionResult ValidateRequestWithIdentifier<T>(
+        UntrustedValue<string> identifier,
+        Func<T, IActionResult> handle) where T : Identifier
     {
         try
         {
             var validatedId = validator.Validate(identifier);
-            return handle(validatedId);
+            var request = Activator.CreateInstance(typeof(T), validatedId) as T;
+            return handle(request!);
         }
         catch (ValidationException)
         {
-            return BadRequest("Malformed identifier.");
+            return BadRequest();
         }
     }
 }
