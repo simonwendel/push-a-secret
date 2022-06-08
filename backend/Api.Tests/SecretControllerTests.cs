@@ -1,3 +1,5 @@
+using System;
+using AutoFixture;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -10,23 +12,17 @@ namespace Api.Tests;
 
 public class SecretControllerTests
 {
+    private readonly Fixture fixture = new();
     private readonly Mock<IIdentifierValidator> validator = new();
     private readonly Mock<IStore> store = new();
     private readonly SecretController sut;
 
     public SecretControllerTests()
-    {
-        sut = new SecretController(validator.Object, store.Object);
-    }
+        => sut = new SecretController(validator.Object, store.Object);
 
-    [Theory, AutoData]
-    public void Head_GivenInvalidIdentifierString_ReturnsBadRequest(UntrustedValue<string> untrusted)
-    {
-        validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
-        sut.Head(untrusted).Should().BeAssignableTo<BadRequestObjectResult>();
-        validator.VerifyAll();
-        store.VerifyNoOtherCalls();
-    }
+    [Fact]
+    public void Head_GivenInvalidIdentifierString_ReturnsBadRequest()
+        => EnsureBadRequestGivenInvalidIdentifier(sut.Head);
 
     [Theory, AutoData]
     public void Head_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
@@ -42,8 +38,7 @@ public class SecretControllerTests
     }
 
     [Theory, AutoData]
-    public void Head_WhenIdentifierDoesHaveDocument_ReturnsOK(UntrustedValue<string> untrusted, string id,
-        Secret secret)
+    public void Head_WhenIdentifierDoesHaveDocument_ReturnsOK(UntrustedValue<string> untrusted, string id)
     {
         validator.Setup(x => x.Validate(untrusted)).Returns(id);
         store.Setup(x => x.Peek(new PeekRequest(id))).Returns(new PeekResponse(Result.OK));
@@ -54,14 +49,9 @@ public class SecretControllerTests
         store.VerifyAll();
     }
 
-    [Theory, AutoData]
-    public void Get_GivenInvalidIdentifierString_ReturnsBadRequest(UntrustedValue<string> untrusted)
-    {
-        validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
-        sut.Get(untrusted).Should().BeAssignableTo<BadRequestObjectResult>();
-        validator.VerifyAll();
-        store.VerifyNoOtherCalls();
-    }
+    [Fact]
+    public void Get_GivenInvalidIdentifierString_ReturnsBadRequest()
+        => EnsureBadRequestGivenInvalidIdentifier(sut.Get);
 
     [Theory, AutoData]
     public void Get_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
@@ -88,14 +78,9 @@ public class SecretControllerTests
         store.VerifyAll();
     }
 
-    [Theory, AutoData]
-    public void Delete_GivenInvalidIdentifierString_ReturnsBadRequest(UntrustedValue<string> untrusted)
-    {
-        validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
-        sut.Delete(untrusted).Should().BeAssignableTo<BadRequestObjectResult>();
-        validator.VerifyAll();
-        store.VerifyNoOtherCalls();
-    }
+    [Fact]
+    public void Delete_GivenInvalidIdentifierString_ReturnsBadRequest()
+        => EnsureBadRequestGivenInvalidIdentifier(sut.Delete);
 
     [Theory, AutoData]
     public void Delete_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
@@ -120,5 +105,14 @@ public class SecretControllerTests
 
         validator.VerifyAll();
         store.VerifyAll();
+    }
+
+    private void EnsureBadRequestGivenInvalidIdentifier(Func<UntrustedValue<string>, IActionResult> action)
+    {
+        var untrusted = fixture.Create<UntrustedValue<string>>();
+        validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
+        action(untrusted).Should().BeAssignableTo<BadRequestObjectResult>();
+        validator.VerifyAll();
+        store.VerifyNoOtherCalls();
     }
 }
