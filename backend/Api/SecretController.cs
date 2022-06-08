@@ -18,37 +18,36 @@ public class SecretController : ControllerBase
 
     [HttpGet("{identifier}")]
     public IActionResult Get(UntrustedValue<string> identifier)
-    {
-        try
+        => HandleValidatedRequest(identifier, validatedId =>
         {
-            var id = validator.Validate(identifier);
-            var request = new ReadRequest(id);
+            var request = new ReadRequest(validatedId);
             var response = store.Read(request);
             return response switch
             {
                 (Result.OK, not null) => Ok(response.Secret),
                 _ => NotFound(request)
             };
-        }
-        catch (ValidationException)
-        {
-            return BadRequest("Malformed identifier.");
-        }
-    }
+        });
 
     [HttpDelete("{identifier}")]
     public IActionResult Delete(UntrustedValue<string> identifier)
-    {
-        try
+        => HandleValidatedRequest(identifier, validatedId =>
         {
-            var id = validator.Validate(identifier);
-            var request = new DeleteRequest(id);
+            var request = new DeleteRequest(validatedId);
             var response = store.Delete(request);
             return response.Result switch
             {
                 Result.OK => NoContent(),
                 _ => NotFound(request)
             };
+        });
+
+    private IActionResult HandleValidatedRequest(UntrustedValue<string> identifier, Func<string, IActionResult> handle)
+    {
+        try
+        {
+            var validatedId = validator.Validate(identifier);
+            return handle(validatedId);
         }
         catch (ValidationException)
         {
