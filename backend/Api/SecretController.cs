@@ -16,6 +16,19 @@ public class SecretController : ControllerBase
         this.store = store;
     }
 
+    [HttpHead("{identifier}")]
+    public IActionResult Head(UntrustedValue<string> identifier)
+        => HandleValidatedRequest(identifier, validatedId =>
+        {
+            var request = new PeekRequest(validatedId);
+            var response = store.Peek(request);
+            return response.Result switch
+            {
+                Result.OK => Ok(),
+                _ => NotFound()
+            };
+        });
+
     [HttpGet("{identifier}")]
     public IActionResult Get(UntrustedValue<string> identifier)
         => HandleValidatedRequest(identifier, validatedId =>

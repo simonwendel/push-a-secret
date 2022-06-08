@@ -20,6 +20,41 @@ public class SecretControllerTests
     }
 
     [Theory, AutoData]
+    public void Head_GivenInvalidIdentifierString_ReturnsBadRequest(UntrustedValue<string> untrusted)
+    {
+        validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
+        sut.Head(untrusted).Should().BeAssignableTo<BadRequestObjectResult>();
+        validator.VerifyAll();
+        store.VerifyNoOtherCalls();
+    }
+
+    [Theory, AutoData]
+    public void Head_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
+    {
+        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        var request = new PeekRequest(id);
+        store.Setup(x => x.Peek(request)).Returns(new PeekResponse(Result.Err));
+
+        sut.Head(untrusted).Should().BeAssignableTo<NotFoundResult>();
+
+        validator.VerifyAll();
+        store.VerifyAll();
+    }
+
+    [Theory, AutoData]
+    public void Head_WhenIdentifierDoesHaveDocument_ReturnsOK(UntrustedValue<string> untrusted, string id,
+        Secret secret)
+    {
+        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        store.Setup(x => x.Peek(new PeekRequest(id))).Returns(new PeekResponse(Result.OK));
+
+        sut.Head(untrusted).Should().BeAssignableTo<OkResult>();
+
+        validator.VerifyAll();
+        store.VerifyAll();
+    }
+
+    [Theory, AutoData]
     public void Get_GivenInvalidIdentifierString_ReturnsBadRequest(UntrustedValue<string> untrusted)
     {
         validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
@@ -32,10 +67,10 @@ public class SecretControllerTests
     public void Get_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
     {
         validator.Setup(x => x.Validate(untrusted)).Returns(id);
-        var readRequest = new ReadRequest(id);
-        store.Setup(x => x.Read(readRequest)).Returns(new ReadResponse(Result.Err, null));
+        var request = new ReadRequest(id);
+        store.Setup(x => x.Read(request)).Returns(new ReadResponse(Result.Err, null));
 
-        sut.Get(untrusted).Should().BeAssignableTo<NotFoundObjectResult>().Which.Value.Should().Be(readRequest);
+        sut.Get(untrusted).Should().BeAssignableTo<NotFoundObjectResult>().Which.Value.Should().Be(request);
 
         validator.VerifyAll();
         store.VerifyAll();
@@ -66,10 +101,10 @@ public class SecretControllerTests
     public void Delete_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
     {
         validator.Setup(x => x.Validate(untrusted)).Returns(id);
-        var deleteRequest = new DeleteRequest(id);
-        store.Setup(x => x.Delete(deleteRequest)).Returns(new DeleteResponse(Result.Err));
+        var request = new DeleteRequest(id);
+        store.Setup(x => x.Delete(request)).Returns(new DeleteResponse(Result.Err));
 
-        sut.Delete(untrusted).Should().BeAssignableTo<NotFoundObjectResult>().Which.Value.Should().Be(deleteRequest);
+        sut.Delete(untrusted).Should().BeAssignableTo<NotFoundObjectResult>().Which.Value.Should().Be(request);
 
         validator.VerifyAll();
         store.VerifyAll();
