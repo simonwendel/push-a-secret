@@ -16,12 +16,12 @@ public class SecretController : ControllerBase
         this.store = store;
     }
 
-    [HttpGet("{untrustedId}")]
-    public IActionResult Get(UntrustedValue<string> untrustedId)
+    [HttpGet("{identifier}")]
+    public IActionResult Get(UntrustedValue<string> identifier)
     {
         try
         {
-            var id = validator.Validate(untrustedId);
+            var id = validator.Validate(identifier);
             var request = new ReadRequest(id);
             var response = store.Read(request);
             return response switch
@@ -32,7 +32,27 @@ public class SecretController : ControllerBase
         }
         catch (ValidationException)
         {
-            return BadRequest("Malformed untrustedId.");
+            return BadRequest("Malformed identifier.");
+        }
+    }
+
+    [HttpDelete("{identifier}")]
+    public IActionResult Delete(UntrustedValue<string> identifier)
+    {
+        try
+        {
+            var id = validator.Validate(identifier);
+            var request = new DeleteRequest(id);
+            var response = store.Delete(request);
+            return response.Result switch
+            {
+                Result.OK => NoContent(),
+                _ => NotFound(request)
+            };
+        }
+        catch (ValidationException)
+        {
+            return BadRequest("Malformed identifier.");
         }
     }
 }

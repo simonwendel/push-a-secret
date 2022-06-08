@@ -52,4 +52,38 @@ public class SecretControllerTests
         validator.VerifyAll();
         store.VerifyAll();
     }
+
+    [Theory, AutoData]
+    public void Delete_GivenInvalidIdentifierString_ReturnsBadRequest(UntrustedValue<string> untrusted)
+    {
+        validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
+        sut.Delete(untrusted).Should().BeAssignableTo<BadRequestObjectResult>();
+        validator.VerifyAll();
+        store.VerifyNoOtherCalls();
+    }
+
+    [Theory, AutoData]
+    public void Delete_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
+    {
+        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        var deleteRequest = new DeleteRequest(id);
+        store.Setup(x => x.Delete(deleteRequest)).Returns(new DeleteResponse(Result.Err));
+
+        sut.Delete(untrusted).Should().BeAssignableTo<NotFoundObjectResult>().Which.Value.Should().Be(deleteRequest);
+
+        validator.VerifyAll();
+        store.VerifyAll();
+    }
+
+    [Theory, AutoData]
+    public void Delete_WhenIdentifierDoesHaveDocument_ReturnsNoContent(UntrustedValue<string> untrusted, string id)
+    {
+        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        store.Setup(x => x.Delete(new DeleteRequest(id))).Returns(new DeleteResponse(Result.OK));
+
+        sut.Delete(untrusted).Should().BeAssignableTo<NoContentResult>();
+
+        validator.VerifyAll();
+        store.VerifyAll();
+    }
 }
