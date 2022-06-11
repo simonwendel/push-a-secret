@@ -24,19 +24,19 @@ public class SecretControllerTests
     public void Head_GivenInvalidIdentifierString_ReturnsBadRequest()
         => EnsureBadRequestGivenInvalidIdentifier(sut.Head);
 
-    [Theory, AutoData]
-    public void Head_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
+    [Fact]
+    public void Head_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
     {
-        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        var (untrusted, id) = GetCorrectlyValidatingId();
         store.Setup(x => x.Peek(new PeekRequest(id))).Returns(new PeekResponse(Result.Err));
         sut.Head(untrusted).Should().BeAssignableTo<NotFoundResult>();
         VerifyAll();
     }
-
-    [Theory, AutoData]
-    public void Head_WhenIdentifierDoesHaveDocument_ReturnsOK(UntrustedValue<string> untrusted, string id)
+    
+    [Fact]
+    public void Head_WhenIdentifierDoesHaveDocument_ReturnsOK()
     {
-        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        var (untrusted, id) = GetCorrectlyValidatingId();
         store.Setup(x => x.Peek(new PeekRequest(id))).Returns(new PeekResponse(Result.OK));
         sut.Head(untrusted).Should().BeAssignableTo<OkResult>();
         VerifyAll();
@@ -46,19 +46,19 @@ public class SecretControllerTests
     public void Get_GivenInvalidIdentifierString_ReturnsBadRequest()
         => EnsureBadRequestGivenInvalidIdentifier(sut.Get);
 
-    [Theory, AutoData]
-    public void Get_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
+    [Fact]
+    public void Get_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
     {
-        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        var (untrusted, id) = GetCorrectlyValidatingId();
         store.Setup(x => x.Read(new ReadRequest(id))).Returns(new ReadResponse(Result.Err, null));
         sut.Get(untrusted).Should().BeAssignableTo<NotFoundResult>();
         VerifyAll();
     }
 
     [Theory, AutoData]
-    public void Get_WhenIdentifierDoesHaveDocument_ReturnsOK(UntrustedValue<string> untrusted, string id, Secret secret)
+    public void Get_WhenIdentifierDoesHaveDocument_ReturnsOK(Secret secret)
     {
-        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        var (untrusted, id) = GetCorrectlyValidatingId();
         store.Setup(x => x.Read(new ReadRequest(id))).Returns(new ReadResponse(Result.OK, secret));
         sut.Get(untrusted).Should().BeAssignableTo<OkObjectResult>().Which.Value.Should().Be(secret);
         VerifyAll();
@@ -68,19 +68,19 @@ public class SecretControllerTests
     public void Delete_GivenInvalidIdentifierString_ReturnsBadRequest()
         => EnsureBadRequestGivenInvalidIdentifier(sut.Delete);
 
-    [Theory, AutoData]
-    public void Delete_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound(UntrustedValue<string> untrusted, string id)
+    [Fact]
+    public void Delete_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
     {
-        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        var (untrusted, id) = GetCorrectlyValidatingId();
         store.Setup(x => x.Delete(new DeleteRequest(id))).Returns(new DeleteResponse(Result.Err));
         sut.Delete(untrusted).Should().BeAssignableTo<NotFoundResult>();
         VerifyAll();
     }
 
-    [Theory, AutoData]
-    public void Delete_WhenIdentifierDoesHaveDocument_ReturnsNoContent(UntrustedValue<string> untrusted, string id)
+    [Fact]
+    public void Delete_WhenIdentifierDoesHaveDocument_ReturnsNoContent()
     {
-        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        var (untrusted, id) = GetCorrectlyValidatingId();
         store.Setup(x => x.Delete(new DeleteRequest(id))).Returns(new DeleteResponse(Result.OK));
         sut.Delete(untrusted).Should().BeAssignableTo<NoContentResult>();
         VerifyAll();
@@ -95,6 +95,14 @@ public class SecretControllerTests
         store.VerifyNoOtherCalls();
     }
 
+    private (UntrustedValue<string>, string) GetCorrectlyValidatingId()
+    {
+        var untrusted = fixture.Create<UntrustedValue<string>>();
+        var id = fixture.Create<string>();
+        validator.Setup(x => x.Validate(untrusted)).Returns(id);
+        return (untrusted, id);
+    }
+    
     private void VerifyAll()
     {
         validator.VerifyAll();
