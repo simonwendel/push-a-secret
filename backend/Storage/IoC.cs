@@ -9,6 +9,7 @@ public static class IoC
         serviceCollection.AddTransient<ITimestampGenerator, TimestampGenerator>();
         serviceCollection.AddTransient<IIdGenerator, IdGenerator>();
         serviceCollection.AddTransient<IRepository>(_ => MongoDbRepositoryFactory.Build());
+        serviceCollection.AddTransient<IStore, Store>();
         return serviceCollection;
     }
 }
