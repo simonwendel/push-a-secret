@@ -1,10 +1,13 @@
+using Api;
 using Conversion;
 using Storage;
 using Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-builder.Services.AddControllers();
+builder.Services.AddControllers(
+    options => options.ModelBinderProviders.Insert(0, new UntrustedValueBinderProvider()));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
