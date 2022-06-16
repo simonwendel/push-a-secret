@@ -1,43 +1,76 @@
+using AutoFixture.Xunit2;
 using Conversion;
 using FluentAssertions;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Storage.Tests;
 
 [Collection("Integration")]
 public class StorageIntegrationTests
 {
-    private readonly ITestOutputHelper testOutputHelper;
-    private readonly Store store;
+    private Store? store;
 
-    public StorageIntegrationTests(ITestOutputHelper testOutputHelper)
+    public StorageIntegrationTests() 
+        => InitializeTestFixture();
+
+    [Theory, AutoData]
+    public void RoundTrip_WhenRunAgainstMongoDb_WorksAsIntended(CreateRequest original)
+        => store
+            .InsertNewSecret(original)
+            .VerifyItExists()
+            .VerifyItCanBeRead()
+            .DeleteTheSecret()
+            .VerifyItIsGone();
+    
+    private void InitializeTestFixture()
     {
-        this.testOutputHelper = testOutputHelper;
         var idGenerator = new IdGenerator(new TimestampGenerator(), new BaseConverter());
         var repository = TestMongoDbRepositoryFactory.Build(cleanAll: true);
         store = new Store(repository, idGenerator);
     }
+}
 
-    [Fact]
-    public void RoundTrippingWorksAsIntended()
+internal static class StorageIntegrationTestExtensions
+{
+    public static (IStore, Identifier, CreateRequest) InsertNewSecret(this IStore? store, CreateRequest original)
     {
-        var original = new CreateRequest(Algorithm: "AES128GCM", IV: "123", Ciphertext: "456");
-
-        var (result, id) = store.Create(original);
+        var (result, identifier) = store!.Create(original);
         result.Should().Be(Result.OK);
-        id.Should().NotBeNull();
+        identifier.Should().NotBeNull();
+        return (store, identifier, original)!;
+    }
 
-        store.Peek(new PeekRequest(id!.Id)).Should().Be(new PeekResponse(Result.OK));
+    public static (IStore, Identifier, CreateRequest) VerifyItExists(this (IStore, Identifier, CreateRequest) chain)
+    {
+        var (store, identifier, _) = chain;
+        var okPeek = new PeekResponse(Result.OK);
+        store.Peek(new PeekRequest(identifier.Id)).Should().Be(okPeek);
+        return chain;
+    }
 
-        (result, var secret) = store.Read(new ReadRequest(id.Id));
+    public static (IStore, Identifier, CreateRequest) VerifyItCanBeRead(
+        this (IStore, Identifier, CreateRequest) chain)
+    {
+        var (store, identifier, original) = chain;
+        var (result, secret) = store.Read(new ReadRequest(identifier.Id));
         result.Should().Be(Result.OK);
         secret.Should().NotBeNull();
         secret.Should().BeEquivalentTo(original);
+        return chain;
+    }
 
-        store.Delete(new DeleteRequest(id.Id)).Should().Be(new DeleteResponse(Result.OK));
-        store.Peek(new PeekRequest(id.Id)).Should().Be(new PeekResponse(Result.Err));
+    public static (IStore, Identifier, CreateRequest) DeleteTheSecret(this (IStore, Identifier, CreateRequest) chain)
+    {
+        var (store, identifier, _) = chain;
+        var okDelete = new DeleteResponse(Result.OK);
+        store.Delete(new DeleteRequest(identifier.Id)).Should().Be(okDelete);
+        return chain;
+    }
 
-        testOutputHelper.WriteLine("Round-tripped with id = {0}", id.Id);
+    public static void VerifyItIsGone(this (IStore, Identifier, CreateRequest) chain)
+    {
+        var (store, identifier, _) = chain;
+        var errorPeek = new PeekResponse(Result.Err);
+        store.Peek(new PeekRequest(identifier.Id)).Should().Be(errorPeek);
     }
 }
