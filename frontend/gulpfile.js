@@ -3,7 +3,8 @@ const CONFIGURATION = {
     elmSources: 'src/**/*.elm',
     elmTests: 'tests/**/*.elm',
     elmBundleFile: 'app.js',
-    staticAssets: ['index.html', 'img/**/*', 'js/**/*.js'],
+    logo: 'img/logos/logo.png',
+    staticAssets: ['index.html', 'img/*', 'js/**/*.js'],
     lessFiles: ['style/**/*.less'],
     outputDirectory: 'dist/'
 }
@@ -14,8 +15,16 @@ const less = require('gulp-less');
 const concat = require('gulp-concat');
 const del = require('del');
 const shell = require('gulp-shell');
+const rename = require('gulp-rename');
+
 function cleanDistFolder() {
     return del(CONFIGURATION.outputDirectory + '**');
+}
+
+function copyLogo() {
+    return src(CONFIGURATION.logo)
+        .pipe(rename('logo.png'))
+        .pipe(dest(CONFIGURATION.outputDirectory))
 }
 
 function copyStaticAssets() {
@@ -44,7 +53,7 @@ function watchTests() {
     return shell.task('elm-test --watch')();
 }
 
-const buildTask = series(cleanDistFolder, copyStaticAssets, makeCssFiles, makeElmBundle);
+const buildTask = series(cleanDistFolder, copyLogo, copyStaticAssets, makeCssFiles, makeElmBundle);
 exports.build = buildTask;
 
 const testTask = runTests;
