@@ -1,5 +1,4 @@
 using AutoFixture.Xunit2;
-using Conversion;
 using FluentAssertions;
 using Xunit;
 
@@ -24,7 +23,7 @@ public class StorageIntegrationTests
     
     private void InitializeTestFixture()
     {
-        var idGenerator = new IdGenerator(new TimestampGenerator(), new BaseConverter());
+        var idGenerator = IdGenerator.Default;
         var repository = TestMongoDbRepositoryFactory.Build(cleanAll: true);
         store = new Store(repository, idGenerator);
     }
