@@ -1,4 +1,4 @@
-﻿namespace Validation;
+﻿namespace Validation.General;
 
 public abstract class ValidatorPipelineBase<T> : ValidatorBase<T>
 {

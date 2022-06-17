@@ -1,6 +1,7 @@
 using System;
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using Validation.General;
 using Xunit;
 
 namespace Validation.Tests;
@@ -11,7 +12,7 @@ public class NonEmptyStringValidatorTests
     [InlineAutoData("")]
     [InlineAutoData(" ")]
     [InlineAutoData(null)]
-    public void Validate_GivenNullOrEmptyString_ThrowsException(string value, NonEmptyStringValidator sut)
+    internal void Validate_GivenNullOrEmptyString_ThrowsException(string value, NonEmptyStringValidator sut)
     {
         var untrusted = new UntrustedValue<string>(value);
         Action validating = () => sut.Validate(untrusted);
@@ -19,7 +20,7 @@ public class NonEmptyStringValidatorTests
     }
 
     [Theory, AutoData]
-    public void Validate_GivenStringWithContents_ReturnsValue(string value, NonEmptyStringValidator sut)
+    internal void Validate_GivenStringWithContents_ReturnsValue(string value, NonEmptyStringValidator sut)
     {
         var untrusted = new UntrustedValue<string>(value);
         sut.Validate(untrusted).Should().Be(value);

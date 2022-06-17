@@ -1,4 +1,6 @@
-﻿namespace Validation;
+﻿using Validation.General;
+
+namespace Validation;
 
 public class IdentifierValidator : ValidatorPipelineBase<string>, IIdentifierValidator
 {

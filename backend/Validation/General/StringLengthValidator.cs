@@ -1,6 +1,6 @@
-﻿namespace Validation;
+﻿namespace Validation.General;
 
-public class StringLengthValidator : ValidatorBase<string>
+internal class StringLengthValidator : ValidatorBase<string>
 {
     private readonly int minLength;
     private readonly int maxLength;

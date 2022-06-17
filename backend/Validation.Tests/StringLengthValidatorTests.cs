@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using Validation.General;
 using Xunit;
 
 namespace Validation.Tests;
