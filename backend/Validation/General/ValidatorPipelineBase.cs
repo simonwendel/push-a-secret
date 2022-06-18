@@ -1,6 +1,6 @@
 ﻿namespace Validation.General;
 
-public abstract class ValidatorPipelineBase<T> : ValidatorBase<T>
+public abstract class ValidatorPipelineBase<T> : ValidatorBase<T> where T : notnull
 {
     private readonly ValidatorBase<T>[] validators;
 

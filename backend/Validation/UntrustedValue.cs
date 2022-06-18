@@ -1,6 +1,6 @@
 ﻿namespace Validation;
 
-public class UntrustedValue<T>
+public class UntrustedValue<T> where T : notnull
 {
     public UntrustedValue(T value)
     {
@@ -10,7 +10,7 @@ public class UntrustedValue<T>
     internal T Value { get; }
 
     public sealed override bool Equals(object? obj)
-        => Value!.Equals(obj);
+        => Value.Equals(obj);
 
     public bool Equals(T other) 
         => Equals((object?) other);
@@ -21,7 +21,7 @@ public class UntrustedValue<T>
     /// want to, f.x. reflection.
     /// </remarks>
     public sealed override int GetHashCode() 
-        => Value!.GetHashCode();
+        => Value.GetHashCode();
 
     /// <remarks>
     /// In order to at least make it hard to bypass validation, ToString() will always throw an
