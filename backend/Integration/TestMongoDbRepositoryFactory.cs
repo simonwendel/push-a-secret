@@ -1,8 +1,8 @@
-﻿using System;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using Storage;
 
-namespace Storage.Tests;
+namespace Integration;
 
 internal static class TestMongoDbRepositoryFactory
 {

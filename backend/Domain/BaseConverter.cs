@@ -1,4 +1,4 @@
-﻿namespace Conversion;
+﻿namespace Domain;
 
 public class BaseConverter : IBaseConverter
 {

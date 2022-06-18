@@ -1,9 +1,8 @@
-﻿using System;
-using AutoFixture.Xunit2;
+﻿using AutoFixture.Xunit2;
 using FluentAssertions;
 using Xunit;
 
-namespace Conversion.Tests;
+namespace Domain.Tests;
 
 public class BaseConverterTests
 {

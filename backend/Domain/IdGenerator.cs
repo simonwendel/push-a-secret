@@ -1,6 +1,4 @@
-﻿using Conversion;
-
-namespace Storage;
+﻿namespace Domain;
 
 internal class IdGenerator : IIdGenerator
 {

@@ -3,7 +3,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace Storage.Tests;
+namespace Domain.Tests;
 
 public class StoreTests
 {

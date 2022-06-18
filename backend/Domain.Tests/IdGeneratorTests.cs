@@ -1,10 +1,9 @@
 ﻿using AutoFixture.Xunit2;
-using Conversion;
 using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace Storage.Tests;
+namespace Domain.Tests;
 
 public class IdGeneratorTests
 {

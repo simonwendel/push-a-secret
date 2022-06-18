@@ -1,5 +1,5 @@
 using Api;
-using Conversion;
+using Domain;
 using Storage;
 using Validation;
 
@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services
     .AddValidationModule()
     .AddStorageModule()
-    .AddConversionModule();
+    .AddDomainModule();
 
 var app = builder.Build();
 app.UseSwagger();

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using Conversion;
+using Domain;
 
 BenchmarkRunner.Run(typeof(Benchmark));
 

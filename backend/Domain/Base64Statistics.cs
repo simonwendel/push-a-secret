@@ -1,4 +1,4 @@
-﻿namespace Conversion;
+﻿namespace Domain;
 
 public static class Base64Statistics
 {

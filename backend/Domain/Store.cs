@@ -1,4 +1,4 @@
-﻿namespace Storage;
+﻿namespace Domain;
 
 internal class Store : IStore
 {

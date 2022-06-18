@@ -1,4 +1,4 @@
-﻿namespace Storage;
+﻿namespace Domain;
 
 public enum Result
 {

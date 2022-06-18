@@ -1,8 +1,9 @@
 using AutoFixture.Xunit2;
+using Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace Storage.Tests;
+namespace Integration;
 
 [Collection("Integration")]
 public class StorageIntegrationTests

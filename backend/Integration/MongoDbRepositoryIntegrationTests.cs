@@ -1,8 +1,10 @@
 ﻿using AutoFixture.Xunit2;
+using Domain;
 using FluentAssertions;
+using Storage;
 using Xunit;
 
-namespace Storage.Tests;
+namespace Integration;
 
 [Collection("Integration")]
 public class MongoDbRepositoryIntegrationTests
