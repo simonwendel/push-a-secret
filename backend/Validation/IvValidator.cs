@@ -3,7 +3,7 @@ using Validation.General;
 
 namespace Validation;
 
-public class IvValidator : ValidatorPipelineBase<string>
+public class IvValidator : ValidatorPipelineBase<string>, IIvValidator
 {
     private const int IvNumberOfBytes = 12;
 

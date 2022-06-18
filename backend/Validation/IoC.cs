@@ -8,6 +8,8 @@ public static class IoC
     {
         serviceCollection.AddTransient<IIdentifierValidator, IdentifierValidator>();
         serviceCollection.AddTransient<ICiphertextValidator, CiphertextValidator>();
+        serviceCollection.AddTransient<IAlgorithmValidator, AlgorithmValidator>();
+        serviceCollection.AddTransient<IIvValidator, IvValidator>();
         return serviceCollection;
     }
 }

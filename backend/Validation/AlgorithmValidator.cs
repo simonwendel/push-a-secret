@@ -2,7 +2,7 @@
 
 namespace Validation;
 
-public class AlgorithmValidator : ValidatorPipelineBase<string>
+public class AlgorithmValidator : ValidatorPipelineBase<string>, IAlgorithmValidator
 {
     public AlgorithmValidator()
         : base(new NonEmptyStringValidator())
