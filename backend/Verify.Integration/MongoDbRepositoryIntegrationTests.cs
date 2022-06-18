@@ -4,9 +4,9 @@ using FluentAssertions;
 using Storage;
 using Xunit;
 
-namespace Integration;
+namespace Verify.Integration;
 
-[Collection("Integration")]
+[Collection("Verify.Integration")]
 public class MongoDbRepositoryIntegrationTests
 {
     private readonly MongoDbRepository sut;

@@ -2,9 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "Storage\Storage.csproj", "{79829BF0-12AA-4DB4-9728-4DDF99083771}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration", "Integration\Integration.csproj", "{26C0618B-1143-4FFA-8E77-D079F76C69F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verify.Integration", "Verify.Integration\Verify.Integration.csproj", "{26C0618B-1143-4FFA-8E77-D079F76C69F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmark", "Benchmark\Benchmark.csproj", "{B30AA58A-111A-4668-A451-AC7A3F8BD4C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verify.Benchmark", "Verify.Benchmark\Verify.Benchmark.csproj", "{B30AA58A-111A-4668-A451-AC7A3F8BD4C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{9599FB7B-EBA4-46FA-9CDB-75266671BF4B}"
 EndProject

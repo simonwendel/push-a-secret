@@ -3,9 +3,9 @@ using Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace Integration;
+namespace Verify.Integration;
 
-[Collection("Integration")]
+[Collection("Verify.Integration")]
 public class StorageIntegrationTests
 {
     private Store? store;

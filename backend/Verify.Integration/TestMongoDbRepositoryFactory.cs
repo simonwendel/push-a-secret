@@ -2,7 +2,7 @@
 using MongoDB.Driver;
 using Storage;
 
-namespace Integration;
+namespace Verify.Integration;
 
 internal static class TestMongoDbRepositoryFactory
 {
