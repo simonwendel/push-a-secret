@@ -5,16 +5,16 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <WarningsAsErrors>CS8602</WarningsAsErrors>
+        <WarningsAsErrors>CS8602, CS8714, CS8620, CS8622</WarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Storage\Storage.csproj" />
-      <ProjectReference Include="..\Validation\Validation.csproj" />
+        <ProjectReference Include="..\Storage\Storage.csproj"/>
+        <ProjectReference Include="..\Validation\Validation.csproj"/>
     </ItemGroup>
 
 </Project>
