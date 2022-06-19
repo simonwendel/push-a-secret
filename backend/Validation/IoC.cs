@@ -9,5 +9,6 @@ public static class IoC
             .AddTransient<IIdentifierValidator, IdentifierValidator>()
             .AddTransient<ICiphertextValidator, CiphertextValidator>()
             .AddTransient<IAlgorithmValidator, AlgorithmValidator>()
-            .AddTransient<IIvValidator, IvValidator>();
+            .AddTransient<IIvValidator, IvValidator>()
+            .AddTransient<ISecretValidator, SecretValidator>();
 }
