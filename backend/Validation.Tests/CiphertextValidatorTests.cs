@@ -12,6 +12,10 @@ public class CiphertextValidatorTests
     public void MaxCipherLength_AsPerConfiguration_ShouldBe216()
         => CiphertextValidator.MaxCipherLength.Should().Be(216);
 
+    [Fact]
+    public void MinCipherLength_AsPerConfiguration_ShouldBe24()
+        => CiphertextValidator.MinCipherLength.Should().Be(24);
+
     [Theory]
     [InlineAutoData("")]
     [InlineAutoData(" ")]
@@ -27,6 +31,14 @@ public class CiphertextValidatorTests
     public void Validate_TooLongString_ThrowsException(CiphertextValidator sut)
     {
         var tooLong = $"{new string('+', CiphertextValidator.MaxCipherLength + 1)}===";
+        Action validating = () => sut.Validate(new UntrustedValue<string>(tooLong));
+        validating.Should().Throw<ValidationException>();
+    }
+
+    [Theory, AutoData]
+    public void Validate_TooShortString_ThrowsException(CiphertextValidator sut)
+    {
+        var tooLong = $"{new string('+', CiphertextValidator.MinCipherLength - 1)}";
         Action validating = () => sut.Validate(new UntrustedValue<string>(tooLong));
         validating.Should().Throw<ValidationException>();
     }
@@ -49,13 +61,20 @@ public class CiphertextValidatorTests
     [Theory, AutoData]
     public void Validate_GivenLongestValidEncoding_ReturnsValue(CiphertextValidator sut)
     {
-        var encoded = GetLongestValidEncodedCipher();
+        var encoded = GetValidEncodedCipherOfLength(72);
         sut.Validate(new UntrustedValue<string>(encoded)).Should().Be(encoded);
     }
 
-    private static string GetLongestValidEncodedCipher()
+    [Theory, AutoData]
+    public void Validate_GivenShortestValidEncoding_ReturnsValue(CiphertextValidator sut)
     {
-        const int maxNumberOfEncryptedBytes = 72 * 2 + 16; // 72 characters * 2 bytes per cp + 16 bytes auth tag
+        var encoded = GetValidEncodedCipherOfLength(1);
+        sut.Validate(new UntrustedValue<string>(encoded)).Should().Be(encoded);
+    }
+
+    private static string GetValidEncodedCipherOfLength(int length)
+    {
+        var maxNumberOfEncryptedBytes = length * 2 + 16;
         var correspondingCipher = Enumerable.Repeat((byte) 0xFF, maxNumberOfEncryptedBytes).ToArray();
         return Convert.ToBase64String(correspondingCipher);
     }
