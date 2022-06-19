@@ -8,22 +8,40 @@ namespace Validation.Tests;
 public class UntrustedValueTests
 {
     private readonly SuperSecretTestClass value = new();
-    private readonly UntrustedValue<SuperSecretTestClass> untrusted;
+    private readonly UntrustedValue<SuperSecretTestClass> sut;
 
     public UntrustedValueTests()
-        => untrusted = new(value);
+        => sut = new UntrustedValue<SuperSecretTestClass>(value);
 
     [Theory, AutoData]
-    public void Equals_Always_ReturnsEqualsForWrappedValue(object other)
+    internal void Equals_GivenWrappedValue_ReturnsEqualsForWrappedValue(SuperSecretTestClass other)
     {
-        value.Equals(other).Should().Be(value.EqualsResult);
+        // ReSharper disable once SuspiciousTypeConversion.Global
+        sut.Equals(other).Should().Be(value.EqualsResult);
         value.EqualsCalled.Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineAutoData("1", "2", false)]
+    [InlineAutoData("2", "1", false)]
+    [InlineAutoData("2", "2", true)]
+    internal void Equals_GivenUntrustedValue_ReturnsEqualsForWrappedValues(string first, string second, bool expected)
+    {
+        var @this = new UntrustedValue<string>(first);
+        var that = new UntrustedValue<string>(second);
+        @this.Equals(that).Should().Be(expected);
+    }
+
+    [Theory, AutoData]
+    internal void Equals_GivenNull_ReturnsFalse(UntrustedValue<object> sut)
+    {
+        sut.Equals(null).Should().BeFalse();
     }
 
     [Fact]
     public void GetHashCode_Always_ReturnsHashCodeForWrappedValue()
     {
-        untrusted.GetHashCode().Should().Be(value.GetHashCodeResult);
+        sut.GetHashCode().Should().Be(value.GetHashCodeResult);
         value.GetHashCodeCalled.Should().BeTrue();
     }
 
@@ -32,7 +50,7 @@ public class UntrustedValueTests
     {
         var rendering = () =>
         {
-            var _ = untrusted.ToString();
+            var _ = sut.ToString();
         };
 
         rendering.Should().Throw<InvalidOperationException>();
@@ -40,7 +58,7 @@ public class UntrustedValueTests
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    private class SuperSecretTestClass
+    internal class SuperSecretTestClass
     {
         internal bool EqualsCalled { get; private set; }
         internal bool EqualsResult { get; }

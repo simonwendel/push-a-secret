@@ -10,17 +10,19 @@ public class UntrustedValue<T> where T : notnull
     internal T Value { get; }
 
     public sealed override bool Equals(object? obj)
-        => Value.Equals(obj);
-
-    public bool Equals(T other) 
-        => Equals((object?) other);
+        => obj switch
+        {
+            T wrapped => Value.Equals(wrapped),
+            UntrustedValue<T> untrusted => Value.Equals(untrusted.Value),
+            _ => false
+        };
 
     /// <remarks>
     /// The GetHashCode() method can of course be used to reverse-engineer the underlying
     /// value without validating it first, but there are easier ways than this if you really
     /// want to, f.x. reflection.
     /// </remarks>
-    public sealed override int GetHashCode() 
+    public sealed override int GetHashCode()
         => Value.GetHashCode();
 
     /// <remarks>
