@@ -1,5 +1,6 @@
 using Api;
 using Domain;
+using Microsoft.OpenApi.Models;
 using Storage;
 using Validation;
 
@@ -9,7 +10,8 @@ builder.Services.AddControllers(
     options => options.ModelBinderProviders.Insert(0, new UntrustedValueBinderProvider()));
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+    c.MapType<UntrustedValue<string>>(() => new OpenApiSchema {Type = "string"}));
 
 builder.Services
     .AddValidationModule()

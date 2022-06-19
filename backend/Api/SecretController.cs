@@ -17,7 +17,7 @@ public class SecretController : ControllerBase
     }
 
     [HttpHead("{identifier}")]
-    public IActionResult Head(UntrustedValue<string> identifier)
+    public IActionResult Head([FromRoute] UntrustedValue<string> identifier)
         => ValidateRequestWithIdentifier<PeekRequest>(
             identifier,
             request => store.Peek(request).Result switch
@@ -27,7 +27,7 @@ public class SecretController : ControllerBase
             });
 
     [HttpGet("{identifier}")]
-    public IActionResult Get(UntrustedValue<string> identifier)
+    public IActionResult Get([FromRoute] UntrustedValue<string> identifier)
         => ValidateRequestWithIdentifier<ReadRequest>(
             identifier,
             request => store.Read(request) switch
@@ -37,7 +37,7 @@ public class SecretController : ControllerBase
             });
 
     [HttpDelete("{identifier}")]
-    public IActionResult Delete(UntrustedValue<string> identifier)
+    public IActionResult Delete([FromRoute] UntrustedValue<string> identifier)
         => ValidateRequestWithIdentifier<DeleteRequest>(
             identifier,
             request => store.Delete(request).Result switch
