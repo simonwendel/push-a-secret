@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoFixture.Xunit2;
+using Domain;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Moq;
@@ -29,6 +30,13 @@ public class UntrustedValueBinderProviderTests
     {
         var context = GetProviderContextFor(typeof(UntrustedValue<string>));
         sut.GetBinder(context).Should().BeOfType<UntrustedStringBinder>();
+    }
+
+    [Theory, AutoData]
+    public void GetBinder_GivenUntrustedValueOfSecret_ReturnsBinder(UntrustedValueBinderProvider sut)
+    {
+        var context = GetProviderContextFor(typeof(UntrustedValue<Secret>));
+        sut.GetBinder(context).Should().BeOfType<UntrustedSecretBinder>();
     }
 
     private static ModelBinderProviderContext GetProviderContextFor(Type type)

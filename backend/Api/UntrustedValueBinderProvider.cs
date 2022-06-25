@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Domain;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Validation;
 
 namespace Api;
@@ -12,8 +13,16 @@ public class UntrustedValueBinderProvider : IModelBinderProvider
             throw new ArgumentNullException(nameof(context));
         }
 
-        return context.Metadata.ModelType == typeof(UntrustedValue<string>)
-            ? new UntrustedStringBinder()
-            : null;
+        if (context.Metadata.ModelType == typeof(UntrustedValue<string>))
+        {
+            return new UntrustedStringBinder();
+        }
+
+        if (context.Metadata.ModelType == typeof(UntrustedValue<Secret>))
+        {
+            return new UntrustedSecretBinder();
+        }
+
+        return null;
     }
 }
