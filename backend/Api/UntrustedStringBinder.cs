@@ -12,22 +12,22 @@ public class UntrustedStringBinder : IModelBinder
             throw new ArgumentNullException(nameof(context));
         }
 
-        var modelName = context.ModelName;
-        var valueResult = context.ValueProvider.GetValue(modelName);
-        if (valueResult == ValueProviderResult.None)
+        var name = context.ModelName;
+        var result = context.ValueProvider.GetValue(name);
+        if (result == ValueProviderResult.None)
         {
             return Task.CompletedTask;
         }
 
-        context.ModelState.SetModelValue(modelName, valueResult);
-
-        var value = valueResult.FirstValue;
-        if (!string.IsNullOrEmpty(value))
+        context.ModelState.SetModelValue(name, result);
+        var value = result.FirstValue;
+        if (string.IsNullOrEmpty(value))
         {
-            var model = new UntrustedValue<string>(value);
-            context.Result = ModelBindingResult.Success(model);
+            return Task.CompletedTask;
         }
 
+        var model = new UntrustedValue<string>(value);
+        context.Result = ModelBindingResult.Success(model);
         return Task.CompletedTask;
     }
 }
