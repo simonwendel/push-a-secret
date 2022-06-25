@@ -30,21 +30,19 @@ public class SecretControllerTests
 
     [Fact]
     public void Head_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
-    {
-        var (untrusted, id) = ConstructCorrectlyValidatingId();
-        store.Setup(x => x.Peek(new PeekRequest(id))).Returns(new PeekResponse(Result.Err));
-        sut.Head(untrusted).Should().BeAssignableTo<NotFoundResult>();
-        VerifyAll();
-    }
+        => EnsureForValidIdentifier((untrusted, id) =>
+        {
+            store.Setup(x => x.Peek(new PeekRequest(id))).Returns(new PeekResponse(Result.Err));
+            sut.Head(untrusted).Should().BeAssignableTo<NotFoundResult>();
+        });
 
     [Fact]
     public void Head_WhenIdentifierDoesHaveDocument_ReturnsOK()
-    {
-        var (untrusted, id) = ConstructCorrectlyValidatingId();
-        store.Setup(x => x.Peek(new PeekRequest(id))).Returns(new PeekResponse(Result.OK));
-        sut.Head(untrusted).Should().BeAssignableTo<OkResult>();
-        VerifyAll();
-    }
+        => EnsureForValidIdentifier((untrusted, id) =>
+        {
+            store.Setup(x => x.Peek(new PeekRequest(id))).Returns(new PeekResponse(Result.OK));
+            sut.Head(untrusted).Should().BeAssignableTo<OkResult>();
+        });
 
     [Fact]
     public void Get_GivenInvalidIdentifierString_ReturnsBadRequest()
@@ -85,21 +83,19 @@ public class SecretControllerTests
 
     [Fact]
     public void Delete_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
-    {
-        var (untrusted, id) = ConstructCorrectlyValidatingId();
-        store.Setup(x => x.Delete(new DeleteRequest(id))).Returns(new DeleteResponse(Result.Err));
-        sut.Delete(untrusted).Should().BeAssignableTo<NotFoundResult>();
-        VerifyAll();
-    }
+        => EnsureForValidIdentifier((untrusted, id) =>
+        {
+            store.Setup(x => x.Delete(new DeleteRequest(id))).Returns(new DeleteResponse(Result.Err));
+            sut.Delete(untrusted).Should().BeAssignableTo<NotFoundResult>();
+        });
 
     [Fact]
     public void Delete_WhenIdentifierDoesHaveDocument_ReturnsNoContent()
-    {
-        var (untrusted, id) = ConstructCorrectlyValidatingId();
-        store.Setup(x => x.Delete(new DeleteRequest(id))).Returns(new DeleteResponse(Result.OK));
-        sut.Delete(untrusted).Should().BeAssignableTo<NoContentResult>();
-        VerifyAll();
-    }
+        => EnsureForValidIdentifier((untrusted, id) =>
+        {
+            store.Setup(x => x.Delete(new DeleteRequest(id))).Returns(new DeleteResponse(Result.OK));
+            sut.Delete(untrusted).Should().BeAssignableTo<NoContentResult>();
+        });
 
     private void EnsureBadRequestGivenInvalidIdentifier(Func<UntrustedValue<string>, IActionResult> action)
     {
@@ -108,6 +104,13 @@ public class SecretControllerTests
         action(untrusted).Should().BeAssignableTo<BadRequestResult>();
         idValidator.VerifyAll();
         store.VerifyNoOtherCalls();
+    }
+
+    private void EnsureForValidIdentifier(Action<UntrustedValue<string>, string> func)
+    {
+        var (untrusted, id) = ConstructCorrectlyValidatingId();
+        func(untrusted, id);
+        VerifyAll();
     }
 
     private (UntrustedValue<string>, string) ConstructCorrectlyValidatingId()
