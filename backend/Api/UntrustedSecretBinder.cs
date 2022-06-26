@@ -20,7 +20,12 @@ public class UntrustedSecretBinder : IModelBinder
         {
             try
             {
-                var secret = JsonSerializer.Deserialize<Secret>(value)
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                
+                var secret = JsonSerializer.Deserialize<Secret>(value, options)
                              ?? throw new InvalidOperationException();
                 var model = new UntrustedValue<Secret>(secret);
                 context.ModelState.SetModelValue(modelName, new ValueProviderResult(value));
