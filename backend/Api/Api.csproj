@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <WarningsAsErrors>CS8602, CS8714, CS8620, CS8622</WarningsAsErrors>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
