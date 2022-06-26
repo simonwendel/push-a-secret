@@ -100,5 +100,5 @@ public class SecretController : ControllerBase
     }
 
     private string ConstructResourceUrl(Identifier identifier)
-        => Url?.RouteUrl(nameof(Get), new {identifier = identifier.Id}, Request.Scheme) ?? string.Empty;
+        => Url?.Action(nameof(Get), new {identifier = identifier.Id}) ?? string.Empty;
 }
