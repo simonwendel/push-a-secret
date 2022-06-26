@@ -42,6 +42,24 @@ public class SecretController : ControllerBase
                 _ => NotFound()
             });
 
+    [HttpPost]
+    public IActionResult Post([FromBody] UntrustedValue<Secret> secret)
+    {
+        try
+        {
+            var s = secretValidator.Validate(secret);
+            return store.Create(new CreateRequest(s.Algorithm, s.IV, s.Ciphertext)) switch
+            {
+                (Result.OK, not null) response => Created(ConstructResourceUrl(response.Identifier!), s),
+                _ => StatusCode(500)
+            };
+        }
+        catch (ValidationException)
+        {
+            return BadRequest();
+        }
+    }
+
     [HttpDelete("{identifier}")]
     public IActionResult Delete([FromRoute] UntrustedValue<string> identifier)
         => HandleRequestWithIdentifier<DeleteRequest>(
@@ -60,7 +78,7 @@ public class SecretController : ControllerBase
         {
             var validatedId = idValidator.Validate(identifier);
             var request = Activator.CreateInstance(typeof(T), validatedId) as T;
-            return handle(request!);
+            return handle(request ?? throw new InvalidOperationException());
         }
         catch (ValidationException)
         {
@@ -80,4 +98,7 @@ public class SecretController : ControllerBase
             return false;
         }
     }
+
+    private string ConstructResourceUrl(Identifier identifier)
+        => Url?.RouteUrl(nameof(Get), new {identifier = identifier.Id}, Request.Scheme) ?? string.Empty;
 }

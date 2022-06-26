@@ -50,30 +50,57 @@ public class SecretControllerTests
 
     [Fact]
     public void Get_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
-    {
-        var (untrusted, id) = ConstructCorrectlyValidatingId();
-        store.Setup(x => x.Read(new ReadRequest(id))).Returns(new ReadResponse(Result.Err, null));
-        sut.Get(untrusted).Should().BeAssignableTo<NotFoundResult>();
-        VerifyAll();
-    }
+        => EnsureForValidIdentifier((untrusted, id) =>
+        {
+            store.Setup(x => x.Read(new ReadRequest(id))).Returns(new ReadResponse(Result.Err, null));
+            sut.Get(untrusted).Should().BeAssignableTo<NotFoundResult>();
+        });
 
     [Theory, AutoData]
     public void Get_WhenIdentifierDoesHaveValidDocument_ReturnsOK(Secret secret)
+        => EnsureForValidIdentifier((untrusted, id) =>
+        {
+            store.Setup(x => x.Read(new ReadRequest(id))).Returns(new ReadResponse(Result.OK, secret));
+            secretValidator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Returns(secret);
+            sut.Get(untrusted).Should().BeAssignableTo<OkObjectResult>().Which.Value.Should().Be(secret);
+        });
+
+
+    [Theory, AutoData]
+    public void Get_WhenIdentifierHasInvalidDocument_ReturnsConflict(Secret secret)
+        => EnsureForValidIdentifier((untrusted, id) =>
+        {
+            store.Setup(x => x.Read(new ReadRequest(id))).Returns(new ReadResponse(Result.OK, secret));
+            secretValidator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Throws<ValidationException>();
+            sut.Get(untrusted).Should().BeAssignableTo<ConflictResult>();
+        });
+
+    [Theory, AutoData]
+    public void Post_GivenInvalidSecret_ReturnsBadRequest(UntrustedValue<Secret> untrusted)
     {
-        var (untrusted, id) = ConstructCorrectlyValidatingId();
-        store.Setup(x => x.Read(new ReadRequest(id))).Returns(new ReadResponse(Result.OK, secret));
-        secretValidator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Returns(secret);
-        sut.Get(untrusted).Should().BeAssignableTo<OkObjectResult>().Which.Value.Should().Be(secret);
+        secretValidator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
+        sut.Post(untrusted).Should().BeAssignableTo<BadRequestResult>();
+        store.VerifyNoOtherCalls();
+    }
+
+    [Theory, AutoData]
+    public void Post_WhenSecretCannotBeSaved_Returns500(UntrustedValue<Secret> untrusted, Secret secret)
+    {
+        secretValidator.Setup(x => x.Validate(untrusted)).Returns(secret);
+        store.Setup(x => x.Create(new CreateRequest(secret.Algorithm, secret.IV, secret.Ciphertext)))
+            .Returns(new CreateResponse(Result.Err, null));
+        sut.Post(untrusted).Should().BeAssignableTo<StatusCodeResult>().Which.StatusCode.Should().Be(500);
         VerifyAll();
     }
 
     [Theory, AutoData]
-    internal void Get_WhenIdentifierHasInvalidDocument_ReturnsConflict(Secret secret)
+    public void Post_WhenSecretWasSaved_ReturnsIdentifier(UntrustedValue<Secret> untrusted, Secret secret,
+        Identifier identifier)
     {
-        var (untrusted, id) = ConstructCorrectlyValidatingId();
-        store.Setup(x => x.Read(new ReadRequest(id))).Returns(new ReadResponse(Result.OK, secret));
-        secretValidator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Throws<ValidationException>();
-        sut.Get(untrusted).Should().BeAssignableTo<ConflictResult>();
+        secretValidator.Setup(x => x.Validate(untrusted)).Returns(secret);
+        store.Setup(x => x.Create(new CreateRequest(secret.Algorithm, secret.IV, secret.Ciphertext)))
+            .Returns(new CreateResponse(Result.OK, identifier));
+        sut.Post(untrusted).Should().BeAssignableTo<CreatedResult>().Which.Value.Should().Be(secret);
         VerifyAll();
     }
 
