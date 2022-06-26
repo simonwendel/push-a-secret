@@ -16,7 +16,6 @@ public class UntrustedSecretBinder : IModelBinder
 
         var modelName = context.FieldName;
         var value = await new StreamReader(context.HttpContext.Request.Body).ReadToEndAsync();
-        context.ModelState.SetModelValue(modelName, new ValueProviderResult(value));
         if (!string.IsNullOrEmpty(value))
         {
             try
@@ -24,11 +23,13 @@ public class UntrustedSecretBinder : IModelBinder
                 var secret = JsonSerializer.Deserialize<Secret>(value)
                              ?? throw new InvalidOperationException();
                 var model = new UntrustedValue<Secret>(secret);
+                context.ModelState.SetModelValue(modelName, new ValueProviderResult(value));
+                context.ModelState.MarkFieldValid(modelName);
                 context.Result = ModelBindingResult.Success(model);
             }
             catch (Exception)
             {
-                context.Result = ModelBindingResult.Failed();
+                // ignored because we simply won't bother to bind if something happens
             }
         }
     }
