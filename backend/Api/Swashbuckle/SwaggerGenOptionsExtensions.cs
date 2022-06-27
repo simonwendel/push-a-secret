@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Domain;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Validation;
@@ -24,5 +25,7 @@ public static class SwaggerGenOptionsExtensions
         options.SchemaFilter<SecretSchemaFilter>();
 
         options.MapType<UntrustedValue<string>>(() => new OpenApiSchema {Type = "string"});
+        options.MapType<UntrustedValue<Secret>>(() => new OpenApiSchema
+            {Reference = new OpenApiReference {Type = ReferenceType.Schema, Id = nameof(Secret)}});
     }
 }
