@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Api;
+namespace Api.Swashbuckle;
 
 public class RemoveDefaultResponse : IOperationFilter
 {

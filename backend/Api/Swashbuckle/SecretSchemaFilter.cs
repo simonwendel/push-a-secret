@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Validation;
 
-namespace Api;
+namespace Api.Swashbuckle;
 
 public class SecretSchemaFilter : ISchemaFilter
 {

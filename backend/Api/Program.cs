@@ -1,7 +1,6 @@
-using System.Reflection;
 using Api;
+using Api.Swashbuckle;
 using Domain;
-using Microsoft.OpenApi.Models;
 using Storage;
 using Validation;
 
@@ -11,26 +10,7 @@ builder.Services.AddControllers(
     options => options.ModelBinderProviders.Insert(0, new UntrustedValueBinderProvider()));
 
 builder.Services.AddEndpointsApiExplorer();
-
-const string apiVersion = "v1";
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc(apiVersion, new OpenApiInfo
-    {
-        Version = apiVersion,
-        Title = "Push-a-Secret API",
-        Description = "Secrets storage API serving Push-a-Secret clients."
-    });
-    
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    options.IncludeXmlComments(xmlPath);
-
-    options.OperationFilter<RemoveDefaultResponse>();
-    options.SchemaFilter<SecretSchemaFilter>();
-    
-    options.MapType<UntrustedValue<string>>(() => new OpenApiSchema {});
-});
+builder.Services.AddSwaggerGen(options => options.ConfigureSwaggerGen(apiVersion: "v1"));
 
 builder.Services
     .AddValidationModule()
