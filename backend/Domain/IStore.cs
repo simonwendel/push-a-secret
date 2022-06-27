@@ -2,8 +2,8 @@
 
 public interface IStore
 {
-    PeekResponse Peek(PeekRequest request);
-    CreateResponse Create(CreateRequest request);
-    ReadResponse Read(ReadRequest request);
-    DeleteResponse Delete(DeleteRequest request);
+    Result Peek(Identifier identifier);
+    IdentifierResult Create(Secret secret);
+    SecretResult Read(Identifier identifier);
+    Result Delete(Identifier identifier);
 }

@@ -37,9 +37,9 @@ public class SecretController : ControllerBase
     [ProducesResponseType(400, Type = default!)]
     [ProducesResponseType(404, Type = default!)]
     public IActionResult Head([FromRoute] UntrustedValue<string> identifier)
-        => HandleRequestWithIdentifier<PeekRequest>(
+        => HandleRequestWithIdentifier(
             identifier,
-            request => store.Peek(request).Result switch
+            validated => store.Peek(validated) switch
             {
                 Result.OK => Ok(),
                 _ => NotFound()
@@ -61,9 +61,9 @@ public class SecretController : ControllerBase
     [ProducesResponseType(409, Type = default!)]
     [Produces(MediaTypeNames.Application.Json)]
     public IActionResult Get([FromRoute] UntrustedValue<string> identifier)
-        => HandleRequestWithIdentifier<ReadRequest>(
+        => HandleRequestWithIdentifier(
             identifier,
-            request => store.Read(request) switch
+            validated => store.Read(validated) switch
             {
                 (Result.OK, not null) response
                     => IsValidSecret(response.Secret!)
@@ -89,10 +89,10 @@ public class SecretController : ControllerBase
     {
         try
         {
-            var valid = secretValidator.Validate(secret);
-            return store.Create(new CreateRequest(valid.Algorithm, valid.IV, valid.Ciphertext)) switch
+            var validated = secretValidator.Validate(secret);
+            return store.Create(validated) switch
             {
-                (Result.OK, not null) response => Created(ConstructResourceUrl(response.Identifier!), valid),
+                (Result.OK, not null) response => Created(ConstructResourceUrl(response.Identifier!), validated),
                 _ => StatusCode(500) // probably only happens if the db is down, we needn't add it to docs
             };
         }
@@ -115,23 +115,23 @@ public class SecretController : ControllerBase
     [ProducesResponseType(400, Type = default!)]
     [ProducesResponseType(404, Type = default!)]
     public IActionResult Delete([FromRoute] UntrustedValue<string> identifier)
-        => HandleRequestWithIdentifier<DeleteRequest>(
+        => HandleRequestWithIdentifier(
             identifier,
-            request => store.Delete(request).Result switch
+            validated => store.Delete(validated) switch
             {
                 Result.OK => NoContent(),
                 _ => NotFound()
             });
 
-    private IActionResult HandleRequestWithIdentifier<T>(
-        UntrustedValue<string> identifier,
-        Func<T, IActionResult> handle) where T : Identifier
+    private IActionResult HandleRequestWithIdentifier(
+        UntrustedValue<string> input,
+        Func<Identifier, IActionResult> handle)
     {
         try
         {
-            var validatedId = idValidator.Validate(identifier);
-            var request = Activator.CreateInstance(typeof(T), validatedId) as T;
-            return handle(request ?? throw new InvalidOperationException());
+            var validatedValue = idValidator.Validate(input);
+            var identifier = new Identifier(validatedValue);
+            return handle(identifier ?? throw new InvalidOperationException());
         }
         catch (ValidationException)
         {
@@ -153,5 +153,5 @@ public class SecretController : ControllerBase
     }
 
     private string ConstructResourceUrl(Identifier identifier)
-        => Url?.Action(nameof(Get), new {identifier = identifier.Id}) ?? string.Empty;
+        => Url?.Action(nameof(Get), new {identifier = identifier.Value}) ?? string.Empty;
 }

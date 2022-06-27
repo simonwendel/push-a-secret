@@ -26,7 +26,7 @@ internal class MongoDbRepository : IRepository
         
         var document = new BsonDocument
         {
-            {"id", id.Id},
+            {"id", id.Value},
             {"algorithm", secret.Algorithm},
             {"iv", secret.IV},
             {"ciphertext", secret.Ciphertext}
@@ -74,5 +74,5 @@ internal class MongoDbRepository : IRepository
     }
 
     private static FilterDefinition<BsonDocument> FilterId(Identifier id)
-        => Builders<BsonDocument>.Filter.Eq("id", id.Id);
+        => Builders<BsonDocument>.Filter.Eq("id", id.Value);
 }

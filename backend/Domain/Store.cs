@@ -11,32 +11,26 @@ internal class Store : IStore
         this.idGenerator = idGenerator;
     }
 
-    public PeekResponse Peek(PeekRequest request)
-    {
-        var result = repository.Peek(request);
-        return new PeekResponse(result);
-    }
+    public Result Peek(Identifier identifier) 
+        => repository.Peek(identifier);
 
-    public CreateResponse Create(CreateRequest request)
+    public IdentifierResult Create(Secret secret)
     {
-        var id = idGenerator.Generate();
-        return repository.Create(id, request) switch
+        var identifier = idGenerator.Generate();
+        return repository.Create(identifier, secret) switch
         {
-            Result.OK => new CreateResponse(Result.OK, id),
-            _ => new CreateResponse(Result.Err, null)
+            Result.OK => new IdentifierResult(Result.OK, identifier),
+            _ => new IdentifierResult(Result.Err, null)
         };
     }
 
-    public ReadResponse Read(ReadRequest request)
-        => repository.Read(request) switch
+    public SecretResult Read(Identifier identifier)
+        => repository.Read(identifier) switch
         {
-            (Result.OK, { } secret) => new ReadResponse(Result.OK, secret),
-            _ => new ReadResponse(Result.Err, null)
+            (Result.OK, { } secret) => new SecretResult(Result.OK, secret),
+            _ => new SecretResult(Result.Err, null)
         };
 
-    public DeleteResponse Delete(DeleteRequest request)
-    {
-        var result = repository.Delete(request);
-        return new DeleteResponse(result);
-    }
+    public Result Delete(Identifier identifier) 
+        => repository.Delete(identifier);
 }

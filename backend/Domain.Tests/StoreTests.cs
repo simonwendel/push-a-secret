@@ -17,74 +17,71 @@ public class StoreTests
     [Theory]
     [InlineAutoData(Result.OK)]
     [InlineAutoData(Result.Err)]
-    public void Peek_GivenRequest_PeeksAndReturnsResult(Result result, PeekRequest request)
+    public void Peek_GivenIdentifier_PeeksAndReturnsResult(Result result, Identifier identifier)
     {
-        repository.Setup(x => x.Peek(request)).Returns(result);
-        var expected = new PeekResponse(result);
-        sut.Peek(request).Should().Be(expected);
+        repository.Setup(x => x.Peek(identifier)).Returns(result);
+        sut.Peek(identifier).Should().Be(result);
         repository.VerifyAll();
     }
 
     [Theory, AutoData]
-    public void Create_WhenSecretCouldBeStored_StoresAndReturnsOKResult(
-        Identifier id,
-        CreateRequest request)
+    public void Create_WhenSecretCouldBeStored_StoresAndReturnsOKResult(Identifier identifier, Secret secret)
     {
-        idGenerator.Setup(x => x.Generate()).Returns(id);
-        repository.Setup(x => x.Create(id, request)).Returns(Result.OK);
+        idGenerator.Setup(x => x.Generate()).Returns(identifier);
+        repository.Setup(x => x.Create(identifier, secret)).Returns(Result.OK);
 
-        var expected = new CreateResponse(Result.OK, id);
-        sut.Create(request).Should().Be(expected);
+        var expected = new IdentifierResult(Result.OK, identifier);
+        sut.Create(secret).Should().Be(expected);
 
         idGenerator.VerifyAll();
         repository.VerifyAll();
     }
 
     [Theory, AutoData]
-    public void Create_WhenSecretCouldNotBeStored_ReturnsErrorResult(Identifier id, CreateRequest request)
+    public void Create_WhenSecretCouldNotBeStored_ReturnsErrorResult(Identifier id, Secret secret)
     {
         idGenerator.Setup(x => x.Generate()).Returns(id);
-        repository.Setup(x => x.Create(id, request)).Returns(Result.Err);
+        repository.Setup(x => x.Create(id, secret)).Returns(Result.Err);
 
-        var expected = new CreateResponse(Result.Err, null);
-        sut.Create(request).Should().Be(expected);
+        var expected = new IdentifierResult(Result.Err, null);
+        sut.Create(secret).Should().Be(expected);
 
         idGenerator.VerifyAll();
         repository.VerifyAll();
     }
 
     [Theory, AutoData]
-    public void Read_WhenSecretCouldBeRead_ReadsAndReturnsOKResult(Secret secret, ReadRequest request)
+    public void Read_WhenSecretCouldBeRead_ReadsAndReturnsOKResult(Secret secret, Identifier identifier)
     {
         var read = (Result.OK, secret);
-        repository.Setup(x => x.Read(request)).Returns(read);
+        repository.Setup(x => x.Read(identifier)).Returns(read);
 
-        var expected = new ReadResponse(Result.OK, secret);
-        sut.Read(request).Should().Be(expected);
+        var expected = new SecretResult(Result.OK, secret);
+        sut.Read(identifier).Should().Be(expected);
 
         repository.VerifyAll();
     }
 
     [Theory, AutoData]
-    public void Read_WhenSecretCouldNotBeRead_ReturnsErrorResult(ReadRequest request)
+    public void Read_WhenSecretCouldNotBeRead_ReturnsErrorResult(Identifier identifier)
     {
         (Result, Secret) read = (Result.Err, null)!;
-        repository.Setup(x => x.Read(request)).Returns(read);
+        repository.Setup(x => x.Read(identifier)).Returns(read);
 
-        var expected = new ReadResponse(Result.Err, null);
-        sut.Read(request).Should().Be(expected);
+        var expected = new SecretResult(Result.Err, null);
+        sut.Read(identifier).Should().Be(expected);
 
         repository.VerifyAll();
     }
 
     [Theory, AutoData]
-    public void Read_WhenReadFromRepositoryFails_DiscardsSecretEvenIfReturned(Secret secret, ReadRequest request)
+    public void Read_WhenReadFromRepositoryFails_DiscardsSecretEvenIfReturned(Secret secret, Identifier identifier)
     {
         var read = (Result.Err, secret);
-        repository.Setup(x => x.Read(request)).Returns(read);
+        repository.Setup(x => x.Read(identifier)).Returns(read);
 
-        var expected = new ReadResponse(Result.Err, null);
-        sut.Read(request).Should().Be(expected);
+        var expected = new SecretResult(Result.Err, null);
+        sut.Read(identifier).Should().Be(expected);
 
         repository.VerifyAll();
     }
@@ -92,11 +89,10 @@ public class StoreTests
     [Theory]
     [InlineAutoData(Result.OK)]
     [InlineAutoData(Result.Err)]
-    public void Delete_GivenRequest_RespondsWithRepositoryResults(Result result, DeleteRequest request)
+    public void Delete_GivenIdentifier_RespondsWithRepositoryResults(Result result, Identifier identifier)
     {
-        repository.Setup(x => x.Delete(request)).Returns(result);
-        var expected = new DeleteResponse(result);
-        sut.Delete(request).Should().Be(expected);
+        repository.Setup(x => x.Delete(identifier)).Returns(result);
+        sut.Delete(identifier).Should().Be(result);
         repository.VerifyAll();
     }
 }

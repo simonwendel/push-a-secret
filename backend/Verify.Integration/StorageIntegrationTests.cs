@@ -14,7 +14,7 @@ public class StorageIntegrationTests
         => InitializeTestFixture();
 
     [Theory, AutoData]
-    public void RoundTrip_WhenRunAgainstMongoDb_WorksAsIntended(CreateRequest original)
+    public void RoundTrip_WhenRunAgainstMongoDb_WorksAsIntended(Secret original)
         => store
             .InsertNewSecret(original)
             .VerifyItExists()
@@ -32,7 +32,7 @@ public class StorageIntegrationTests
 
 internal static class StorageIntegrationTestExtensions
 {
-    public static (IStore, Identifier, CreateRequest) InsertNewSecret(this IStore? store, CreateRequest original)
+    public static (IStore, Identifier, Secret) InsertNewSecret(this IStore? store, Secret original)
     {
         var (result, identifier) = store!.Create(original);
         result.Should().Be(Result.OK);
@@ -40,37 +40,34 @@ internal static class StorageIntegrationTestExtensions
         return (store, identifier, original)!;
     }
 
-    public static (IStore, Identifier, CreateRequest) VerifyItExists(this (IStore, Identifier, CreateRequest) chain)
+    public static (IStore, Identifier, Secret) VerifyItExists(this (IStore, Identifier, Secret) chain)
     {
         var (store, identifier, _) = chain;
-        var okPeek = new PeekResponse(Result.OK);
-        store.Peek(new PeekRequest(identifier.Id)).Should().Be(okPeek);
+        store.Peek(identifier).Should().Be(Result.OK);
         return chain;
     }
 
-    public static (IStore, Identifier, CreateRequest) VerifyItCanBeRead(
-        this (IStore, Identifier, CreateRequest) chain)
+    public static (IStore, Identifier, Secret) VerifyItCanBeRead(
+        this (IStore, Identifier, Secret) chain)
     {
         var (store, identifier, original) = chain;
-        var (result, secret) = store.Read(new ReadRequest(identifier.Id));
+        var (result, secret) = store.Read(identifier);
         result.Should().Be(Result.OK);
         secret.Should().NotBeNull();
         secret.Should().BeEquivalentTo(original);
         return chain;
     }
 
-    public static (IStore, Identifier, CreateRequest) DeleteTheSecret(this (IStore, Identifier, CreateRequest) chain)
+    public static (IStore, Identifier, Secret) DeleteTheSecret(this (IStore, Identifier, Secret) chain)
     {
         var (store, identifier, _) = chain;
-        var okDelete = new DeleteResponse(Result.OK);
-        store.Delete(new DeleteRequest(identifier.Id)).Should().Be(okDelete);
+        store.Delete(identifier).Should().Be(Result.OK);
         return chain;
     }
 
-    public static void VerifyItIsGone(this (IStore, Identifier, CreateRequest) chain)
+    public static void VerifyItIsGone(this (IStore, Identifier, Secret) chain)
     {
         var (store, identifier, _) = chain;
-        var errorPeek = new PeekResponse(Result.Err);
-        store.Peek(new PeekRequest(identifier.Id)).Should().Be(errorPeek);
+        store.Peek(identifier).Should().Be(Result.Err);
     }
 }
