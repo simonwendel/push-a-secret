@@ -21,7 +21,7 @@ public class SecretController : ControllerBase
     }
 
     /// <summary>
-    /// Check for secret in persistant storage.
+    /// Check for secret in persistent storage.
     /// </summary>
     /// <remarks>
     /// The response will never have a body. Issuing a HTTP GET request instead using the same
@@ -46,7 +46,7 @@ public class SecretController : ControllerBase
             });
 
     /// <summary>
-    /// Retrieve a secret from persistant storage.
+    /// Retrieve a secret from persistent storage.
     /// </summary>
     /// <param name="identifier">String identifier of the secret to look up.</param>
     /// <returns>Secret object, if successful, otherwise empty response.</returns>
@@ -74,7 +74,7 @@ public class SecretController : ControllerBase
             });
 
     /// <summary>
-    /// Save a secret to persistant storage.
+    /// Save a secret to persistent storage.
     /// </summary>
     /// <param name="secret">A secret to persist to storage.</param>
     /// <returns>Secret object, if successful, otherwise empty response.</returns>
@@ -103,7 +103,7 @@ public class SecretController : ControllerBase
     }
 
     /// <summary>
-    /// Remove a secret from persistant storage.
+    /// Remove a secret from persistent storage.
     /// </summary>
     /// <param name="identifier">String identifier of the secret to delete.</param>
     /// <returns>Empty response.</returns>
