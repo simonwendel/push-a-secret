@@ -1,6 +1,8 @@
-﻿namespace Validation;
+﻿using Domain;
+
+namespace Validation;
 
 public interface IIdentifierValidator
 {
-    string Validate(UntrustedValue<string> untrustedValue);
+    Identifier Validate(UntrustedValue<Identifier> untrustedValue);
 }

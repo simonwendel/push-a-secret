@@ -36,7 +36,7 @@ public class SecretController : ControllerBase
     [ProducesResponseType(200, Type = default!)]
     [ProducesResponseType(400, Type = default!)]
     [ProducesResponseType(404, Type = default!)]
-    public IActionResult Head([FromRoute] UntrustedValue<string> identifier)
+    public IActionResult Head([FromRoute] UntrustedValue<Identifier> identifier)
         => HandleRequestWithIdentifier(
             identifier,
             validated => store.Peek(validated) switch
@@ -60,7 +60,7 @@ public class SecretController : ControllerBase
     [ProducesResponseType(404, Type = default!)]
     [ProducesResponseType(409, Type = default!)]
     [Produces(MediaTypeNames.Application.Json)]
-    public IActionResult Get([FromRoute] UntrustedValue<string> identifier)
+    public IActionResult Get([FromRoute] UntrustedValue<Identifier> identifier)
         => HandleRequestWithIdentifier(
             identifier,
             validated => store.Read(validated) switch
@@ -114,7 +114,7 @@ public class SecretController : ControllerBase
     [ProducesResponseType(204, Type = default!)]
     [ProducesResponseType(400, Type = default!)]
     [ProducesResponseType(404, Type = default!)]
-    public IActionResult Delete([FromRoute] UntrustedValue<string> identifier)
+    public IActionResult Delete([FromRoute] UntrustedValue<Identifier> identifier)
         => HandleRequestWithIdentifier(
             identifier,
             validated => store.Delete(validated) switch
@@ -124,14 +124,13 @@ public class SecretController : ControllerBase
             });
 
     private IActionResult HandleRequestWithIdentifier(
-        UntrustedValue<string> input,
+        UntrustedValue<Identifier> input,
         Func<Identifier, IActionResult> handle)
     {
         try
         {
-            var validatedValue = idValidator.Validate(input);
-            var identifier = new Identifier(validatedValue);
-            return handle(identifier ?? throw new InvalidOperationException());
+            var validated = idValidator.Validate(input);
+            return handle(validated);
         }
         catch (ValidationException)
         {

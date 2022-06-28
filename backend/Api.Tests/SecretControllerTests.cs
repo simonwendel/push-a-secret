@@ -30,17 +30,17 @@ public class SecretControllerTests
 
     [Fact]
     public void Head_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
-        => EnsureForValidIdentifier((untrusted, identifierValue) =>
+        => EnsureForValidIdentifier((untrusted, identifier) =>
         {
-            store.Setup(x => x.Peek(new Identifier(identifierValue))).Returns(Result.Err);
+            store.Setup(x => x.Peek(identifier)).Returns(Result.Err);
             sut.Head(untrusted).Should().BeAssignableTo<NotFoundResult>();
         });
 
     [Fact]
     public void Head_WhenIdentifierDoesHaveDocument_ReturnsOK()
-        => EnsureForValidIdentifier((untrusted, identifierValue) =>
+        => EnsureForValidIdentifier((untrusted, identifier) =>
         {
-            store.Setup(x => x.Peek(new Identifier(identifierValue))).Returns(Result.OK);
+            store.Setup(x => x.Peek(identifier)).Returns(Result.OK);
             sut.Head(untrusted).Should().BeAssignableTo<OkResult>();
         });
 
@@ -50,17 +50,17 @@ public class SecretControllerTests
 
     [Fact]
     public void Get_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
-        => EnsureForValidIdentifier((untrusted, identifierValue) =>
+        => EnsureForValidIdentifier((untrusted, identifier) =>
         {
-            store.Setup(x => x.Read(new Identifier(identifierValue))).Returns(new SecretResult(Result.Err, null));
+            store.Setup(x => x.Read(identifier)).Returns(new SecretResult(Result.Err, null));
             sut.Get(untrusted).Should().BeAssignableTo<NotFoundResult>();
         });
 
     [Theory, AutoData]
     public void Get_WhenIdentifierDoesHaveValidDocument_ReturnsOK(Secret secret)
-        => EnsureForValidIdentifier((untrusted, identifierValue) =>
+        => EnsureForValidIdentifier((untrusted, identifier) =>
         {
-            store.Setup(x => x.Read(new Identifier(identifierValue))).Returns(new SecretResult(Result.OK, secret));
+            store.Setup(x => x.Read(identifier)).Returns(new SecretResult(Result.OK, secret));
             secretValidator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Returns(secret);
             sut.Get(untrusted).Should().BeAssignableTo<OkObjectResult>().Which.Value.Should().Be(secret);
         });
@@ -68,9 +68,9 @@ public class SecretControllerTests
 
     [Theory, AutoData]
     public void Get_WhenIdentifierHasInvalidDocument_ReturnsConflict(Secret secret)
-        => EnsureForValidIdentifier((untrusted, identifierValue) =>
+        => EnsureForValidIdentifier((untrusted, identifier) =>
         {
-            store.Setup(x => x.Read(new Identifier(identifierValue))).Returns(new SecretResult(Result.OK, secret));
+            store.Setup(x => x.Read(identifier)).Returns(new SecretResult(Result.OK, secret));
             secretValidator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Throws<ValidationException>();
             sut.Get(untrusted).Should().BeAssignableTo<ConflictResult>();
         });
@@ -110,42 +110,42 @@ public class SecretControllerTests
 
     [Fact]
     public void Delete_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
-        => EnsureForValidIdentifier((untrusted, identifierValue) =>
+        => EnsureForValidIdentifier((untrusted, identifier) =>
         {
-            store.Setup(x => x.Delete(new Identifier(identifierValue))).Returns(Result.Err);
+            store.Setup(x => x.Delete(identifier)).Returns(Result.Err);
             sut.Delete(untrusted).Should().BeAssignableTo<NotFoundResult>();
         });
 
     [Fact]
     public void Delete_WhenIdentifierDoesHaveDocument_ReturnsNoContent()
-        => EnsureForValidIdentifier((untrusted, identifierValue) =>
+        => EnsureForValidIdentifier((untrusted, identifier) =>
         {
-            store.Setup(x => x.Delete(new Identifier(identifierValue))).Returns(Result.OK);
+            store.Setup(x => x.Delete(identifier)).Returns(Result.OK);
             sut.Delete(untrusted).Should().BeAssignableTo<NoContentResult>();
         });
 
-    private void EnsureBadRequestGivenInvalidIdentifier(Func<UntrustedValue<string>, IActionResult> action)
+    private void EnsureBadRequestGivenInvalidIdentifier(Func<UntrustedValue<Identifier>, IActionResult> action)
     {
-        var untrusted = fixture.Create<UntrustedValue<string>>();
+        var untrusted = fixture.Create<UntrustedValue<Identifier>>();
         idValidator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
         action(untrusted).Should().BeAssignableTo<BadRequestResult>();
         idValidator.VerifyAll();
         store.VerifyNoOtherCalls();
     }
 
-    private void EnsureForValidIdentifier(Action<UntrustedValue<string>, string> func)
+    private void EnsureForValidIdentifier(Action<UntrustedValue<Identifier>, Identifier> func)
     {
-        var (untrusted, identifierValue) = ConstructCorrectlyValidatingId();
-        func(untrusted, identifierValue);
+        var (untrusted, identifier) = ConstructCorrectlyValidatingId();
+        func(untrusted, identifier);
         VerifyAll();
     }
 
-    private (UntrustedValue<string>, string) ConstructCorrectlyValidatingId()
+    private (UntrustedValue<Identifier>, Identifier) ConstructCorrectlyValidatingId()
     {
-        var untrusted = fixture.Create<UntrustedValue<string>>();
-        var identifierValue = fixture.Create<string>();
-        idValidator.Setup(x => x.Validate(untrusted)).Returns(identifierValue);
-        return (untrusted, identifierValue);
+        var untrusted = fixture.Create<UntrustedValue<Identifier>>();
+        var identifier = fixture.Create<Identifier>();
+        idValidator.Setup(x => x.Validate(untrusted)).Returns(identifier);
+        return (untrusted, identifier);
     }
 
     private void VerifyAll()
