@@ -9,7 +9,7 @@ public class Base64StatisticsTests
     [Theory]
     [InlineAutoData(-1)]
     [InlineAutoData(int.MaxValue / 2 + 1)]
-    public void GetInflation_GivenInvalidNumberOfBytes_ThrowsException(int numberOfBytes)
+    internal void GetInflation_GivenInvalidNumberOfBytes_ThrowsException(int numberOfBytes)
     {
         Action getting = () => Base64Statistics.GetInflationFor(numberOfBytes);
         getting.Should().Throw<ArgumentOutOfRangeException>();
@@ -26,6 +26,6 @@ public class Base64StatisticsTests
     [InlineAutoData(19, 28)]
     [InlineAutoData(160, 216)]
     [InlineAutoData(int.MaxValue / 2, 1431655764)]
-    public void GetInflation_GivenNumberOfBytes_CalculatesInflation(int numberOfBytes, int expected)
+    internal void GetInflation_GivenNumberOfBytes_CalculatesInflation(int numberOfBytes, int expected)
         => Base64Statistics.GetInflationFor(numberOfBytes).Should().Be(expected);
 }

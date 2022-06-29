@@ -9,7 +9,7 @@ namespace Validation.Tests.General;
 public class ObjectPropertyValidatorTests
 {
     [Fact]
-    public void Validate_GivenInvalidProperty_ThrowsException()
+    internal void Validate_GivenInvalidProperty_ThrowsException()
     {
         var (sut, obj) = CreateSystemFor(string.Empty);
         Action validating = () => sut.Validate(new UntrustedValue<TestValue>(obj));
@@ -17,7 +17,7 @@ public class ObjectPropertyValidatorTests
     }
 
     [Theory, AutoData]
-    public void Validate_GivenValidProperty_ReturnsValue(string value)
+    internal void Validate_GivenValidProperty_ReturnsValue(string value)
     {
         var (sut, obj) = CreateSystemFor(value);
         sut.Validate(new UntrustedValue<TestValue>(obj)).TestProperty.Should().Be(value);

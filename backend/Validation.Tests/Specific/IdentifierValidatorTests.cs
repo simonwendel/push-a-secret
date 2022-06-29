@@ -13,7 +13,7 @@ public class IdentifierValidatorTests
     [InlineAutoData("")]
     [InlineAutoData(" ")]
     [InlineAutoData(null)]
-    public void Validate_GivenNullOrEmptyString_ThrowsException(string value, IdentifierValidator sut)
+    internal void Validate_GivenNullOrEmptyString_ThrowsException(string value, IdentifierValidator sut)
         => EnsureForUntrustedIdentifier(value, untrusted =>
         {
             Action validating = () => sut.Validate(untrusted);
@@ -22,7 +22,7 @@ public class IdentifierValidatorTests
 
     [Theory]
     [InlineAutoData("1y2p0ij32e8e70")]
-    public void Validate_GivenTooLongString_ThrowsException(string value, IdentifierValidator sut)
+    internal void Validate_GivenTooLongString_ThrowsException(string value, IdentifierValidator sut)
         => EnsureForUntrustedIdentifier(value, untrusted =>
         {
             Action validating = () => sut.Validate(untrusted);
@@ -31,7 +31,7 @@ public class IdentifierValidatorTests
 
     [Theory]
     [InlineAutoData(";")]
-    public void Validate_GivenStringWithNonAsciiLettersOrDigits_ThrowsException(string value, IdentifierValidator sut)
+    internal void Validate_GivenStringWithNonAsciiLettersOrDigits_ThrowsException(string value, IdentifierValidator sut)
         => EnsureForUntrustedIdentifier(value, untrusted =>
         {
             Action validating = () => sut.Validate(untrusted);
@@ -42,7 +42,7 @@ public class IdentifierValidatorTests
     [InlineAutoData("0")]
     [InlineAutoData("1337")]
     [InlineAutoData("1y2p0ij32e8e7")]
-    public void Validate_GivenStringWithContents_ReturnsValue(string value, IdentifierValidator sut)
+    internal void Validate_GivenStringWithContents_ReturnsValue(string value, IdentifierValidator sut)
         => EnsureForUntrustedIdentifier(
             value, untrusted =>
             {

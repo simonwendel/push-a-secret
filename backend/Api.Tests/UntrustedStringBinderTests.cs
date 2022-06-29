@@ -15,21 +15,21 @@ public class UntrustedStringBinderTests
     private UntrustedValue<string>? model;
 
     [Theory, AutoData]
-    public void BindModelAsync_GivenNullBindingContext_ThrowsException(UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenNullBindingContext_ThrowsException(UntrustedStringBinder sut)
     {
         Action binding = () => sut.BindModelAsync(null);
         binding.Should().Throw<ArgumentNullException>();
     }
 
     [Theory, AutoData]
-    public void BindModelAsync_GivenNoValue_ReturnsCompletedTask(UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenNoValue_ReturnsCompletedTask(UntrustedStringBinder sut)
     {
         var (context, _) = CreateBinderContext(ValueProviderResult.None);
         sut.BindModelAsync(context).IsCompleted.Should().BeTrue();
     }
 
     [Theory, AutoData]
-    public void BindModelAsync_GivenNoValue_DoesNotChangeState(UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenNoValue_DoesNotChangeState(UntrustedStringBinder sut)
     {
         var (context, state) = CreateBinderContext(ValueProviderResult.None);
         sut.BindModelAsync(context);
@@ -37,14 +37,14 @@ public class UntrustedStringBinderTests
     }
 
     [Theory, AutoData]
-    public void BindModelAsync_GivenValue_ReturnsCompletedTask(ValueProviderResult result, UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenValue_ReturnsCompletedTask(ValueProviderResult result, UntrustedStringBinder sut)
     {
         var (context, _) = CreateBinderContext(result);
         sut.BindModelAsync(context).IsCompleted.Should().BeTrue();
     }
 
     [Theory, AutoData]
-    public void BindModelAsync_GivenValue_ChangesState(ValueProviderResult result, UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenValue_ChangesState(ValueProviderResult result, UntrustedStringBinder sut)
     {
         var (context, state) = CreateBinderContext(result);
         sut.BindModelAsync(context);
@@ -52,7 +52,7 @@ public class UntrustedStringBinderTests
     }
 
     [Theory, AutoData]
-    public void BindModelAsync_GivenValue_ReturnsModel(string actualValue, UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenValue_ReturnsModel(string actualValue, UntrustedStringBinder sut)
     {
         var result = new ValueProviderResult(actualValue);
         var (context, _) = CreateBinderContext(result);

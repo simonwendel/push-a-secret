@@ -12,28 +12,28 @@ namespace Api.Tests;
 public class UntrustedValueBinderProviderTests
 {
     [Theory, AutoData]
-    public void GetBinder_GivenNullContext_ThrowsException(UntrustedValueBinderProvider sut)
+    internal void GetBinder_GivenNullContext_ThrowsException(UntrustedValueBinderProvider sut)
     {
         Action getting = () => sut.GetBinder(null);
         getting.Should().Throw<ArgumentNullException>();
     }
 
     [Theory, AutoData]
-    public void GetBinder_GivenWrongType_ReturnsNull(Type type, UntrustedValueBinderProvider sut)
+    internal void GetBinder_GivenWrongType_ReturnsNull(Type type, UntrustedValueBinderProvider sut)
     {
         var context = GetProviderContextFor(type);
         sut.GetBinder(context).Should().BeNull();
     }
 
     [Theory, AutoData]
-    public void GetBinder_GivenUntrustedValueOfString_ReturnsBinder(UntrustedValueBinderProvider sut)
+    internal void GetBinder_GivenUntrustedValueOfString_ReturnsBinder(UntrustedValueBinderProvider sut)
     {
         var context = GetProviderContextFor(typeof(UntrustedValue<string>));
         sut.GetBinder(context).Should().BeOfType<UntrustedStringBinder>();
     }
 
     [Theory, AutoData]
-    public void GetBinder_GivenUntrustedValueOfSecret_ReturnsBinder(UntrustedValueBinderProvider sut)
+    internal void GetBinder_GivenUntrustedValueOfSecret_ReturnsBinder(UntrustedValueBinderProvider sut)
     {
         var context = GetProviderContextFor(typeof(UntrustedValue<Secret>));
         sut.GetBinder(context).Should().BeOfType<UntrustedSecretBinder>();

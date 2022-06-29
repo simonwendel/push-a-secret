@@ -13,7 +13,7 @@ public class Base64AlphabetValidatorTests
     [InlineAutoData("\\")]
     [InlineAutoData("å")]
     [InlineAutoData(";")]
-    public void Validate_GivenIllegalCharacter_ThrowsException(string untrusted, Base64AlphabetValidator sut)
+    internal void Validate_GivenIllegalCharacter_ThrowsException(string untrusted, Base64AlphabetValidator sut)
     {
         Action validating = () => sut.Validate(new UntrustedValue<string>(untrusted));
         validating.Should().Throw<ValidationException>();
@@ -24,7 +24,7 @@ public class Base64AlphabetValidatorTests
     [InlineAutoData("+/=")]
     [InlineAutoData("+/===")]
     [InlineAutoData("+/====")]
-    public void Validate_GivenInvalidPadding_ThrowsException(string value, Base64AlphabetValidator sut)
+    internal void Validate_GivenInvalidPadding_ThrowsException(string value, Base64AlphabetValidator sut)
     {
         Action validating = () => sut.Validate(new UntrustedValue<string>(value));
         validating.Should().Throw<ValidationException>();
@@ -37,7 +37,7 @@ public class Base64AlphabetValidatorTests
     [InlineAutoData("+/==")]
     [InlineAutoData(" ")]
     [InlineAutoData("")]
-    public void Validate_GivenValidString_ReturnsValue(string value, Base64AlphabetValidator sut)
+    internal void Validate_GivenValidString_ReturnsValue(string value, Base64AlphabetValidator sut)
     {
         var untrusted = new UntrustedValue<string>(value);
         sut.Validate(untrusted).Should().Be(value);

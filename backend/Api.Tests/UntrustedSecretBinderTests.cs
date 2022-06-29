@@ -30,14 +30,14 @@ public class UntrustedSecretBinderTests
     }
 
     [Theory, AutoData]
-    public void BindModelAsync_GivenNullBindingContext_ThrowsException(UntrustedSecretBinder sut)
+    internal void BindModelAsync_GivenNullBindingContext_ThrowsException(UntrustedSecretBinder sut)
     {
         Func<Task> binding = async () => await sut.BindModelAsync(null);
         binding.Should().ThrowAsync<ArgumentNullException>();
     }
 
     [Theory, AutoData]
-    public async Task BindModelAsync_WhenBodyIsEmpty_DoesNotSetModel(UntrustedSecretBinder sut)
+    internal async Task BindModelAsync_WhenBodyIsEmpty_DoesNotSetModel(UntrustedSecretBinder sut)
     {
         var context = CreateBinderContextWithValue(string.Empty);
         await sut.BindModelAsync(context);
@@ -46,7 +46,7 @@ public class UntrustedSecretBinderTests
     }
     
     [Theory, AutoData]
-    public void BindModelAsync_WhenBodyIsNotSerializedSecret_DoesNotSetModel(object value, UntrustedSecretBinder sut)
+    internal void BindModelAsync_WhenBodyIsNotSerializedSecret_DoesNotSetModel(object value, UntrustedSecretBinder sut)
     {
         var context = CreateBinderContextWithValue(JsonSerializer.Serialize(value));
         sut.BindModelAsync(context).IsCompleted.Should().BeTrue();
@@ -54,7 +54,7 @@ public class UntrustedSecretBinderTests
     }
     
     [Theory, AutoData]
-    public async Task BindModelAsync_WhenBodyIsSerializedSecret_ReturnsModel(UntrustedSecretBinder sut)
+    internal async Task BindModelAsync_WhenBodyIsSerializedSecret_ReturnsModel(UntrustedSecretBinder sut)
     {
         var context = CreateBinderContextWithValue(expectedSerialized);
         await sut.BindModelAsync(context);

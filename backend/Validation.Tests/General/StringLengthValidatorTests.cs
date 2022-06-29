@@ -12,7 +12,7 @@ public class StringLengthValidatorTests
     [InlineData(10, 9)]
     [InlineData(1, 0)]
     [InlineData(2, 1)]
-    public void Ctor_GivenInvalidBounds_ThrowsArgumentException(int minLength, int maxLength)
+    internal void Ctor_GivenInvalidBounds_ThrowsArgumentException(int minLength, int maxLength)
     {
         Action constructing = () => new StringLengthValidator(minLength, maxLength);
         constructing.Should().Throw<ArgumentException>();
@@ -21,7 +21,7 @@ public class StringLengthValidatorTests
     [Theory]
     [InlineData(-1, 9)]
     [InlineData(0, -1)]
-    public void Ctor_GivenNegativeBounds_ThrowsArgumentOutOfRangeException(int minLength, int maxLength)
+    internal void Ctor_GivenNegativeBounds_ThrowsArgumentOutOfRangeException(int minLength, int maxLength)
     {
         Action constructing = () => new StringLengthValidator(minLength, maxLength);
         constructing.Should().Throw<ArgumentOutOfRangeException>();
@@ -31,7 +31,7 @@ public class StringLengthValidatorTests
     [InlineAutoData("", 1)]
     [InlineAutoData("_1_", 4)]
     [InlineAutoData("abc", 6)]
-    public void Validate_GivenTooShortString_ThrowsException(string value, int minLength)
+    internal void Validate_GivenTooShortString_ThrowsException(string value, int minLength)
     {
         var untrusted = new UntrustedValue<string>(value);
         var sut = new StringLengthValidator(minLength);
@@ -43,7 +43,7 @@ public class StringLengthValidatorTests
     [InlineAutoData("12", 0, 1)]
     [InlineAutoData("_1_2_3_4", 2, 4)]
     [InlineAutoData("abcdefghijklmnopqrstuvxyz", 6, 20)]
-    public void Validate_GivenTooLongString_ThrowsException(string value, int minLength, int maxLength)
+    internal void Validate_GivenTooLongString_ThrowsException(string value, int minLength, int maxLength)
     {
         var untrusted = new UntrustedValue<string>(value);
         var sut = new StringLengthValidator(minLength, maxLength);
@@ -52,7 +52,7 @@ public class StringLengthValidatorTests
     }
 
     [Fact]
-    public void Validate_GivenStringWithinLengthRange_ReturnsValue()
+    internal void Validate_GivenStringWithinLengthRange_ReturnsValue()
     {
         var expected = "12345";
         var untrusted = new UntrustedValue<string>(expected);

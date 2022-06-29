@@ -8,7 +8,7 @@ namespace Validation.Tests.General;
 public class ValidatorPipelineBaseTests
 {
     [Fact]
-    public void Ctor_GivenNoValidators_ThrowsException()
+    internal void Ctor_GivenNoValidators_ThrowsException()
     {
         var constructing = () =>
         {

@@ -14,7 +14,7 @@ public class StorageIntegrationTests
         => InitializeTestFixture();
 
     [Theory, AutoData]
-    public void RoundTrip_WhenRunAgainstMongoDb_WorksAsIntended(Secret original)
+    internal void RoundTrip_WhenRunAgainstMongoDb_WorksAsIntended(Secret original)
         => store
             .InsertNewSecret(original)
             .VerifyItExists()

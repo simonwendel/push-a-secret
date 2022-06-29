@@ -26,11 +26,11 @@ public class SecretControllerTests
             secretValidator.Object);
 
     [Fact]
-    public void Head_GivenInvalidIdentifierString_ReturnsBadRequest()
+    internal void Head_GivenInvalidIdentifierString_ReturnsBadRequest()
         => EnsureBadRequestGivenInvalidIdentifier(sut.Head);
 
     [Fact]
-    public void Head_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
+    internal void Head_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
         => EnsureForValidIdentifier((untrusted, identifier) =>
         {
             store.Setup(x => x.Peek(identifier)).Returns(Result.Err);
@@ -38,7 +38,7 @@ public class SecretControllerTests
         });
 
     [Fact]
-    public void Head_WhenIdentifierDoesHaveDocument_ReturnsOK()
+    internal void Head_WhenIdentifierDoesHaveDocument_ReturnsOK()
         => EnsureForValidIdentifier((untrusted, identifier) =>
         {
             store.Setup(x => x.Peek(identifier)).Returns(Result.OK);
@@ -46,11 +46,11 @@ public class SecretControllerTests
         });
 
     [Fact]
-    public void Get_GivenInvalidIdentifierString_ReturnsBadRequest()
+    internal void Get_GivenInvalidIdentifierString_ReturnsBadRequest()
         => EnsureBadRequestGivenInvalidIdentifier(sut.Get);
 
     [Fact]
-    public void Get_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
+    internal void Get_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
         => EnsureForValidIdentifier((untrusted, identifier) =>
         {
             store.Setup(x => x.Read(identifier)).Returns(new SecretResult(Result.Err, null));
@@ -58,7 +58,7 @@ public class SecretControllerTests
         });
 
     [Theory, AutoData]
-    public void Get_WhenIdentifierDoesHaveValidDocument_ReturnsOK(Secret secret)
+    internal void Get_WhenIdentifierDoesHaveValidDocument_ReturnsOK(Secret secret)
         => EnsureForValidIdentifier((untrusted, identifier) =>
         {
             store.Setup(x => x.Read(identifier)).Returns(new SecretResult(Result.OK, secret));
@@ -68,7 +68,7 @@ public class SecretControllerTests
 
 
     [Theory, AutoData]
-    public void Get_WhenIdentifierHasInvalidDocument_ReturnsConflict(Secret secret)
+    internal void Get_WhenIdentifierHasInvalidDocument_ReturnsConflict(Secret secret)
         => EnsureForValidIdentifier((untrusted, identifier) =>
         {
             store.Setup(x => x.Read(identifier)).Returns(new SecretResult(Result.OK, secret));
@@ -77,7 +77,7 @@ public class SecretControllerTests
         });
 
     [Theory, AutoData]
-    public void Post_GivenInvalidSecret_ReturnsBadRequest(UntrustedValue<Secret> untrusted)
+    internal void Post_GivenInvalidSecret_ReturnsBadRequest(UntrustedValue<Secret> untrusted)
     {
         secretValidator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
         sut.Post(untrusted).Should().BeAssignableTo<BadRequestResult>();
@@ -85,7 +85,7 @@ public class SecretControllerTests
     }
 
     [Theory, AutoData]
-    public void Post_WhenSecretCannotBeSaved_Returns500(UntrustedValue<Secret> untrusted, Secret secret)
+    internal void Post_WhenSecretCannotBeSaved_Returns500(UntrustedValue<Secret> untrusted, Secret secret)
     {
         secretValidator.Setup(x => x.Validate(untrusted)).Returns(secret);
         store.Setup(x => x.Create(secret)).Returns(new IdentifierResult(Result.Err, null));
@@ -94,7 +94,7 @@ public class SecretControllerTests
     }
 
     [Theory, AutoData]
-    public void Post_WhenSecretWasSaved_ReturnsIdentifier(
+    internal void Post_WhenSecretWasSaved_ReturnsIdentifier(
         UntrustedValue<Secret> untrusted,
         Secret secret,
         Identifier identifier)
@@ -106,11 +106,11 @@ public class SecretControllerTests
     }
 
     [Fact]
-    public void Delete_GivenInvalidIdentifierString_ReturnsBadRequest()
+    internal void Delete_GivenInvalidIdentifierString_ReturnsBadRequest()
         => EnsureBadRequestGivenInvalidIdentifier(sut.Delete);
 
     [Fact]
-    public void Delete_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
+    internal void Delete_WhenIdentifierDoesNotHaveDocument_ReturnsNotFound()
         => EnsureForValidIdentifier((untrusted, identifier) =>
         {
             store.Setup(x => x.Delete(identifier)).Returns(Result.Err);
@@ -118,7 +118,7 @@ public class SecretControllerTests
         });
 
     [Fact]
-    public void Delete_WhenIdentifierDoesHaveDocument_ReturnsNoContent()
+    internal void Delete_WhenIdentifierDoesHaveDocument_ReturnsNoContent()
         => EnsureForValidIdentifier((untrusted, identifier) =>
         {
             store.Setup(x => x.Delete(identifier)).Returns(Result.OK);

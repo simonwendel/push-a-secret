@@ -12,7 +12,7 @@ public class NonEmptyStringLengthValidatorTests
     [InlineData("123456")]
     [InlineData("    ")]
     [InlineData("\t\t\t\t")]
-    public void Validate_GivenNonValidString_ThrowsException(string value)
+    internal void Validate_GivenNonValidString_ThrowsException(string value)
     {
         var untrusted = new UntrustedValue<string>(value);
         var sut = new NonEmptyStringLengthValidator(3, 5);
@@ -25,7 +25,7 @@ public class NonEmptyStringLengthValidatorTests
     [InlineData("12345")]
     [InlineData("   1")]
     [InlineData("\t\ta\t")]
-    public void Validate_GivenValidString_ReturnsValue(string value)
+    internal void Validate_GivenValidString_ReturnsValue(string value)
     {
         var untrusted = new UntrustedValue<string>(value);
         var sut = new NonEmptyStringLengthValidator(3, 5);
