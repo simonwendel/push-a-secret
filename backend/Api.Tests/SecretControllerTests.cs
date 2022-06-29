@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Validation;
+using Validation.Specific;
 using Xunit;
 
 namespace Api.Tests;

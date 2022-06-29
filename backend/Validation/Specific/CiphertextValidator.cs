@@ -1,7 +1,7 @@
 ﻿using Domain;
 using Validation.General;
 
-namespace Validation;
+namespace Validation.Specific;
 
 public class CiphertextValidator : ValidatorPipelineBase<string>, ICiphertextValidator
 {

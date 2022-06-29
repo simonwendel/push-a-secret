@@ -2,6 +2,7 @@
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Validation;
+using Validation.Specific;
 
 namespace Api;
 

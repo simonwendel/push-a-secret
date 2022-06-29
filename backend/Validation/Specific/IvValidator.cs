@@ -1,7 +1,7 @@
 ﻿using Domain;
 using Validation.General;
 
-namespace Validation;
+namespace Validation.Specific;
 
 public class IvValidator : ValidatorPipelineBase<string>, IIvValidator
 {

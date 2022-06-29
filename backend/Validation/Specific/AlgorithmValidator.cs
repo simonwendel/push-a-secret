@@ -1,6 +1,6 @@
 ﻿using Validation.General;
 
-namespace Validation;
+namespace Validation.Specific;
 
 public class AlgorithmValidator : ValidatorPipelineBase<string>, IAlgorithmValidator
 {

@@ -2,9 +2,10 @@ using System;
 using AutoFixture.Xunit2;
 using Domain;
 using FluentAssertions;
+using Validation.Specific;
 using Xunit;
 
-namespace Validation.Tests;
+namespace Validation.Tests.Specific;
 
 public class IdentifierValidatorTests
 {

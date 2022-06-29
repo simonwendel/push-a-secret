@@ -1,6 +1,6 @@
 ﻿using Domain;
 
-namespace Validation;
+namespace Validation.Specific;
 
 public interface ISecretValidator
 {

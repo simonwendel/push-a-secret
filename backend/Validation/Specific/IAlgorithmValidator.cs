@@ -1,4 +1,4 @@
-﻿namespace Validation;
+﻿namespace Validation.Specific;
 
 public interface IAlgorithmValidator
 {

@@ -2,9 +2,10 @@
 using System.Linq;
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using Validation.Specific;
 using Xunit;
 
-namespace Validation.Tests;
+namespace Validation.Tests.Specific;
 
 public class CiphertextValidatorTests
 {
