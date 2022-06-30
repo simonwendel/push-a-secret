@@ -65,7 +65,7 @@ public class StoreTests
     [Theory, AutoData]
     internal void Read_WhenSecretCouldNotBeRead_ReturnsErrorResult(Identifier identifier)
     {
-        (Result, Secret) read = (Result.Err, null)!;
+        (Result, Secret?) read = (Result.Err, null);
         repository.Setup(x => x.Read(identifier)).Returns(read);
 
         var expected = new SecretResult(Result.Err, null);

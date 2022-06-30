@@ -1,3 +1,4 @@
+using System;
 using AutoFixture.Xunit2;
 using Domain;
 using FluentAssertions;
@@ -8,10 +9,10 @@ namespace Verify.Integration;
 [Collection("Verify.Integration")]
 public class StorageIntegrationTests
 {
-    private Store? store;
+    private readonly Store store;
 
     public StorageIntegrationTests() 
-        => InitializeTestFixture();
+        => store = InitializeTestFixture();
 
     [Theory, AutoData]
     internal void RoundTrip_WhenRunAgainstMongoDb_WorksAsIntended(Secret original)
@@ -22,22 +23,27 @@ public class StorageIntegrationTests
             .DeleteTheSecret()
             .VerifyItIsGone();
     
-    private void InitializeTestFixture()
+    private Store InitializeTestFixture()
     {
         var idGenerator = IdGenerator.Default;
         var repository = TestMongoDbRepositoryFactory.Build(cleanAll: true);
-        store = new Store(repository, idGenerator);
+        return new Store(repository, idGenerator);
     }
 }
 
 internal static class StorageIntegrationTestExtensions
 {
-    public static (IStore, Identifier, Secret) InsertNewSecret(this IStore? store, Secret original)
+    public static (IStore, Identifier, Secret) InsertNewSecret(this IStore store, Secret original)
     {
-        var (result, identifier) = store!.Create(original);
+        var (result, identifier) = store.Create(original);
+        if (identifier is null)
+        {
+            throw new InvalidOperationException();
+        }
+        
         result.Should().Be(Result.OK);
         identifier.Should().NotBeNull();
-        return (store, identifier, original)!;
+        return (store, identifier, original);
     }
 
     public static (IStore, Identifier, Secret) VerifyItExists(this (IStore, Identifier, Secret) chain)

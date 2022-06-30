@@ -64,7 +64,7 @@ public class SecretController : ControllerBase
             validated => store.Read(validated) switch
             {
                 (Result.OK, not null) response
-                    => IsValidSecret(response.Secret!)
+                    => IsValidSecret(response.Secret)
                         ? Ok(response.Secret)
                         : Conflict(),
 
@@ -90,7 +90,7 @@ public class SecretController : ControllerBase
             {
                 (Result.OK, not null) response
                     => Created(
-                        ConstructResourceUrl(response.Identifier!),
+                        ConstructResourceUrl(response.Identifier),
                         validated),
 
                 _ => StatusCode(500) // probably only happens if the db is down, we needn't add it to docs
@@ -118,12 +118,12 @@ public class SecretController : ControllerBase
             });
 
     private IActionResult HandleRequestWith<T>(UntrustedValue<T> input, Func<T, IActionResult> handle) where T : notnull
-        => TryValidate(input, out var validated)
-            ? handle(validated!)
+        => TryValidate(input, out var validated) && validated is not null
+            ? handle(validated)
             : BadRequest();
 
-    private bool IsValidSecret(Secret secret)
-        => TryValidate(new UntrustedValue<Secret>(secret), out _);
+    private bool IsValidSecret(Secret? secret)
+        => secret is not null && TryValidate(new UntrustedValue<Secret>(secret), out _);
 
     private bool TryValidate<T>(UntrustedValue<T> input, out T? validated) where T : notnull
     {
@@ -140,6 +140,10 @@ public class SecretController : ControllerBase
         }
     }
 
-    private string ConstructResourceUrl(Identifier identifier)
-        => Url?.Action(nameof(Get), new {identifier = identifier.Value}) ?? string.Empty;
+    private string ConstructResourceUrl(Identifier? identifier)
+        => identifier switch
+        {
+            (not null) => Url?.Action(nameof(Get), new {identifier = identifier.Value}),
+            _ => null
+        } ?? string.Empty;
 }
