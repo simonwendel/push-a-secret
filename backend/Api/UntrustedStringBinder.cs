@@ -7,7 +7,7 @@ public class UntrustedStringBinder : IModelBinder
 {
     public Task BindModelAsync(ModelBindingContext? context)
     {
-        if (context == null)
+        if (context is null)
         {
             throw new ArgumentNullException(nameof(context));
         }
