@@ -2,7 +2,7 @@
 
 namespace Validation.Specific;
 
-public class AlgorithmValidator : ValidatorPipelineBase<string>, IAlgorithmValidator
+internal class AlgorithmValidator : ValidatorPipelineBase<string>, IAlgorithmValidator
 {
     public AlgorithmValidator()
         : base(new NonEmptyStringValidator())

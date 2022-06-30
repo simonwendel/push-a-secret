@@ -2,7 +2,7 @@
 
 namespace Validation.General;
 
-public class ObjectPropertyValidator<T, TProp> : ValidatorBase<T>
+internal class ObjectPropertyValidator<T, TProp> : ValidatorBase<T>
     where T : notnull
     where TProp : notnull
 {

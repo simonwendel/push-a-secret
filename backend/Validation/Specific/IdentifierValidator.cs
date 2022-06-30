@@ -3,7 +3,7 @@ using Validation.General;
 
 namespace Validation.Specific;
 
-public class IdentifierValidator : ValidatorPipelineBase<Identifier>, IIdentifierValidator
+internal class IdentifierValidator : ValidatorPipelineBase<Identifier>, IIdentifierValidator
 {
     public IdentifierValidator()
         : base(

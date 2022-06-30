@@ -1,8 +1,8 @@
 ﻿using Domain;
+using Validation.General;
 
 namespace Validation.Specific;
 
-public interface IIdentifierValidator
+internal interface IIdentifierValidator : IValidatorBase<Identifier>
 {
-    Identifier Validate(UntrustedValue<Identifier> untrustedValue);
 }

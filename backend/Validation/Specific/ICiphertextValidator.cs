@@ -1,6 +1,7 @@
-﻿namespace Validation.Specific;
+﻿using Validation.General;
 
-public interface ICiphertextValidator
+namespace Validation.Specific;
+
+internal interface ICiphertextValidator : IValidatorBase<string>
 {
-    string Validate(UntrustedValue<string> untrustedValue);
 }

@@ -1,8 +1,8 @@
 ﻿using Domain;
+using Validation.General;
 
 namespace Validation.Specific;
 
-public interface ISecretValidator
+internal interface ISecretValidator : IValidatorBase<Secret>
 {
-    Secret Validate(UntrustedValue<Secret> untrustedValue);
 }

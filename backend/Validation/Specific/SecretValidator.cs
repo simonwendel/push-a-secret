@@ -3,7 +3,7 @@ using Validation.General;
 
 namespace Validation.Specific;
 
-public class SecretValidator : ValidatorPipelineBase<Secret>, ISecretValidator
+internal class SecretValidator : ValidatorPipelineBase<Secret>, ISecretValidator
 {
     public SecretValidator()
         : base(

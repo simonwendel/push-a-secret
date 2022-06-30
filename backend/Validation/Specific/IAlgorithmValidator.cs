@@ -1,6 +1,7 @@
-﻿namespace Validation.Specific;
+﻿using Validation.General;
 
-public interface IAlgorithmValidator
+namespace Validation.Specific;
+
+internal interface IAlgorithmValidator : IValidatorBase<string>
 {
-    string Validate(UntrustedValue<string> untrustedValue);
 }

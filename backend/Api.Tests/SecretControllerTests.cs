@@ -6,7 +6,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Validation;
-using Validation.Specific;
 using Xunit;
 
 namespace Api.Tests;
@@ -14,16 +13,14 @@ namespace Api.Tests;
 public class SecretControllerTests
 {
     private readonly Fixture fixture = new();
-    private readonly Mock<IIdentifierValidator> idValidator = new();
-    private readonly Mock<ISecretValidator> secretValidator = new();
     private readonly Mock<IStore> store = new();
+    private readonly Mock<IValidator> validator = new();
     private readonly SecretController sut;
 
     public SecretControllerTests()
         => sut = new SecretController(
             store.Object,
-            idValidator.Object,
-            secretValidator.Object);
+            validator.Object);
 
     [Fact]
     internal void Head_GivenInvalidIdentifierString_ReturnsBadRequest()
@@ -62,7 +59,7 @@ public class SecretControllerTests
         => EnsureForValidIdentifier((untrusted, identifier) =>
         {
             store.Setup(x => x.Read(identifier)).Returns(new SecretResult(Result.OK, secret));
-            secretValidator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Returns(secret);
+            validator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Returns(secret);
             sut.Get(untrusted).Should().BeAssignableTo<OkObjectResult>().Which.Value.Should().Be(secret);
         });
 
@@ -72,14 +69,14 @@ public class SecretControllerTests
         => EnsureForValidIdentifier((untrusted, identifier) =>
         {
             store.Setup(x => x.Read(identifier)).Returns(new SecretResult(Result.OK, secret));
-            secretValidator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Throws<ValidationException>();
+            validator.Setup(x => x.Validate(new UntrustedValue<Secret>(secret))).Throws<ValidationException>();
             sut.Get(untrusted).Should().BeAssignableTo<ConflictResult>();
         });
 
     [Theory, AutoData]
     internal void Post_GivenInvalidSecret_ReturnsBadRequest(UntrustedValue<Secret> untrusted)
     {
-        secretValidator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
+        validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
         sut.Post(untrusted).Should().BeAssignableTo<BadRequestResult>();
         store.VerifyNoOtherCalls();
     }
@@ -87,7 +84,7 @@ public class SecretControllerTests
     [Theory, AutoData]
     internal void Post_WhenSecretCannotBeSaved_Returns500(UntrustedValue<Secret> untrusted, Secret secret)
     {
-        secretValidator.Setup(x => x.Validate(untrusted)).Returns(secret);
+        validator.Setup(x => x.Validate(untrusted)).Returns(secret);
         store.Setup(x => x.Create(secret)).Returns(new IdentifierResult(Result.Err, null));
         sut.Post(untrusted).Should().BeAssignableTo<StatusCodeResult>().Which.StatusCode.Should().Be(500);
         VerifyAll();
@@ -99,7 +96,7 @@ public class SecretControllerTests
         Secret secret,
         Identifier identifier)
     {
-        secretValidator.Setup(x => x.Validate(untrusted)).Returns(secret);
+        validator.Setup(x => x.Validate(untrusted)).Returns(secret);
         store.Setup(x => x.Create(secret)).Returns(new IdentifierResult(Result.OK, identifier));
         sut.Post(untrusted).Should().BeAssignableTo<CreatedResult>().Which.Value.Should().Be(secret);
         VerifyAll();
@@ -128,9 +125,9 @@ public class SecretControllerTests
     private void EnsureBadRequestGivenInvalidIdentifier(Func<UntrustedValue<Identifier>, IActionResult> action)
     {
         var untrusted = fixture.Create<UntrustedValue<Identifier>>();
-        idValidator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
+        validator.Setup(x => x.Validate(untrusted)).Throws<ValidationException>();
         action(untrusted).Should().BeAssignableTo<BadRequestResult>();
-        idValidator.VerifyAll();
+        validator.VerifyAll();
         store.VerifyNoOtherCalls();
     }
 
@@ -145,13 +142,13 @@ public class SecretControllerTests
     {
         var untrusted = fixture.Create<UntrustedValue<Identifier>>();
         var identifier = fixture.Create<Identifier>();
-        idValidator.Setup(x => x.Validate(untrusted)).Returns(identifier);
+        validator.Setup(x => x.Validate(untrusted)).Returns(identifier);
         return (untrusted, identifier);
     }
 
     private void VerifyAll()
     {
-        idValidator.VerifyAll();
+        validator.VerifyAll();
         store.VerifyAll();
     }
 }

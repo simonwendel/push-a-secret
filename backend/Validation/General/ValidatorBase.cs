@@ -1,6 +1,6 @@
 ﻿namespace Validation.General;
 
-public abstract class ValidatorBase<T> where T : notnull
+internal abstract class ValidatorBase<T> : IValidatorBase<T> where T : notnull
 {
     public T Validate(UntrustedValue<T> untrustedValue)
         => Valid(untrustedValue.Value)

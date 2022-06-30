@@ -3,7 +3,7 @@ using Validation.General;
 
 namespace Validation.Specific;
 
-public class CiphertextValidator : ValidatorPipelineBase<string>, ICiphertextValidator
+internal class CiphertextValidator : ValidatorPipelineBase<string>, ICiphertextValidator
 {
     private const int MaxCleartextLength = 72;
     private const int MinCleartextLength = 1;

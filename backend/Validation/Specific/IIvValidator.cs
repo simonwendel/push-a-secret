@@ -1,6 +1,7 @@
-﻿namespace Validation.Specific;
+﻿using Validation.General;
 
-public interface IIvValidator
+namespace Validation.Specific;
+
+internal interface IIvValidator : IValidatorBase<string>
 {
-    string Validate(UntrustedValue<string> untrustedValue);
 }

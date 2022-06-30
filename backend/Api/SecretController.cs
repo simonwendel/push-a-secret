@@ -2,7 +2,6 @@
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Validation;
-using Validation.Specific;
 
 namespace Api;
 
@@ -10,15 +9,13 @@ namespace Api;
 [Route("[controller]")]
 public class SecretController : ControllerBase
 {
-    private readonly IIdentifierValidator idValidator;
-    private readonly ISecretValidator secretValidator;
+    private readonly IValidator validator;
     private readonly IStore store;
 
-    public SecretController(IStore store, IIdentifierValidator idValidator, ISecretValidator secretValidator)
+    public SecretController(IStore store, IValidator validator)
     {
         this.store = store;
-        this.idValidator = idValidator;
-        this.secretValidator = secretValidator;
+        this.validator = validator;
     }
 
     /// <summary>
@@ -90,7 +87,7 @@ public class SecretController : ControllerBase
     {
         try
         {
-            var validated = secretValidator.Validate(secret);
+            var validated = validator.Validate(secret);
             return store.Create(validated) switch
             {
                 (Result.OK, not null) response => Created(ConstructResourceUrl(response.Identifier!), validated),
@@ -130,7 +127,7 @@ public class SecretController : ControllerBase
     {
         try
         {
-            var validated = idValidator.Validate(input);
+            var validated = validator.Validate(input);
             return handle(validated);
         }
         catch (ValidationException)
@@ -143,7 +140,7 @@ public class SecretController : ControllerBase
     {
         try
         {
-            secretValidator.Validate(new UntrustedValue<Secret>(secret));
+            validator.Validate(new UntrustedValue<Secret>(secret));
             return true;
         }
         catch (ValidationException)
