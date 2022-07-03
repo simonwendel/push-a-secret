@@ -10,7 +10,7 @@ internal static class TestMongoDbRepositoryFactory
     private const string TestDatabaseName = "push-a-secret-tests";
     private const string TestCollectionName = "test-secrets";
 
-    public static MongoDbRepository Build(bool cleanAll = true)
+    public static MongoDbRepository Build(bool cleanAll = false)
     {
         var mongoClient = new MongoClient(ConnectionString);
         var database = mongoClient.GetDatabase(TestDatabaseName);
