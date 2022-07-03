@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoFixture;
 using AutoFixture.Xunit2;
+using Domain;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Moq;
@@ -9,27 +10,27 @@ using Xunit;
 
 namespace Api.Tests;
 
-public class UntrustedStringBinderTests
+public class UntrustedIdentifierBinderTests
 {
     private readonly Fixture fixture = new();
-    private UntrustedValue<string>? model;
+    private UntrustedValue<Identifier>? model;
 
     [Theory, AutoData]
-    internal void BindModelAsync_GivenNullBindingContext_ThrowsException(UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenNullBindingContext_ThrowsException(UntrustedIdentifierBinder sut)
     {
         Action binding = () => sut.BindModelAsync(null);
         binding.Should().Throw<ArgumentNullException>();
     }
 
     [Theory, AutoData]
-    internal void BindModelAsync_GivenNoValue_ReturnsCompletedTask(UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenNoValue_ReturnsCompletedTask(UntrustedIdentifierBinder sut)
     {
         var (context, _) = CreateBinderContext(ValueProviderResult.None);
         sut.BindModelAsync(context).IsCompleted.Should().BeTrue();
     }
 
     [Theory, AutoData]
-    internal void BindModelAsync_GivenNoValue_DoesNotChangeState(UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenNoValue_DoesNotChangeState(UntrustedIdentifierBinder sut)
     {
         var (context, state) = CreateBinderContext(ValueProviderResult.None);
         sut.BindModelAsync(context);
@@ -37,14 +38,14 @@ public class UntrustedStringBinderTests
     }
 
     [Theory, AutoData]
-    internal void BindModelAsync_GivenValue_ReturnsCompletedTask(ValueProviderResult result, UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenValue_ReturnsCompletedTask(ValueProviderResult result, UntrustedIdentifierBinder sut)
     {
         var (context, _) = CreateBinderContext(result);
         sut.BindModelAsync(context).IsCompleted.Should().BeTrue();
     }
 
     [Theory, AutoData]
-    internal void BindModelAsync_GivenValue_ChangesState(ValueProviderResult result, UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenValue_ChangesState(ValueProviderResult result, UntrustedIdentifierBinder sut)
     {
         var (context, state) = CreateBinderContext(result);
         sut.BindModelAsync(context);
@@ -52,15 +53,16 @@ public class UntrustedStringBinderTests
     }
 
     [Theory, AutoData]
-    internal void BindModelAsync_GivenValue_ReturnsModel(string actualValue, UntrustedStringBinder sut)
+    internal void BindModelAsync_GivenValue_ReturnsModel(string actualValue, UntrustedIdentifierBinder sut)
     {
         var result = new ValueProviderResult(actualValue);
         var (context, _) = CreateBinderContext(result);
+        var expected = new Identifier(actualValue);
 
         sut.BindModelAsync(context);
 
         model.Should().NotBeNull()
-            .And.Subject.Equals(actualValue).Should().BeTrue();
+            .And.Subject.Equals(expected).Should().BeTrue();
     }
 
     private (ModelBindingContext, ModelStateDictionary) CreateBinderContext(
@@ -82,7 +84,7 @@ public class UntrustedStringBinderTests
         context.Setup(x => x.ValueProvider).Returns(valueProvider);
         context.Setup(x => x.ModelState).Returns(state);
         context.SetupSet(x => x.Result = It.IsAny<ModelBindingResult>())
-            .Callback((ModelBindingResult x) => { model = x.Model as UntrustedValue<string>; });
+            .Callback((ModelBindingResult x) => { model = x.Model as UntrustedValue<Identifier>; });
 
         return (context.Object, state);
     }

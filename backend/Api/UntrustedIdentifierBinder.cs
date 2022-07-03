@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Domain;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Validation;
 
 namespace Api;
 
-public class UntrustedStringBinder : IModelBinder
+public class UntrustedIdentifierBinder : IModelBinder
 {
     public Task BindModelAsync(ModelBindingContext? context)
     {
@@ -26,7 +27,8 @@ public class UntrustedStringBinder : IModelBinder
             return Task.CompletedTask;
         }
 
-        var model = new UntrustedValue<string>(value);
+        var identifier = new Identifier(value);
+        var model = new UntrustedValue<Identifier>(identifier);
         context.Result = ModelBindingResult.Success(model);
         return Task.CompletedTask;
     }

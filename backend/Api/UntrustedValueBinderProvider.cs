@@ -13,9 +13,9 @@ public class UntrustedValueBinderProvider : IModelBinderProvider
             throw new ArgumentNullException(nameof(context));
         }
 
-        if (context.Metadata.ModelType == typeof(UntrustedValue<string>))
+        if (context.Metadata.ModelType == typeof(UntrustedValue<Identifier>))
         {
-            return new UntrustedStringBinder();
+            return new UntrustedIdentifierBinder();
         }
 
         if (context.Metadata.ModelType == typeof(UntrustedValue<Secret>))

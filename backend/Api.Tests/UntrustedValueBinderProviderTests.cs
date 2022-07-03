@@ -26,10 +26,10 @@ public class UntrustedValueBinderProviderTests
     }
 
     [Theory, AutoData]
-    internal void GetBinder_GivenUntrustedValueOfString_ReturnsBinder(UntrustedValueBinderProvider sut)
+    internal void GetBinder_GivenUntrustedValueOfIdentifier_ReturnsBinder(UntrustedValueBinderProvider sut)
     {
-        var context = GetProviderContextFor(typeof(UntrustedValue<string>));
-        sut.GetBinder(context).Should().BeOfType<UntrustedStringBinder>();
+        var context = GetProviderContextFor(typeof(UntrustedValue<Identifier>));
+        sut.GetBinder(context).Should().BeOfType<UntrustedIdentifierBinder>();
     }
 
     [Theory, AutoData]
