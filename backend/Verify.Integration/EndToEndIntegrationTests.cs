@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Domain;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
@@ -28,28 +29,27 @@ public class EndToEndIntegrationTests
     }
 
     [Fact]
-    internal void RoundTrip_WhenRunAgainstApi_WorksAsIntended()
-        => client
-            .InsertNewSecret(original)
-            .VerifyItExists()
-            .VerifyItCanBeRead()
-            .DeleteTheSecret()
-            .VerifyItIsGone();
-}
+    internal async Task RoundTrip_WhenRunAgainstApi_WorksAsIntended()
+        => await Task.Run(async () =>
+        {
+            var chain = await InsertNewSecret(client, original);
+            chain = await VerifyItExists(chain);
+            chain = await VerifyItCanBeRead(chain);
+            chain = await DeleteTheSecret(chain);
+            await VerifyItIsGone(chain);
+        });
 
-internal static class EndToEndIntegrationTestExtensions
-{
     private static readonly JsonSerializerOptions options = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public static (HttpClient, Uri, Secret) InsertNewSecret(
-        this HttpClient client, Secret original)
+    private static async Task<(HttpClient, Uri, Secret)> InsertNewSecret(
+        HttpClient client, Secret original)
     {
-        var response = client.PostAsJsonAsync("secret", original).Result;
+        var response = await client.PostAsJsonAsync("secret", original);
         response.StatusCode.Should().Be(HttpStatusCode.Created);
-        var secret = response.Content.ReadFromJsonAsync<Secret>(options).Result;
+        var secret = await response.Content.ReadFromJsonAsync<Secret>(options);
         secret.Should().BeEquivalentTo(original);
         if (response.Headers.Location is not null)
         {
@@ -60,39 +60,39 @@ internal static class EndToEndIntegrationTestExtensions
         throw new Xunit.Sdk.NotNullException();
     }
 
-    public static (HttpClient, Uri, Secret) VerifyItExists(
-        this (HttpClient, Uri, Secret) chain)
+    private static async Task<(HttpClient, Uri, Secret)> VerifyItExists(
+        (HttpClient, Uri, Secret) chain)
     {
         var (client, location, _) = chain;
-        var response = client.SendAsync(new HttpRequestMessage(HttpMethod.Head, location)).Result;
+        var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, location));
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         return chain;
     }
 
-    public static (HttpClient, Uri, Secret) VerifyItCanBeRead(
-        this (HttpClient, Uri, Secret) chain)
+    private static async Task<(HttpClient, Uri, Secret)> VerifyItCanBeRead(
+        (HttpClient, Uri, Secret) chain)
     {
         var (client, location, original) = chain;
-        var response = client.GetAsync(location).Result;
+        var response = await client.GetAsync(location);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var secret = response.Content.ReadFromJsonAsync<Secret>(options).Result;
+        var secret = await response.Content.ReadFromJsonAsync<Secret>(options);
         secret.Should().BeEquivalentTo(original);
         return chain;
     }
 
-    public static (HttpClient, Uri, Secret) DeleteTheSecret(
-        this (HttpClient, Uri, Secret) chain)
+    private static async Task<(HttpClient, Uri, Secret)> DeleteTheSecret(
+        (HttpClient, Uri, Secret) chain)
     {
         var (client, location, _) = chain;
-        var response = client.DeleteAsync(location).Result;
+        var response = await client.DeleteAsync(location);
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         return chain;
     }
 
-    public static void VerifyItIsGone(this (HttpClient, Uri, Secret) chain)
+    private static async Task VerifyItIsGone((HttpClient, Uri, Secret) chain)
     {
         var (client, location, _) = chain;
-        var response = client.GetAsync(location).Result;
+        var response = await client.GetAsync(location);
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
@@ -106,7 +106,9 @@ internal class ApiApplication : WebApplicationFactory<Program>
         {
             var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IRepository));
             if (descriptor != null)
+            {
                 services.Remove(descriptor);
+            }
 
             services.AddSingleton<IRepository>(_ => TestMongoDbRepositoryFactory.Build(cleanAll: true));
         });
