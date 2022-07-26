@@ -30,22 +30,23 @@ public class EndToEndIntegrationTests
 
     [Fact]
     internal async Task RoundTrip_WhenRunAgainstApi_WorksAsIntended()
-        => await Task.Run(async () =>
-        {
-            var chain = await InsertNewSecret(client, original);
-            chain = await VerifyItExists(chain);
-            chain = await VerifyItCanBeRead(chain);
-            chain = await DeleteTheSecret(chain);
-            await VerifyItIsGone(chain);
-        });
+        => await client
+            .InsertNewSecret(original)
+            .VerifyItExists()
+            .VerifyItCanBeRead()
+            .DeleteIt()
+            .VerifyItIsGone();
+}
 
+internal static class EndToEndIntegrationTestExtensions
+{
     private static readonly JsonSerializerOptions options = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    private static async Task<(HttpClient, Uri, Secret)> InsertNewSecret(
-        HttpClient client, Secret original)
+    public static async Task<(HttpClient, Uri, Secret)> InsertNewSecret(
+        this HttpClient client, Secret original)
     {
         var response = await client.PostAsJsonAsync("secret", original);
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -60,18 +61,20 @@ public class EndToEndIntegrationTests
         throw new Xunit.Sdk.NotNullException();
     }
 
-    private static async Task<(HttpClient, Uri, Secret)> VerifyItExists(
-        (HttpClient, Uri, Secret) chain)
+    public static async Task<(HttpClient, Uri, Secret)> VerifyItExists(
+        this Task<(HttpClient, Uri, Secret)> previous)
     {
+        var chain = await previous;
         var (client, location, _) = chain;
         var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, location));
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         return chain;
     }
 
-    private static async Task<(HttpClient, Uri, Secret)> VerifyItCanBeRead(
-        (HttpClient, Uri, Secret) chain)
+    public static async Task<(HttpClient, Uri, Secret)> VerifyItCanBeRead(
+        this Task<(HttpClient, Uri, Secret)> previous)
     {
+        var chain = await previous;
         var (client, location, original) = chain;
         var response = await client.GetAsync(location);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -80,18 +83,19 @@ public class EndToEndIntegrationTests
         return chain;
     }
 
-    private static async Task<(HttpClient, Uri, Secret)> DeleteTheSecret(
-        (HttpClient, Uri, Secret) chain)
+    public static async Task<(HttpClient, Uri, Secret)> DeleteIt(
+        this Task<(HttpClient, Uri, Secret)> previous)
     {
+        var chain = await previous;
         var (client, location, _) = chain;
         var response = await client.DeleteAsync(location);
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         return chain;
     }
 
-    private static async Task VerifyItIsGone((HttpClient, Uri, Secret) chain)
+    public static async Task VerifyItIsGone(this Task<(HttpClient, Uri, Secret)> previous)
     {
-        var (client, location, _) = chain;
+        var (client, location, _) = await previous;
         var response = await client.GetAsync(location);
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
