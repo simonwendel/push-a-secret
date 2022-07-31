@@ -12,7 +12,7 @@
 <body>
   <script type='module'>
 
-    import { wireCrypto, wireStorage } from '/ports.js'
+    import { wireCrypto } from '/ports.js'
 
     const app = Elm.Main.init({
       flags: {
@@ -21,7 +21,6 @@
     });
 
     wireCrypto(app);
-    wireStorage(app);
 
   </script>
 </body>
