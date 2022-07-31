@@ -1,77 +1,101 @@
-port module Storage exposing
-    ( PeekRequest
-    , PeekResponse
-    , DeleteRequest
-    , DeleteResponse
-    , ReadRequest
-    , ReadResponse
-    , CreateRequest
-    , CreateResponse
-    , receivePeek
-    , receiveDelete
-    , receiveRead
-    , receiveCreate
-    , requestPeek
-    , requestDelete
-    , requestRead
-    , requestCreate
+module Storage exposing
+    ( Secret
+    , check
+    , delete
+    , retrieve
+    , store
     )
 
+import Api
+import Dict
+import Http
+import Json.Decode as D exposing (Decoder)
+import Json.Encode as E
 
-type alias CreateRequest =
+
+type alias Secret =
     { algorithm : String
     , iv : String
     , ciphertext : String
     }
 
 
-type alias CreateResponse =
-    { id : String }
+api : Api.Client msg a
+api =
+    Api.client
 
 
-type alias ReadRequest =
-    CreateResponse
+check : String -> (Bool -> msg) -> Cmd msg
+check id msg =
+    api.head id
+        (\result ->
+            case result of
+                Ok _ ->
+                    msg True
+
+                Err _ ->
+                    msg False
+        )
 
 
-type alias ReadResponse =
-    CreateRequest
+retrieve : String -> (Maybe Secret -> msg) -> Cmd msg
+retrieve id msg =
+    api.get id
+        decoder
+        (\result ->
+            case result of
+                Ok ( secret, _ ) ->
+                    msg (Just secret)
+
+                Err _ ->
+                    msg Nothing
+        )
 
 
-type alias DeleteRequest =
-    { id : String }
+store : Secret -> (Maybe String -> msg) -> Cmd msg
+store secret msg =
+    api.post (encode secret)
+        decoder
+        (\result ->
+            case result of
+                Ok ( _, headers ) ->
+                    case Dict.get "location" headers of
+                        Just location ->
+                            msg <| Just <| String.replace "/secret/" "" location
+
+                        Nothing ->
+                            msg Nothing
+
+                Err _ ->
+                    msg Nothing
+        )
 
 
-type alias DeleteResponse =
-    { success : Bool }
+delete : String -> (Bool -> msg) -> Cmd msg
+delete id msg =
+    api.delete id
+        (\result ->
+            case result of
+                Ok _ ->
+                    msg True
+
+                Err _ ->
+                    msg False
+        )
 
 
-type alias PeekRequest =
-    CreateResponse
+decoder : Decoder Secret
+decoder =
+    D.map3 Secret
+        (D.field "algorithm" D.string)
+        (D.field "iv" D.string)
+        (D.field "ciphertext" D.string)
 
 
-type alias PeekResponse =
-    { exists : Bool }
-
-
-port requestCreate : CreateRequest -> Cmd msg
-
-
-port receiveCreate : (CreateResponse -> msg) -> Sub msg
-
-
-port requestRead : ReadRequest -> Cmd msg
-
-
-port receiveRead : (ReadResponse -> msg) -> Sub msg
-
-
-port requestDelete : DeleteRequest -> Cmd msg
-
-
-port receiveDelete : (DeleteResponse -> msg) -> Sub msg
-
-
-port requestPeek : PeekRequest -> Cmd msg
-
-
-port receivePeek : (PeekResponse -> msg) -> Sub msg
+encode : Secret -> E.Value
+encode secret =
+    E.object
+        [ ( "algorithm", E.string secret.algorithm )
+        , ( "iv", E.string secret.iv )
+        , ( "ciphertext", E.string secret.ciphertext )
+        ]

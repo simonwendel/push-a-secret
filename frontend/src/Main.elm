@@ -59,9 +59,6 @@ subscriptions model =
         View viewModel ->
             View.subscriptions viewModel |> Sub.map GotViewMsg
 
-        Delete deleteModel ->
-            Delete.subscriptions deleteModel |> Sub.map GotDeleteMsg
-
         _ ->
             Sub.none
 

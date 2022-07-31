@@ -29,25 +29,32 @@ type alias Model =
 
 
 type Msg
-    = ToggleVisibility
-    | UpdateCleartext String
-    | RequestEncryption
-    | ReceivedKey Crypto.Key
-    | ReceivedEncryption Crypto.EncryptionResponse
-    | StoredEncrypted Storage.CreateResponse
+    = Toggle
+    | UpdateText String
+    | Encrypt
+    | GeneratedKey Crypto.Key
+    | Encrypted Crypto.EncryptionResponse
+    | Stored (Maybe String)
 
 
 init : String -> ( Model, Cmd Msg )
 init base_url =
-    ( { base_url = base_url, visible = False, cleartext = "", id = Nothing, key = Nothing, error_message = Nothing }, Crypto.requestKey () )
+    ( { base_url = base_url
+      , visible = False
+      , cleartext = ""
+      , id = Nothing
+      , key = Nothing
+      , error_message = Nothing
+      }
+    , Crypto.requestKey ()
+    )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ Crypto.receiveKey ReceivedKey
-        , Crypto.receiveEncryption ReceivedEncryption
-        , Storage.receiveCreate StoredEncrypted
+        [ Crypto.receiveKey GeneratedKey
+        , Crypto.receiveEncryption Encrypted
         ]
 
 
@@ -87,7 +94,7 @@ view { id, visible, base_url, key, error_message } =
                     [ label []
                         [ text "Secret: "
                         , input
-                            [ onInput UpdateCleartext
+                            [ onInput UpdateText
                             , autofocus True
                             , required True
                             , minlength secretConstraints.minLength
@@ -100,8 +107,8 @@ view { id, visible, base_url, key, error_message } =
                             ]
                             []
                         ]
-                    , button [ onClick ToggleVisibility, class "neutral" ] [ text "👁" ]
-                    , button [ onClick RequestEncryption, class "ok" ] [ text "✔" ]
+                    , button [ onClick Toggle, class "neutral" ] [ text "👁" ]
+                    , button [ onClick Encrypt, class "ok" ] [ text "✔" ]
                     ]
                 ]
                     ++ (case error_message of
@@ -119,13 +126,13 @@ view { id, visible, base_url, key, error_message } =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ToggleVisibility ->
+        Toggle ->
             ( { model | visible = not model.visible }, Cmd.none )
 
-        UpdateCleartext newValue ->
+        UpdateText newValue ->
             ( { model | cleartext = newValue }, Cmd.none )
 
-        RequestEncryption ->
+        Encrypt ->
             case model.key of
                 Just key ->
                     case validateSecret model.cleartext of
@@ -138,16 +145,23 @@ update msg model =
                 Nothing ->
                     ( model, Cmd.none )
 
-        ReceivedKey key ->
+        GeneratedKey key ->
             ( { model | key = Just key }, Cmd.none )
 
-        ReceivedEncryption encrypted ->
+        Encrypted encrypted ->
             case model.key of
                 Just keyValue ->
-                    ( model, Storage.requestCreate { iv = encrypted.iv, ciphertext = encrypted.ciphertext, algorithm = keyValue.algorithm } )
+                    ( model
+                    , Storage.store
+                        { iv = encrypted.iv
+                        , ciphertext = encrypted.ciphertext
+                        , algorithm = keyValue.algorithm
+                        }
+                        Stored
+                    )
 
                 Nothing ->
                     ( model, Cmd.none )
 
-        StoredEncrypted { id } ->
-            ( { model | id = Just id }, Cmd.none )
+        Stored id ->
+            ( { model | id = id }, Cmd.none )

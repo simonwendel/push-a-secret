@@ -20,27 +20,26 @@ type alias Model =
     { id : String
     , key : String
     , firstLoad : Bool
-    , lookup : Maybe Storage.ReadResponse
+    , lookup : Maybe Storage.Secret
     , cleartext : Maybe String
     , base_url : String
     }
 
 
 type Msg
-    = ReadEncrypted Storage.ReadResponse
-    | DecryptedSecret Crypto.DecryptionResponse
+    = Read (Maybe Storage.Secret)
+    | Decrypted Crypto.DecryptionResponse
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch
-        [ Storage.receiveRead ReadEncrypted, Crypto.receiveDecryption DecryptedSecret ]
+    Crypto.receiveDecryption Decrypted
 
 
 init : String -> String -> String -> ( Model, Cmd Msg )
 init id key base_url =
     ( { id = id, key = key, lookup = Nothing, cleartext = Nothing, base_url = base_url, firstLoad = True }
-    , Storage.requestRead { id = id }
+    , Storage.retrieve id Read
     )
 
 
@@ -73,17 +72,22 @@ view model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ReadEncrypted lookup ->
-            ( { model | lookup = Just lookup, firstLoad = False }
-            , Crypto.requestDecryption
-                { key =
-                    { key = model.key
-                    , algorithm = lookup.algorithm
-                    }
-                , iv = lookup.iv
-                , ciphertext = lookup.ciphertext
-                }
+        Read secret ->
+            ( { model | lookup = secret, firstLoad = False }
+            , case secret of
+                Just value ->
+                    Crypto.requestDecryption
+                        { key =
+                            { key = model.key
+                            , algorithm = value.algorithm
+                            }
+                        , iv = value.iv
+                        , ciphertext = value.ciphertext
+                        }
+
+                Nothing ->
+                    Cmd.none
             )
 
-        DecryptedSecret { cleartext } ->
+        Decrypted { cleartext } ->
             ( { model | cleartext = Just cleartext }, Cmd.none )

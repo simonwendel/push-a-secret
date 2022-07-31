@@ -2,7 +2,6 @@ module Page.Delete exposing
     ( Model
     , Msg
     , init
-    , subscriptions
     , update
     , view
     )
@@ -28,23 +27,15 @@ type alias Model =
 type Msg
     = DoDelete
     | DontDelete
-    | PeekedEncrypted Storage.PeekResponse
-    | DeletedEncrypted Storage.DeleteResponse
+    | Checked Bool
+    | Deleted Bool
 
 
 init : String -> ( Model, Cmd Msg )
 init id =
     ( { id = id, pleaseDelete = Nothing, exists = Nothing, deleted = False, firstLoad = True }
-    , Storage.requestPeek { id = id }
+    , Storage.check id Checked
     )
-
-
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.batch
-        [ Storage.receivePeek PeekedEncrypted
-        , Storage.receiveDelete DeletedEncrypted
-        ]
 
 
 view : Model -> Html Msg
@@ -99,14 +90,14 @@ update msg model =
     case msg of
         DoDelete ->
             ( { model | pleaseDelete = Just True }
-            , Storage.requestDelete { id = model.id }
+            , Storage.delete model.id Deleted
             )
 
         DontDelete ->
             ( { model | pleaseDelete = Just False }, Cmd.none )
 
-        PeekedEncrypted { exists } ->
+        Checked exists ->
             ( { model | exists = Just exists, firstLoad = False }, Cmd.none )
 
-        DeletedEncrypted { success } ->
+        Deleted success ->
             ( { model | deleted = success }, Cmd.none )
