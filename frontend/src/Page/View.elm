@@ -39,7 +39,13 @@ subscriptions _ =
 
 init : String -> String -> String -> ( Model, Cmd Msg )
 init id key base_url =
-    ( { id = id, key = key, lookup = Nothing, cleartext = Nothing, base_url = base_url, firstLoad = True }
+    ( { id = id
+      , key = key
+      , lookup = Nothing
+      , cleartext = Nothing
+      , base_url = base_url
+      , firstLoad = True
+      }
     , Storage.retrieve id Read
     )
 
@@ -47,13 +53,13 @@ init id key base_url =
 view : Model -> Html Msg
 view model =
     case model.cleartext of
-        Just cleartextValue ->
+        Just value ->
             let
                 link =
                     crossOrigin model.base_url [ "d", model.id ] []
             in
             section [ class "content" ]
-                [ h1 [] [ cleartextValue |> text ]
+                [ h1 [] [ value |> text ]
                 , p []
                     [ text "Use the following link to delete this secret:"
                     , br [] []
@@ -62,7 +68,7 @@ view model =
                     ]
                 ]
 
-        _ ->
+        Nothing ->
             if model.firstLoad then
                 Loading.view
 

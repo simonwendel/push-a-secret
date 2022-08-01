@@ -33,7 +33,12 @@ type Msg
 
 init : String -> ( Model, Cmd Msg )
 init id =
-    ( { id = id, pleaseDelete = Nothing, exists = Nothing, deleted = False, firstLoad = True }
+    ( { id = id
+      , pleaseDelete = Nothing
+      , exists = Nothing
+      , deleted = False
+      , firstLoad = True
+      }
     , Storage.check id Checked
     )
 
@@ -96,8 +101,8 @@ update msg model =
         DontDelete ->
             ( { model | pleaseDelete = Just False }, Cmd.none )
 
-        Checked exists ->
-            ( { model | exists = Just exists, firstLoad = False }, Cmd.none )
+        Checked results ->
+            ( { model | exists = Just results, firstLoad = False }, Cmd.none )
 
-        Deleted success ->
-            ( { model | deleted = success }, Cmd.none )
+        Deleted results ->
+            ( { model | deleted = results }, Cmd.none )

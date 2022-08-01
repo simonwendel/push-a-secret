@@ -9,10 +9,10 @@ secretConstraints =
 
 
 validateSecret : String -> Result String String
-validateSecret string =
+validateSecret secret =
     let
         length =
-            String.length string
+            String.length secret
     in
     if length < secretConstraints.minLength then
         Err "Secret is too short."
@@ -21,4 +21,4 @@ validateSecret string =
         Err "Secret is too long."
 
     else
-        Ok string
+        Ok secret
