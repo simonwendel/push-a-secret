@@ -12,6 +12,7 @@ import Html exposing (Html, a, br, h1, p, section, text)
 import Html.Attributes exposing (class, href)
 import Page.Loading as Loading
 import Page.NotFound as NotFound
+import Secret exposing (Secret)
 import Storage
 import Url.Builder exposing (crossOrigin)
 
@@ -20,14 +21,14 @@ type alias Model =
     { id : String
     , key : String
     , firstLoad : Bool
-    , lookup : Maybe Storage.Secret
+    , lookup : Maybe Secret
     , cleartext : Maybe String
     , base_url : String
     }
 
 
 type Msg
-    = Read (Maybe Storage.Secret)
+    = Read (Maybe Secret)
     | Decrypted Crypto.DecryptionResponse
 
 

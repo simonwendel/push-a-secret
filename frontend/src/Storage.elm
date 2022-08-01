@@ -1,6 +1,5 @@
 module Storage exposing
-    ( Secret
-    , check
+    ( check
     , delete
     , retrieve
     , store
@@ -8,16 +7,7 @@ module Storage exposing
 
 import Api
 import Dict
-import Http
-import Json.Decode as D exposing (Decoder)
-import Json.Encode as E
-
-
-type alias Secret =
-    { algorithm : String
-    , iv : String
-    , ciphertext : String
-    }
+import Secret exposing (Secret)
 
 
 api : Api.Client msg a
@@ -41,7 +31,7 @@ check id msg =
 retrieve : String -> (Maybe Secret -> msg) -> Cmd msg
 retrieve id msg =
     api.get id
-        decoder
+        Secret.decoder
         (\result ->
             case result of
                 Ok ( secret, _ ) ->
@@ -54,8 +44,8 @@ retrieve id msg =
 
 store : Secret -> (Maybe String -> msg) -> Cmd msg
 store secret msg =
-    api.post (encode secret)
-        decoder
+    api.post (Secret.encode secret)
+        Secret.decoder
         (\result ->
             case result of
                 Ok ( _, headers ) ->
@@ -82,20 +72,3 @@ delete id msg =
                 Err _ ->
                     msg False
         )
-
-
-decoder : Decoder Secret
-decoder =
-    D.map3 Secret
-        (D.field "algorithm" D.string)
-        (D.field "iv" D.string)
-        (D.field "ciphertext" D.string)
-
-
-encode : Secret -> E.Value
-encode secret =
-    E.object
-        [ ( "algorithm", E.string secret.algorithm )
-        , ( "iv", E.string secret.iv )
-        , ( "ciphertext", E.string secret.ciphertext )
-        ]
