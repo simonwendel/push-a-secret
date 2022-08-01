@@ -11,22 +11,18 @@ type alias Headers =
 
 
 type alias RequestExpectEmpty msg =
-    String -> (Result Http.Error ( (), Headers ) -> msg) -> Cmd msg
+    (Result Http.Error ( (), Headers ) -> msg) -> Cmd msg
 
 
 type alias RequestExpectJson msg a =
-    String -> Decoder a -> (Result Http.Error ( a, Headers ) -> msg) -> Cmd msg
-
-
-type alias RequestWithJsonExpectJson msg a =
-    E.Value -> Decoder a -> (Result Http.Error ( a, Headers ) -> msg) -> Cmd msg
+    Decoder a -> (Result Http.Error ( a, Headers ) -> msg) -> Cmd msg
 
 
 type alias Client msg a =
-    { head : RequestExpectEmpty msg
-    , get : RequestExpectJson msg a
-    , post : RequestWithJsonExpectJson msg a
-    , delete : RequestExpectEmpty msg
+    { head : String -> RequestExpectEmpty msg
+    , get : String -> RequestExpectJson msg a
+    , post : E.Value -> RequestExpectJson msg a
+    , delete : String -> RequestExpectEmpty msg
     }
 
 
@@ -48,7 +44,7 @@ buildClient baseUrl =
     }
 
 
-headRequest : RequestExpectEmpty msg
+headRequest : String -> RequestExpectEmpty msg
 headRequest url msg =
     makeRequest
         { url = url
@@ -58,7 +54,7 @@ headRequest url msg =
         }
 
 
-getRequest : RequestExpectJson msg a
+getRequest : String -> RequestExpectJson msg a
 getRequest url decoder msg =
     Http.get
         { url = url
@@ -66,7 +62,7 @@ getRequest url decoder msg =
         }
 
 
-postRequest : String -> RequestWithJsonExpectJson msg a
+postRequest : String -> E.Value -> RequestExpectJson msg a
 postRequest url value decoder msg =
     Http.post
         { url = url
@@ -75,7 +71,7 @@ postRequest url value decoder msg =
         }
 
 
-deleteRequest : RequestExpectEmpty msg
+deleteRequest : String -> RequestExpectEmpty msg
 deleteRequest url msg =
     makeRequest
         { url = url
