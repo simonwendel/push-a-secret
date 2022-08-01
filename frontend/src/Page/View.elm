@@ -12,6 +12,7 @@ import Html exposing (Html, a, br, h1, p, section, text)
 import Html.Attributes exposing (class, href)
 import Page.Loading as Loading
 import Page.NotFound as NotFound
+import Route
 import Secret exposing (Secret)
 import Storage
 import Url.Builder exposing (crossOrigin)
@@ -56,7 +57,7 @@ view model =
         Just value ->
             let
                 link =
-                    crossOrigin model.base_url [ "d", model.id ] []
+                    crossOrigin model.base_url [ Route.delete_path, model.id ] []
             in
             section [ class "content" ]
                 [ h1 [] [ value |> text ]

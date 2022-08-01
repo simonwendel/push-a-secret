@@ -12,6 +12,7 @@ import Html exposing (Html, a, button, em, h1, input, label, p, span, strong, te
 import Html.Attributes exposing (autofocus, class, href, maxlength, minlength, required, type_)
 import Html.Events exposing (onClick, onInput)
 import Render exposing (renderContent, renderRow)
+import Route
 import Storage
 import String exposing (fromInt)
 import Url.Builder exposing (crossOrigin)
@@ -64,7 +65,7 @@ view { id, visible, base_url, key, error_message } =
         ( Just idValue, Just keyValue ) ->
             let
                 link =
-                    crossOrigin base_url [ "v", idValue, keyValue.key ] []
+                    crossOrigin base_url [ Route.view_path, idValue, keyValue.key ] []
             in
             renderContent
                 [ h1 [] [ text "Your secret has been created!" ]
