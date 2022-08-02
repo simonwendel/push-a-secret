@@ -1,5 +1,6 @@
 module Api exposing (Client, Headers, client)
 
+import Configuration exposing (api_url)
 import Dict exposing (Dict)
 import Http exposing (Expect)
 import Json.Decode as D exposing (Decoder)
@@ -28,7 +29,7 @@ type alias Client msg a =
 
 client : Client msg a
 client =
-    buildClient "http://localhost:5000"
+    buildClient api_url
 
 
 buildClient : String -> Client msg a

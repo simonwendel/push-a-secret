@@ -39,6 +39,13 @@ function makeCssFiles() {
         .pipe(dest(CONFIGURATION.outputDirectory));
 }
 
+function configureElmApp() {
+    const env = process.env.ELM_ENVIRONMENT ?? 'default';
+    return src('env/Configuration.elm_' + env)
+        .pipe(rename('Configuration.elm'))
+        .pipe(dest('src', { overwrite: true }));
+}
+
 function makeElmBundle() {
     return src(CONFIGURATION.elmProgram)
         .pipe(elm.bundle(CONFIGURATION.elmBundleFile))
@@ -53,7 +60,7 @@ function watchTests() {
     return shell.task('elm-test --watch')();
 }
 
-const buildTask = series(cleanDistFolder, copyLogo, copyStaticAssets, makeCssFiles, makeElmBundle);
+const buildTask = series(cleanDistFolder, copyLogo, copyStaticAssets, makeCssFiles, configureElmApp, makeElmBundle);
 exports.build = buildTask;
 
 const testTask = runTests;
