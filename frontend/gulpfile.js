@@ -60,18 +60,20 @@ function watchTests() {
     return shell.task('elm-test --watch')();
 }
 
-const buildTask = series(cleanDistFolder, copyLogo, copyStaticAssets, makeCssFiles, configureElmApp, makeElmBundle);
+const buildTask = series(copyLogo, copyStaticAssets, makeCssFiles, makeElmBundle);
 exports.build = buildTask;
 
 const testTask = runTests;
 exports.test = testTask;
 
+const defaultTask = series(runTests, cleanDistFolder, configureElmApp, buildTask)
+exports.default = defaultTask;
+
 const watchTask = () => {
     const files = [CONFIGURATION.elmSources].concat(CONFIGURATION.staticAssets).concat(CONFIGURATION.lessFiles);
     const settings = { ignoreInitial: false };
-    watch(files, settings, buildTask);
+    
+    watch(files, settings, defaultTask);
     watchTests();
 };
-
 exports.watch = watchTask
-exports.default = series(runTests, buildTask);
