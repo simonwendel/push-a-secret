@@ -8,16 +8,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Verify.Integration"/>
+        <InternalsVisibleTo Include="Storage.Tests"/>
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
+        <InternalsVisibleTo Include="Verify.Integration" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0"/>
-        <PackageReference Include="MongoDB.Driver" Version="2.15.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+        <PackageReference Include="MongoDB.Driver" Version="2.15.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Domain\Domain.csproj"/>
+        <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
 </Project>

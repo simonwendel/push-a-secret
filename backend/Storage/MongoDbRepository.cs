@@ -1,14 +1,13 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using Domain;
 
 namespace Storage;
 
 internal class MongoDbRepository : IRepository
 {
-    private readonly IMongoCollection<BsonDocument> collection;
+    private readonly IMongoCollection<SecretEntity> collection;
 
-    public MongoDbRepository(IMongoCollection<BsonDocument> collection) 
+    public MongoDbRepository(IMongoCollection<SecretEntity> collection)
         => this.collection = collection;
 
     public Result Peek(Identifier id)
@@ -23,18 +22,18 @@ internal class MongoDbRepository : IRepository
         {
             return Result.Err;
         }
-        
-        var document = new BsonDocument
-        {
-            {"id", id.Value},
-            {"algorithm", secret.Algorithm},
-            {"iv", secret.IV},
-            {"ciphertext", secret.Ciphertext}
-        };
+
+        var entity = new SecretEntity
+        (
+            id: id.Value,
+            algorithm: secret.Algorithm,
+            iv: secret.IV,
+            ciphertext: secret.Ciphertext
+        );
 
         try
         {
-            collection.InsertOne(document);
+            collection.InsertOne(entity);
             return Result.OK;
         }
         catch (Exception)
@@ -47,11 +46,12 @@ internal class MongoDbRepository : IRepository
     {
         try
         {
-            var document = collection.Find(FilterId(id)).Single();
+            var entity = collection.Find(FilterId(id)).Single();
             var secret = new Secret(
-                document.GetValue("algorithm").AsString,
-                document.GetValue("iv").AsString,
-                document.GetValue("ciphertext").AsString);
+                entity.Algorithm,
+                entity.IV,
+                entity.Ciphertext);
+
             return (Result.OK, secret);
         }
         catch (Exception)
@@ -73,6 +73,6 @@ internal class MongoDbRepository : IRepository
         }
     }
 
-    private static FilterDefinition<BsonDocument> FilterId(Identifier id)
-        => Builders<BsonDocument>.Filter.Eq("id", id.Value);
+    private static FilterDefinition<SecretEntity> FilterId(Identifier id)
+        => Builders<SecretEntity>.Filter.Eq(x => x.Id, id.Value);
 }

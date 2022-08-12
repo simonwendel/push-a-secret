@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 namespace Storage;
 
@@ -13,7 +12,7 @@ internal static class MongoDbRepositoryFactory
     {
         var mongoClient = new MongoClient(ConnectionString);
         var database = mongoClient.GetDatabase(DatabaseName);
-        var collection = database.GetCollection<BsonDocument>(CollectionName);
+        var collection = database.GetCollection<SecretEntity>(CollectionName);
         return new MongoDbRepository(collection);
     }
 }
