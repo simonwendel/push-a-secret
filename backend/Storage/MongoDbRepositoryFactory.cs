@@ -2,16 +2,16 @@
 
 namespace Storage;
 
-internal static class MongoDbRepositoryFactory
+internal class MongoDbRepositoryFactory : IMongoDbRepositoryFactory
 {
     private const string ConnectionString = "mongodb://localhost:27017";
     private const string DatabaseName = "push-a-secret";
     private const string CollectionName = "secrets";
 
-    public static MongoDbRepository Build()
+    public MongoDbRepository Build()
         => Build(ConnectionString, DatabaseName, CollectionName, TimeSpan.FromSeconds(60), cleanAll: false);
-    
-    public static MongoDbRepository Build(
+
+    protected static MongoDbRepository Build(
         string connectionString,
         string databaseName,
         string collectionName,
