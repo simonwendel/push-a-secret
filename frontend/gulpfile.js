@@ -72,8 +72,10 @@ exports.default = defaultTask;
 const watchTask = () => {
     const files = [CONFIGURATION.elmSources].concat(CONFIGURATION.staticAssets).concat(CONFIGURATION.lessFiles);
     const settings = { ignoreInitial: false };
-    
-    watch(files, settings, defaultTask);
+    series(
+        cleanDistFolder,
+        configureElmApp);
+    watch(files, settings, buildTask);
     watchTests();
 };
 exports.watch = watchTask
