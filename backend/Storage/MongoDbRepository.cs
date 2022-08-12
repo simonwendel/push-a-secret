@@ -24,12 +24,13 @@ internal class MongoDbRepository : IRepository
         }
 
         var entity = new SecretEntity
-        (
-            id: id.Value,
-            algorithm: secret.Algorithm,
-            iv: secret.IV,
-            ciphertext: secret.Ciphertext
-        );
+        {
+            Id = id.Value,
+            Algorithm = secret.Algorithm,
+            IV = secret.IV,
+            Ciphertext = secret.Ciphertext,
+            CreatedAt = DateTime.UtcNow
+        };
 
         try
         {

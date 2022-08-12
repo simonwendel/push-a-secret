@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using System;
 using Storage;
 
 namespace Verify.Integration;
@@ -11,15 +10,10 @@ internal static class TestMongoDbRepositoryFactory
     private const string TestCollectionName = "test-secrets";
 
     public static MongoDbRepository Build(bool cleanAll = false)
-    {
-        var mongoClient = new MongoClient(ConnectionString);
-        var database = mongoClient.GetDatabase(TestDatabaseName);
-        if (cleanAll)
-        {
-            database.DropCollection(TestCollectionName);
-        }
-
-        var collection = database.GetCollection<BsonDocument>(TestCollectionName);
-        return new MongoDbRepository(collection);
-    }
+        => MongoDbRepositoryFactory.Build(
+            ConnectionString, 
+            TestDatabaseName, 
+            TestCollectionName,
+            expiry: TimeSpan.FromMinutes(5), 
+            cleanAll: true);
 }
