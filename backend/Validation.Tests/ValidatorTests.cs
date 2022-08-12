@@ -28,7 +28,6 @@ public class ValidatorTests
     [Theory, AutoData]
     public void Validate_GivenSecret_UsesSecretValidator(UntrustedValue<Secret> untrusted, Secret validated)
     {
-        
         secretValidator.Setup(x => x.Validate(untrusted)).Returns(validated);
         sut.Validate(untrusted).Should().Be(validated);
         secretValidator.VerifyAll();
