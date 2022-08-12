@@ -12,7 +12,7 @@ public class MongoDbRepositoryIntegrationTests
     private readonly MongoDbRepository sut;
 
     public MongoDbRepositoryIntegrationTests()
-        => sut = TestMongoDbRepositoryFactory.Build(cleanAll: true);
+        => sut = TestMongoDbRepositoryFactory.Build();
 
     [Fact]
     internal void Peek_GivenIdOfDocumentThatDoesNotExist_ReturnsErrorResult()

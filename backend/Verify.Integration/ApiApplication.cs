@@ -20,7 +20,7 @@ internal class ApiApplication : WebApplicationFactory<Program>
                 services.Remove(descriptor);
             }
 
-            services.AddSingleton<IRepository>(_ => TestMongoDbRepositoryFactory.Build(cleanAll: true));
+            services.AddSingleton<IRepository>(_ => TestMongoDbRepositoryFactory.Build());
         });
     }
 }
