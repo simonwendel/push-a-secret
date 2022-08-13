@@ -29,6 +29,7 @@ internal class MongoDbRepository : IRepository
             Algorithm = secret.Algorithm,
             IV = secret.IV,
             Ciphertext = secret.Ciphertext,
+            Ttl = secret.Ttl,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -51,7 +52,8 @@ internal class MongoDbRepository : IRepository
             var secret = new Secret(
                 entity.Algorithm,
                 entity.IV,
-                entity.Ciphertext);
+                entity.Ciphertext,
+                entity.Ttl);
 
             return (Result.OK, secret);
         }

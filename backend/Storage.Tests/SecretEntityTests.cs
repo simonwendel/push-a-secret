@@ -15,20 +15,23 @@ public class SecretEntityTests
         string id,
         string algorithm,
         string iv,
-        string ciphertext)
+        string ciphertext,
+        int ttl)
     {
         var sut = new SecretEntity
         {
             Id = id,
             Algorithm = algorithm,
             IV = iv,
-            Ciphertext = ciphertext
+            Ciphertext = ciphertext,
+            Ttl = ttl
         };
 
         sut.Id.Should().Be(id);
         sut.Algorithm.Should().Be(algorithm);
         sut.IV.Should().Be(iv);
         sut.Ciphertext.Should().Be(ciphertext);
+        sut.Ttl.Should().Be(ttl);
     }
 
     /// <remorks>
@@ -43,8 +46,9 @@ public class SecretEntityTests
         EnsureWeCantDo(() => sut.Algorithm);
         EnsureWeCantDo(() => sut.IV);
         EnsureWeCantDo(() => sut.Ciphertext);
+        EnsureWeCantDo(() => sut.Ttl);
     }
 
-    private static void EnsureWeCantDo(Func<string> action)
+    private static void EnsureWeCantDo<T>(Func<T> action)
         => action.Should().Throw<InvalidOperationException>();
 }

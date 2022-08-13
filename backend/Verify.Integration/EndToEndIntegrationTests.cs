@@ -20,7 +20,7 @@ public class EndToEndIntegrationTests
     {
         var app = new ApiApplication();
         client = app.CreateClient();
-        secret = new("A128GCM", "xMY6HokU51VT8g02", "zb8HP7LFqYr+1fWZA5ZFAfIHz3Y=");
+        secret = new("A128GCM", "xMY6HokU51VT8g02", "zb8HP7LFqYr+1fWZA5ZFAfIHz3Y=", 5);
     }
 
     [Fact]

@@ -8,7 +8,7 @@ public enum Result
 
 public record Identifier(string Value);
 
-public record Secret(string Algorithm, string IV, string Ciphertext);
+public record Secret(string Algorithm, string IV, string Ciphertext, int Ttl);
 
 public record IdentifierResult(Result Result, Identifier? Identifier);
 

@@ -24,7 +24,7 @@ public class UntrustedSecretBinderTests
 
     public UntrustedSecretBinderTests()
     {
-        var secret = new Secret("A128GCM", "xMY6HokU51VT8g02", "zb8HP7LFqYr+1fWZA5ZFAfIHz3Y=");
+        var secret = new Secret("A128GCM", "xMY6HokU51VT8g02", "zb8HP7LFqYr+1fWZA5ZFAfIHz3Y=", 3);
         expected = new UntrustedValue<Secret>(secret);
         expectedSerialized = JsonSerializer.Serialize(secret);
     }
