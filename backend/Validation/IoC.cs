@@ -11,6 +11,7 @@ public static class IoC
             .AddTransient<ICiphertextValidator, CiphertextValidator>()
             .AddTransient<IAlgorithmValidator, AlgorithmValidator>()
             .AddTransient<IIvValidator, IvValidator>()
+            .AddTransient<ITtlDaysValidator, TtlDaysValidator>()
             .AddTransient<ISecretValidator, SecretValidator>()
             .AddTransient<IValidator, Validator>();
 }
