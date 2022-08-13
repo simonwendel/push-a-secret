@@ -11,7 +11,7 @@ public class SecretEntityTests
     /// in order to verify that no exceptions are thrown in the happy path.
     /// </remarks>
     [Theory, AutoData]
-    public void PropertiesWithNullableBackingFields_WhenSet_CanBeRead(
+    internal void PropertiesWithNullableBackingFields_WhenSet_CanBeRead(
         string id,
         string algorithm,
         string iv,
@@ -36,7 +36,7 @@ public class SecretEntityTests
     /// make sure we have values for things, we make this explicit by throwing an exception.
     /// </remorks>
     [Fact]
-    public void PropertiesWithNullableBackingFields_WhenNotSet_CantBeRead()
+    internal void PropertiesWithNullableBackingFields_WhenNotSet_CantBeRead()
     {
         var sut = new SecretEntity();
         EnsureWeCantDo(() => sut.Id);

@@ -18,7 +18,7 @@ public class ValidatorTests
         => sut = new Validator(idValidator.Object, secretValidator.Object);
 
     [Theory, AutoData]
-    public void Validate_GivenIdentifier_UsesIdentifierValidator(UntrustedValue<Identifier> untrusted, Identifier validated)
+    internal void Validate_GivenIdentifier_UsesIdentifierValidator(UntrustedValue<Identifier> untrusted, Identifier validated)
     {
         idValidator.Setup(x => x.Validate(untrusted)).Returns(validated);
         sut.Validate(untrusted).Should().Be(validated);
@@ -26,7 +26,7 @@ public class ValidatorTests
     }
 
     [Theory, AutoData]
-    public void Validate_GivenSecret_UsesSecretValidator(UntrustedValue<Secret> untrusted, Secret validated)
+    internal void Validate_GivenSecret_UsesSecretValidator(UntrustedValue<Secret> untrusted, Secret validated)
     {
         secretValidator.Setup(x => x.Validate(untrusted)).Returns(validated);
         sut.Validate(untrusted).Should().Be(validated);
@@ -34,7 +34,7 @@ public class ValidatorTests
     }
 
     [Theory, AutoData]
-    public void Validate_GivenInvalidType_ThrowsException(UntrustedValue<object> untrusted)
+    internal void Validate_GivenInvalidType_ThrowsException(UntrustedValue<object> untrusted)
     {
         Action validating = () => sut.Validate(untrusted);
         validating.Should().Throw<InvalidOperationException>();

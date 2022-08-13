@@ -39,14 +39,14 @@ public class UntrustedValueTests
     }
 
     [Fact]
-    public void GetHashCode_Always_ReturnsHashCodeForWrappedValue()
+    internal void GetHashCode_Always_ReturnsHashCodeForWrappedValue()
     {
         sut.GetHashCode().Should().Be(value.GetHashCodeResult);
         value.GetHashCodeCalled.Should().BeTrue();
     }
 
     [Fact(Skip = "We don't use this in debug builds anymore.")]
-    public void ToString_Always_ThrowsExceptionInsteadOfReturningValue()
+    internal void ToString_Always_ThrowsExceptionInsteadOfReturningValue()
     {
         var rendering = () =>
         {
