@@ -15,7 +15,8 @@ public class SecretSchemaFilter : ISchemaFilter
             {
                 ["algorithm"] = new OpenApiString("A128GCM"),
                 ["ciphertext"] = new OpenApiString("BbrE2kT+87Zg+2JHSa5/4FdoEAl6X4JoaQPFdaRbcmRA5A=="),
-                ["iv"] = new OpenApiString("nBtsLdhcT/0O+Pd/")
+                ["iv"] = new OpenApiString("nBtsLdhcT/0O+Pd/"),
+                ["ttl"] = new OpenApiInteger(1)
             };
         }
     }
