@@ -9,13 +9,12 @@ internal class MongoDbRepositoryFactory : IMongoDbRepositoryFactory
     private const string CollectionName = "secrets";
 
     public MongoDbRepository Build()
-        => Build(ConnectionString, DatabaseName, CollectionName, TimeSpan.FromSeconds(60), cleanAll: false);
+        => Build(ConnectionString, DatabaseName, CollectionName, cleanAll: false);
 
     protected static MongoDbRepository Build(
         string connectionString,
         string databaseName,
         string collectionName,
-        TimeSpan expiry,
         bool cleanAll = false)
     {
         var mongoClient = new MongoClient(connectionString);
@@ -27,14 +26,14 @@ internal class MongoDbRepositoryFactory : IMongoDbRepositoryFactory
         
         var collection = database.GetCollection<SecretEntity>(collectionName);
 
-        if (collection.Indexes.List().ToList().Any(x => x.GetValue("name").AsString == "expireAfterSecondsIndex"))
+        if (collection.Indexes.List().ToList().Any(x => x.GetValue("name").AsString == "expireAtIndex"))
             return new MongoDbRepository(collection);
 
-        var keys = Builders<SecretEntity>.IndexKeys.Ascending("_createdAt");
+        var keys = Builders<SecretEntity>.IndexKeys.Ascending("_expireAt");
         var options = new CreateIndexOptions
         {
-            Name = "expireAfterSecondsIndex",
-            ExpireAfter = expiry
+            Name = "expireAtIndex",
+            ExpireAfter = TimeSpan.FromSeconds(0)
         };
 
         var indexModel = new CreateIndexModel<SecretEntity>(keys, options);

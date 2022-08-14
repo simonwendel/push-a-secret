@@ -23,6 +23,7 @@ internal class MongoDbRepository : IRepository
             return Result.Err;
         }
 
+        var now = DateTime.UtcNow;
         var entity = new SecretEntity
         {
             Id = id.Value,
@@ -30,7 +31,8 @@ internal class MongoDbRepository : IRepository
             IV = secret.IV,
             Ciphertext = secret.Ciphertext,
             Ttl = secret.Ttl,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = now,
+            ExpireAt = now.AddDays(secret.Ttl)
         };
 
         try

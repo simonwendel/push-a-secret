@@ -14,6 +14,5 @@ internal class TestMongoDbRepositoryFactory : MongoDbRepositoryFactory
             ConnectionString, 
             TestDatabaseName, 
             TestCollectionName,
-            expiry: TimeSpan.FromMinutes(5), 
             cleanAll: true);
 }

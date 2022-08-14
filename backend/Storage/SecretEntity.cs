@@ -44,7 +44,11 @@ internal class SecretEntity
     [BsonElement("_createdAt")]
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public DateTime CreatedAt { get; init; }
-
+    
+    [BsonElement("_expireAt")]
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
+    public DateTime ExpireAt { get; init; }
+    
     private static T GetValidField<T>(T? value, [CallerArgumentExpression("value")] string field = "")
         => value ?? throw new InvalidOperationException(
             $"{field} can't be null, this entity was not initialized correctly.");
