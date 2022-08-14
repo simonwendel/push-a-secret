@@ -9,7 +9,12 @@ namespace Validation.Tests.Specific;
 public class SecretValidatorTests
 {
     private readonly Secret validSecret = new("A128GCM", "xMY6HokU51VT8g02", "zb8HP7LFqYr+1fWZA5ZFAfIHz3Y=", 4);
-    private readonly SecretValidator sut = new();
+
+    private readonly SecretValidator sut = new(
+        new AlgorithmValidator(),
+        new IvValidator(),
+        new CiphertextValidator(),
+        new TtlDaysValidator());
 
     [Fact]
     internal void Validate_GivenValidSecret_ReturnsValue()
