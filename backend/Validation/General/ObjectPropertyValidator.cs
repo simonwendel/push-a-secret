@@ -7,9 +7,9 @@ internal class ObjectPropertyValidator<T, TProp> : ValidatorBase<T>
     where TProp : notnull
 {
     private readonly Expression<Func<T, TProp>> selector;
-    private readonly ValidatorBase<TProp> validator;
+    private readonly IValidatorBase<TProp> validator;
 
-    public ObjectPropertyValidator(Expression<Func<T, TProp>> selector, ValidatorBase<TProp> validator)
+    public ObjectPropertyValidator(Expression<Func<T, TProp>> selector, IValidatorBase<TProp> validator)
     {
         this.selector = selector;
         this.validator = validator;
