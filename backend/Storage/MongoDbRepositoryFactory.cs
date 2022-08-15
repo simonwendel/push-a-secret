@@ -4,41 +4,79 @@ namespace Storage;
 
 internal class MongoDbRepositoryFactory : IMongoDbRepositoryFactory
 {
+    private const string expiryIndexName = "expireAtIndex";
+    private const string expiryFieldName = "_expireAt";
     private readonly StorageConfiguration config;
 
     public MongoDbRepositoryFactory(StorageConfiguration config)
-    {
-        this.config = config;
-    }
+        => this.config = config;
 
     public MongoDbRepository Build()
-        => Build(cleanAll: false);
+        => Build(dropCollection: false);
 
-    protected MongoDbRepository Build(
-        bool cleanAll)
+    protected MongoDbRepository Build(bool dropCollection)
     {
-        var mongoClient = new MongoClient(config.ConnectionString);
-        var database = mongoClient.GetDatabase(config.DatabaseName);
-        if (cleanAll)
+        MakeSureConfigIsValid(config);
+
+        var database = ConnectToDatabase(
+            config.ConnectionString!,
+            config.DatabaseName!);
+
+        var collection = GetCollection(
+            database,
+            config.CollectionName!,
+            dropCollection);
+
+        if (!ExpiryIndexExists(collection))
         {
-            database.DropCollection(config.CollectionName);
+            CreateExpiryIndex(collection);
         }
-        
-        var collection = database.GetCollection<SecretEntity>(config.CollectionName);
 
-        if (collection.Indexes.List().ToList().Any(x => x.GetValue("name").AsString == "expireAtIndex"))
-            return new MongoDbRepository(collection);
+        return new MongoDbRepository(collection);
+    }
 
-        var keys = Builders<SecretEntity>.IndexKeys.Ascending("_expireAt");
+    private static void MakeSureConfigIsValid(StorageConfiguration config)
+    {
+        if (!config.IsValid())
+        {
+            throw new InvalidOperationException(
+                "Illegal StorageConfiguration, are the appsettings.{*}.json files correct?");
+        }
+    }
+
+    private static IMongoCollection<SecretEntity> GetCollection(
+        IMongoDatabase database,
+        string collectionName,
+        bool dropCollection)
+    {
+        if (dropCollection)
+        {
+            database.DropCollection(collectionName);
+        }
+
+        return database.GetCollection<SecretEntity>(collectionName);
+    }
+
+    private static IMongoDatabase ConnectToDatabase(string connectionString, string databaseName)
+    {
+        var mongoClient = new MongoClient(connectionString);
+        return mongoClient.GetDatabase(databaseName);
+    }
+
+    private static bool ExpiryIndexExists(IMongoCollection<SecretEntity> collection)
+        => collection.Indexes.List().ToList()
+            .Any(x => x.GetValue("name").AsString.Equals(expiryIndexName));
+
+    private static void CreateExpiryIndex(IMongoCollection<SecretEntity> collection)
+    {
+        var keys = Builders<SecretEntity>.IndexKeys.Ascending(expiryFieldName);
         var options = new CreateIndexOptions
         {
-            Name = "expireAtIndex",
+            Name = expiryIndexName,
             ExpireAfter = TimeSpan.FromSeconds(0)
         };
 
         var indexModel = new CreateIndexModel<SecretEntity>(keys, options);
         collection.Indexes.CreateOne(indexModel);
-
-        return new MongoDbRepository(collection);
     }
 }

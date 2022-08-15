@@ -17,5 +17,5 @@ internal class TestMongoDbRepositoryFactory : MongoDbRepositoryFactory
     }
 
     public new MongoDbRepository Build()
-        => Build(cleanAll: true);
+        => Build(dropCollection: true);
 }
