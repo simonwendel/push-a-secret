@@ -1,18 +1,21 @@
-﻿using System;
-using Storage;
+﻿using Storage;
 
 namespace Verify.Integration;
 
 internal class TestMongoDbRepositoryFactory : MongoDbRepositoryFactory
 {
-    private const string ConnectionString = "mongodb://localhost:27017";
-    private const string TestDatabaseName = "push-a-secret-tests";
-    private const string TestCollectionName = "test-secrets";
+    private static readonly StorageConfiguration config = new()
+    {
+        ConnectionString = "mongodb://localhost:27017",
+        DatabaseName = "push-a-secret-tests",
+        CollectionName = "test-secrets"
+    };
 
-    public new static MongoDbRepository Build()
-        => Build(
-            ConnectionString, 
-            TestDatabaseName, 
-            TestCollectionName,
-            cleanAll: true);
+    public TestMongoDbRepositoryFactory()
+        : base(config)
+    {
+    }
+
+    public new MongoDbRepository Build()
+        => Build(cleanAll: true);
 }

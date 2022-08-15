@@ -26,7 +26,7 @@ public class StorageIntegrationTests
     private Store InitializeTestFixture()
     {
         var idGenerator = IdGenerator.Default;
-        var repository = TestMongoDbRepositoryFactory.Build();
+        var repository = new TestMongoDbRepositoryFactory().Build();
         return new Store(repository, idGenerator);
     }
 }

@@ -4,27 +4,27 @@ namespace Storage;
 
 internal class MongoDbRepositoryFactory : IMongoDbRepositoryFactory
 {
-    private const string ConnectionString = "mongodb://localhost:27017";
-    private const string DatabaseName = "push-a-secret";
-    private const string CollectionName = "secrets";
+    private readonly StorageConfiguration config;
+
+    public MongoDbRepositoryFactory(StorageConfiguration config)
+    {
+        this.config = config;
+    }
 
     public MongoDbRepository Build()
-        => Build(ConnectionString, DatabaseName, CollectionName, cleanAll: false);
+        => Build(cleanAll: false);
 
-    protected static MongoDbRepository Build(
-        string connectionString,
-        string databaseName,
-        string collectionName,
-        bool cleanAll = false)
+    protected MongoDbRepository Build(
+        bool cleanAll)
     {
-        var mongoClient = new MongoClient(connectionString);
-        var database = mongoClient.GetDatabase(databaseName);
+        var mongoClient = new MongoClient(config.ConnectionString);
+        var database = mongoClient.GetDatabase(config.DatabaseName);
         if (cleanAll)
         {
-            database.DropCollection(collectionName);
+            database.DropCollection(config.CollectionName);
         }
         
-        var collection = database.GetCollection<SecretEntity>(collectionName);
+        var collection = database.GetCollection<SecretEntity>(config.CollectionName);
 
         if (collection.Indexes.List().ToList().Any(x => x.GetValue("name").AsString == "expireAtIndex"))
             return new MongoDbRepository(collection);
