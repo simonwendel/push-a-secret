@@ -12,6 +12,9 @@ builder.Services.AddControllers(
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => options.ConfigureSwaggerGen(apiVersion: "v1"));
 
+builder.Services.AddSingleton(
+    builder.Configuration.GetSection("Storage").Get<StorageConfiguration>());
+
 builder.Services
     .AddValidationModule()
     .AddStorageModule()
