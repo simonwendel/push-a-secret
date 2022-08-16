@@ -29,6 +29,8 @@ services:
     build:
       dockerfile: ../frontend/Dockerfile
       context: ../frontend
+      args:
+      - ELM_CONFIG_API=https://${API_DOMAIN}
     environment:
       ELM_ENVIRONMENT: Production
     networks:
