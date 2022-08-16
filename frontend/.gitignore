@@ -1,7 +1,3 @@
-######## Custom
-# configuration should not be checked in, will always change
-src/Configuration.elm
-
 ######## Elm
 # elm-package generated files
 elm-stuff

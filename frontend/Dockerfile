@@ -5,13 +5,15 @@ LABEL \
 
 ARG ELM_VERSION="0.19.1"
 ARG ELM_SHA256="e44af52bb27f725a973478e589d990a6428e115fe1bb14f03833134d6c0f155c"
-ARG ELM_ENVIRONMENT="production"
+
+ARG ELM_CONFIG_API="http://localhost:5000"
+ENV ELM_CONFIG_API=${ELM_CONFIG_API}
 
 WORKDIR /work
 
 RUN apk update \
   && apk upgrade \
-  && apk add curl
+  && apk add curl gettext
 
 RUN curl -L -o elm.gz \
       https://github.com/elm/compiler/releases/download/${ELM_VERSION}/binary-for-linux-64-bit.gz \
@@ -22,8 +24,11 @@ RUN curl -L -o elm.gz \
   && elm --help
 
 COPY . .
+
+RUN envsubst < templates/Configuration.elm.template > src/Configuration.elm
+
 RUN npm install \
-  && ELM_ENVIRONMENT=${ELM_ENVIRONMENT} npx gulp
+  && npx gulp
 
 RUN cat dist/app.js | grep -i api_url
 
