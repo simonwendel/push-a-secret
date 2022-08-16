@@ -39,7 +39,7 @@ COPY --from=build /work/dist .
 RUN ls -l
 
 RUN rm /etc/nginx/conf.d/*.conf
-COPY nginx.conf /etc/nginx/conf.d/static.conf
+COPY nginx_static.conf /etc/nginx/conf.d/default.conf
 
 LABEL \
   stage=final \
