@@ -5,11 +5,11 @@
 # Original Copyright (c) 2018 Philipp Schmieder
 
 function help() {
+   echo "Usage: ${0##*/} -d \"example.com www.example.com\" -e \"certmanager@example.com\" [-s] [-h]"
+   echo
    echo "Initialize Let's Encrypt certificates for specified domains and start services."
    echo
-   echo "usage: ${0##*/} -d \"example.com www.example.com\" -e \"certmanager@example.com\" [-s] [-h]"
-   echo
-   echo "options:"
+   echo "Options:"
    echo "d     Whitespace separated list of domains to request certificates for. (Required)"
    echo "e     Email address to associate with Let's Encrypt certificates issued. (Required)"
    echo "s     If provided, Let's Encrypt requests will be issued against the staging servers."
