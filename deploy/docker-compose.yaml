@@ -1,0 +1,86 @@
+version: '3.9'
+
+services:
+  frontdoor:
+    image: nginx:1.23.1
+    command: |
+      /bin/sh -c '
+        while :; do 
+          sleep 6h & wait $${!};
+          nginx -s reload;
+        done & nginx -g \"daemon off;\"'
+    volumes:
+    - ./frontdoor/nginx.conf:/etc/nginx/nginx.conf:ro
+    - ./frontdoor/templates:/etc/nginx/templates:ro
+    - certbot_conf_vol:/etc/letsencrypt
+    - certbot_www_vol:/var/www/certbot
+    environment:
+      - APP_DOMAIN=${APP_DOMAIN}
+      - API_DOMAIN=${API_DOMAIN}
+    networks:
+    - default
+    - app_net
+    - api_net
+    ports:
+    - '80'
+    - '443'
+  
+  app:
+    build:
+      dockerfile: ../frontend/Dockerfile
+      context: ../frontend
+    environment:
+      ELM_ENVIRONMENT: Production
+    networks:
+    - app_net
+    expose:
+    - '80'
+
+  api:
+    build:
+      dockerfile: ../backend/Api/Dockerfile
+      context: ../backend/Api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80
+    networks:
+    - api_net
+    - db_net
+    expose:
+    - '80'
+  
+  db:
+    image: mongo:5.0.8
+    volumes:
+    - database_vol:/data/db
+    networks:
+    - db_net
+    expose:
+    - '27017'
+  
+  certbot:
+    image: certbot/certbot:v1.29.0
+    entrypoint: |
+      /bin/sh -c '
+        trap exit TERM;
+        while :; do
+          certbot renew;
+          sleep 12h & wait $${!};
+        done;'
+    volumes:
+    - certbot_conf_vol:/etc/letsencrypt
+    - certbot_www_vol:/var/www/certbot
+
+networks:
+  default:
+  app_net:
+    internal: true
+  api_net:
+    internal: true
+  db_net:
+    internal: true
+
+volumes:
+  database_vol:
+  certbot_conf_vol:
+  certbot_www_vol:
