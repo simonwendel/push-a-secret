@@ -54,9 +54,15 @@ function main() {
   if [ $production -eq 1 ]; then
     staging_arg=""
   fi
-  
+
   # shellcheck disable=SC2046
   export $(cat .env | sed 's/#.*//g' | envsubst | xargs)
+  echo "Read the following configuration from .env file: "
+  echo
+  echo "APP_DOMAIN=$APP_DOMAIN"
+  echo "API_DOMAIN=$API_DOMAIN"
+  echo "CERT_EMAIL=$CERT_EMAIL"
+  echo
   env -C deploy ./bootstrap.sh -d "$APP_DOMAIN $API_DOMAIN" -e "$CERT_EMAIL" $staging_arg
 }
 
