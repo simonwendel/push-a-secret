@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   proxy:
+    restart: unless-stopped
     image: nginx:1.23.1
     command: |
       /bin/sh -c '
@@ -26,6 +27,7 @@ services:
     - '443'
   
   app:
+    restart: unless-stopped
     build:
       dockerfile: ../frontend/Dockerfile
       context: ../frontend
@@ -39,6 +41,7 @@ services:
     - '80'
 
   api:
+    restart: unless-stopped
     build:
       dockerfile: ../backend/Api/Dockerfile
       context: ../backend/Api
@@ -52,6 +55,7 @@ services:
     - '80'
   
   db:
+    restart: unless-stopped
     image: mongo:5.0.8
     volumes:
     - database_vol:/data/db
@@ -61,6 +65,7 @@ services:
     - '27017'
   
   certbot:
+    restart: unless-stopped
     image: certbot/certbot:v1.29.0
     entrypoint: |
       /bin/sh -c '
