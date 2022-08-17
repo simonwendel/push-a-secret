@@ -1,0 +1,6 @@
+# More languange and framework specific things are in nested ignore files
+
+# Editors and IDEs
+.idea/
+.vscode/
+.history/
