@@ -19,12 +19,6 @@ function help() {
    echo
 }
 
-if docker compose run -it --entrypoint "test -f \"/etc/letsencrypt/.bootstrap\"" certbot; then
-  echo ">>> Already bootstrapped, starting services ..."
-  docker compose up -d proxy app api certbot
-  exit 0
-fi
-
 rsa_key_size=4096
 staging=0
 domains=()
@@ -56,6 +50,12 @@ if [ ${#domains[@]} -eq 0 ] || [ "$email" == "" ]; then
   echo "Missing argument(s)." >&2
   help
   exit 1
+fi
+
+if docker compose run -it --entrypoint "test -f \"/etc/letsencrypt/.bootstrap\"" certbot; then
+  echo ">>> Already bootstrapped, starting services ..."
+  docker compose up -d proxy app api certbot
+  exit 0
 fi
 
 echo ">>> Downloading TLS parameters ..."
