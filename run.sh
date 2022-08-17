@@ -26,26 +26,38 @@ function reminder() {
   echo
 }
 
-production=0
-while getopts ph flag; do
-  case "${flag}" in
-  p)
-    production=1
-    ;;
-  h)
-    help
-    ;;
-  *)
-    echo "Illegal argument(s)." >&2
-    echo
-    help
-    exit 1
-    ;;
-  esac
-done
+function main() {
+  production=0
+  while getopts ph flag; do
+    case "${flag}" in
+    p)
+      production=1
+      ;;
+    h)
+      help
+      ;;
+    *)
+      echo "Illegal argument(s)." >&2
+      echo
+      help
+      exit 1
+      ;;
+    esac
+  done
 
-source .env
-if [ "$API_DOMAIN" == "" ] || [ "$APP_DOMAIN" == "" ] || [ "$CERT_EMAIL" == "" ]; then
-  reminder
-  exit 1
-fi
+  if [ "$API_DOMAIN" == "" ] || [ "$APP_DOMAIN" == "" ] || [ "$CERT_EMAIL" == "" ]; then
+    reminder
+    exit 1
+  fi
+
+  staging_arg="-s"
+  if [ $production -eq 1 ]; then
+    staging_arg=""
+  fi
+  
+  # shellcheck disable=SC2046
+  export $(cat .env | sed 's/#.*//g' | envsubst | xargs)
+  env -C deploy ./bootstrap.sh -d "$APP_DOMAIN $API_DOMAIN" -e "$CERT_EMAIL" $staging_arg
+}
+
+main
