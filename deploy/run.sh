@@ -21,7 +21,7 @@ function help() {
 
 if docker compose run -it --entrypoint "test -f \"/etc/letsencrypt/.bootstrap\"" certbot; then
   echo ">>> Already bootstrapped, starting services ..."
-  docker compose up -d frontdoor app api certbot
+  docker compose up -d proxy app api certbot
   exit 0
 fi
 
@@ -74,8 +74,8 @@ docker compose run --rm --entrypoint "\
     -subj '/CN=localhost'" certbot
 echo
 
-echo ">>> Starting frontdoor ..."
-docker compose up --force-recreate -d frontdoor
+echo ">>> Starting proxy ..."
+docker compose up --force-recreate -d proxy
 echo
 
 echo ">>> Deleting dummy certificate for ${domains[*]} ..."
@@ -102,8 +102,8 @@ docker compose run --rm --entrypoint "\
     --force-renewal" certbot
 echo
 
-echo ">>> Reloading frontdoor ..."
-docker compose exec frontdoor nginx -s reload
+echo ">>> Reloading proxy ..."
+docker compose exec proxy nginx -s reload
 
 echo ">>> Marking environment as bootstrapped ..."
 docker compose run -it --entrypoint "touch \"/etc/letsencrypt/.bootstrap\"" certbot
