@@ -20,7 +20,7 @@ services:
     ports:
     - '80:80'
     - '443:443'
-  
+
   app:
     restart: unless-stopped
     build:
@@ -48,7 +48,7 @@ services:
     - db_net
     expose:
     - '80'
-  
+
   db:
     restart: unless-stopped
     image: mongo:5.0.8
@@ -58,7 +58,7 @@ services:
     - db_net
     expose:
     - '27017'
-  
+
   certbot:
     restart: unless-stopped
     image: certbot/certbot:v1.29.0
