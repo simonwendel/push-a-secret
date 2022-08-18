@@ -1,5 +1,7 @@
 # Push-a-Secret
 
+A zero-knowledge scheme for sharing secrets with a friend.
+
 ## Pre-requisites
 
 Dependencies required on the hosting server:
