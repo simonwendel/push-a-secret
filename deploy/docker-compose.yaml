@@ -29,7 +29,7 @@ services:
   app:
     restart: unless-stopped
     build:
-      dockerfile: ../frontend/Dockerfile
+      dockerfile: Dockerfile
       context: ../frontend
       args:
       - ELM_CONFIG_API=https://${API_DOMAIN}
@@ -43,8 +43,8 @@ services:
   api:
     restart: unless-stopped
     build:
-      dockerfile: ../backend/Api/Dockerfile
-      context: ../backend/Api
+      dockerfile: Api/Dockerfile
+      context: ../backend
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:80
