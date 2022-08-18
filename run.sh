@@ -14,17 +14,28 @@ function help() {
   echo
 }
 
-function reminder() {
-  echo "The .env file seems to be missing proper configuration:"
-  echo
-  cat .env
-  echo
+function configsNeeded() {
   echo "All configuration variables are required, for example:"
   echo
   echo "APP_DOMAIN=www.example.com"
   echo "API_DOMAIN=api.example.com"
   echo "CERT_EMAIL=certmanager@example.com"
   echo
+}
+
+function missingEnv() {
+  echo "Could not find the .env file with application configs."
+  echo "Create a .env file next to ${0##*/}"
+  echo
+  configsNeeded
+}
+
+function reminder() {
+  echo "The .env file seems to be missing proper configuration:"
+  echo
+  cat .env
+  echo
+  configs
 }
 
 production=0
@@ -45,6 +56,11 @@ while getopts ph flag; do
     ;;
   esac
 done
+
+if [ ! -f .env ]; then
+  missingEnv
+  exit 1
+fi
 
 # shellcheck disable=SC2046
 export $(cat .env | sed 's/#.*//g' | envsubst | xargs)
