@@ -5,6 +5,7 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/${API_DOMAIN}/privkey.pem;
 
     location / {
-        proxy_pass      http://api;
+        set             $api api;
+        proxy_pass      http://$api;
     }
 }
