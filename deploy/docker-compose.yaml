@@ -23,8 +23,8 @@ services:
     - app_net
     - api_net
     ports:
-    - '80'
-    - '443'
+    - '80:80'
+    - '443:443'
   
   app:
     restart: unless-stopped
