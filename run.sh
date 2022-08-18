@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 function help() {
   echo "Usage: ${0##*/} [-p|h]"
@@ -26,44 +27,42 @@ function reminder() {
   echo
 }
 
-function main() {
-  production=0
-  while getopts ph flag; do
-    case "${flag}" in
-    p)
-      production=1
-      ;;
-    h)
-      help
-      ;;
-    *)
-      echo "Illegal argument(s)." >&2
-      echo
-      help
-      exit 1
-      ;;
-    esac
-  done
-
-  if [ "$API_DOMAIN" == "" ] || [ "$APP_DOMAIN" == "" ] || [ "$CERT_EMAIL" == "" ]; then
-    reminder
+production=0
+while getopts ph flag; do
+  case "${flag}" in
+  p)
+    production=1
+    ;;
+  h)
+    help
+    exit 0
+    ;;
+  *)
+    echo "${0##*/}: Illegal argument(s)." >&2
+    echo
+    help
     exit 1
-  fi
+    ;;
+  esac
+done
 
-  staging_arg="-s"
-  if [ $production -eq 1 ]; then
-    staging_arg=""
-  fi
+# shellcheck disable=SC2046
+export $(cat .env | sed 's/#.*//g' | envsubst | xargs)
+echo "Read the following configuration from .env file: "
+echo
+echo "APP_DOMAIN=$APP_DOMAIN"
+echo "API_DOMAIN=$API_DOMAIN"
+echo "CERT_EMAIL=$CERT_EMAIL"
+echo
 
-  # shellcheck disable=SC2046
-  export $(cat .env | sed 's/#.*//g' | envsubst | xargs)
-  echo "Read the following configuration from .env file: "
-  echo
-  echo "APP_DOMAIN=$APP_DOMAIN"
-  echo "API_DOMAIN=$API_DOMAIN"
-  echo "CERT_EMAIL=$CERT_EMAIL"
-  echo
-  env -C deploy ./bootstrap.sh -d "$APP_DOMAIN $API_DOMAIN" -e "$CERT_EMAIL" $staging_arg
-}
+if [ "$API_DOMAIN" == "" ] || [ "$APP_DOMAIN" == "" ] || [ "$CERT_EMAIL" == "" ]; then
+  reminder
+  exit 1
+fi
 
-main
+staging_arg="-s"
+if [ $production -eq 1 ]; then
+  staging_arg=""
+fi
+
+env -C deploy ./bootstrap.sh -n "push-a-secret" -d "$APP_DOMAIN $API_DOMAIN" -e "$CERT_EMAIL" $staging_arg
