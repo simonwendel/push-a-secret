@@ -25,6 +25,9 @@ Dependencies required on the hosting server:
 
 ## Attribution
 
-* Favicon created using art from the awesome Twemoji project by Twitter ([twemoji website]).
+* Favicon created using art from the awesome [Twemoji] project by Twitter.
+* Bootstrap script adapted from a [article] and [code] by Philipp Schmieder
 
-[twemoji website]: https://twemoji.twitter.com/
+[Twemoji]: https://twemoji.twitter.com
+[article]: https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
+[code]: https://github.com/wmnnd/nginx-certbot
