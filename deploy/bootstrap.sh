@@ -61,7 +61,7 @@ fi
 function main() {
   if runOnCertbot "test -f /etc/letsencrypt/.bootstrap"; then
     echo ">>> Already bootstrapped, starting services ..."
-    start "proxy app api certbot"
+    start "proxy app api db certbot"
     exit 0
   fi
 
@@ -146,7 +146,7 @@ END
   runOnCertbot "touch /etc/letsencrypt/.bootstrap"
 
   echo ">>> Bootstrapped, starting services ..."
-  start "proxy app api certbot"
+  start "proxy app api db certbot"
 }
 
 function runOnCertbot() {
