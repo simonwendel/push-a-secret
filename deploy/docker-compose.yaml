@@ -43,6 +43,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:80
+      API_API__CORS__ALLOWORIGINS__0: ${APP_DOMAIN}
     networks:
     - api_net
     - db_net
