@@ -6,6 +6,7 @@ using Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables(prefix: "API_");
 builder.Services.AddSingleton(
     builder.Configuration.GetSection("Storage").Get<StorageConfiguration>());
 
