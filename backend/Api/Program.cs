@@ -5,6 +5,10 @@ using Storage;
 using Validation;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton(
+    builder.Configuration.GetSection("Storage").Get<StorageConfiguration>());
+
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(
     options => options.ModelBinderProviders.Insert(0, new UntrustedValueBinderProvider()));
@@ -12,8 +16,7 @@ builder.Services.AddControllers(
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => options.ConfigureSwaggerGen(apiVersion: "v1"));
 
-builder.Services.AddSingleton(
-    builder.Configuration.GetSection("Storage").Get<StorageConfiguration>());
+var corsPolicy = builder.AddCustomCorsPolicy();
 
 builder.Services
     .AddValidationModule()
@@ -23,6 +26,7 @@ builder.Services
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseCors(corsPolicy);
 app.MapControllers();
 
 app.Run();
