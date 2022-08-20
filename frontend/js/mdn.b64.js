@@ -1,8 +1,9 @@
+// SPDX-FileCopyrightText: 2020 Any copyright is dedicated to the Public Domain
+// SPDX-License-Identifier: CC0-1.0
+
 /* 
    This is really hard to do, so I decided to rely on example code from the Mozilla Fondation and simply 
    packed that in an ES6-module.
-
-   Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
 */
 
 /*\

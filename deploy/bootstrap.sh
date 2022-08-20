@@ -1,9 +1,11 @@
+# SPDX-FileCopyrightText: 2018 Philipp Schmieder
+# SPDX-License-Identifier: MIT
+
 #!/bin/bash
 set -e
 
-# Adapted from https://github.com/wmnnd/nginx-certbot
-# Script file: https://raw.githubusercontent.com/wmnnd/nginx-certbot/9fdb9461e77e40459b4a616bf11ce2bb1cdca75a/init-letsencrypt.sh
-# Original Copyright (c) 2018 Philipp Schmieder
+# To view modifications from the original script, use this command:
+# curl -so- https://raw.githubusercontent.com/wmnnd/nginx-certbot/9fdb9461e77e40459b4a616bf11ce2bb1cdca75a/init-letsencrypt.sh | diff -uw - bootstrap.sh
 
 function help() {
    echo "Usage: ${0##*/} -d \"example.com www.example.com\" -e \"certmanager@example.com\" [-s] [-h]"
