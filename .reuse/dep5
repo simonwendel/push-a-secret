@@ -1,0 +1,4 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: push-a-secret
+Upstream-Contact: Simon Wendel <>
+Source: https://github.com/simonwendel/push-a-secret

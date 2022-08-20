@@ -25,11 +25,20 @@ Dependencies required on the hosting server:
     c. Go live by invoking the script adding `-p` to create production certificates.
 4. If the services are stopped, re-run `run.sh` to start them, once bootstrapped certs will only by renewed, never replaced.
 
-## Attribution
+## Licensing
+
+Code written by me is licensed under *GPL-3.0-or-later*, some configs under *CC0-1.0*.
+
+To verify licensing, use the [REUSE] tool by issuing `reuse lint` in the repo root.
+
+### Attribution
+
+Some prior art exists:
 
 * Favicon created using art from the awesome [Twemoji] project by Twitter.
-* Bootstrap script adapted from a [article] and [code] by Philipp Schmieder
+* Bootstrap script adapted from an [article] and [code] by Philipp Schmieder
 
 [Twemoji]: https://twemoji.twitter.com
 [article]: https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
 [code]: https://github.com/wmnnd/nginx-certbot
+[REUSE]: https://reuse.software/
