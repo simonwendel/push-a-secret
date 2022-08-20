@@ -34,6 +34,7 @@ public class SecretController : ControllerBase
     [ProducesResponseType(200, Type = default!)]
     [ProducesResponseType(400, Type = default!)]
     [ProducesResponseType(404, Type = default!)]
+    [Produces(MediaTypeNames.Application.Json)]
     public IActionResult Head([FromRoute] UntrustedValue<Identifier> identifier)
         => HandleRequestWith(
             identifier,
@@ -108,6 +109,7 @@ public class SecretController : ControllerBase
     [ProducesResponseType(204, Type = default!)]
     [ProducesResponseType(400, Type = default!)]
     [ProducesResponseType(404, Type = default!)]
+    [Produces(MediaTypeNames.Application.Json)]
     public IActionResult Delete([FromRoute] UntrustedValue<Identifier> identifier)
         => HandleRequestWith(
             identifier,
