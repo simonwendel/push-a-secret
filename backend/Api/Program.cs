@@ -25,6 +25,7 @@ builder.Services
     .AddDomainModule();
 
 var app = builder.Build();
+app.UseMiddleware<ServerErrorMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors(corsPolicy);
