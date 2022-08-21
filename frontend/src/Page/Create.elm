@@ -42,6 +42,11 @@ type Msg
     | Stored (Maybe String)
 
 
+defaultTtl : Int
+defaultTtl =
+    1
+
+
 init : String -> ( Model, Cmd Msg )
 init base_url =
     ( { base_url = base_url
@@ -161,6 +166,7 @@ update msg model =
                         { iv = encrypted.iv
                         , ciphertext = encrypted.ciphertext
                         , algorithm = keyValue.algorithm
+                        , ttl = defaultTtl
                         }
                         Stored
                     )
