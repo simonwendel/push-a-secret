@@ -1,4 +1,7 @@
-﻿using System.Net.Mime;
+// SPDX-FileCopyrightText: 2022 Simon Wendel
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using System.Net.Mime;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Validation;

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Simon Wendel
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 export { generate, encrypt, decrypt }
 
 import { strToUTF8Arr, UTF8ArrToStr, base64EncArr, base64DecToArr } from '/mdn.b64.js'

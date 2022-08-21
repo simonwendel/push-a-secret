@@ -1,4 +1,7 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+﻿# SPDX-FileCopyrightText: 2022 Simon Wendel
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 LABEL \
   stage=intermediate
 

@@ -1,3 +1,7 @@
+-- SPDX-FileCopyrightText: 2022 Simon Wendel
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
+
 module Page.NotFound exposing (view)
 
 import Html exposing (Html, a, h1, p, text)

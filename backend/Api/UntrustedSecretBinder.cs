@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿// SPDX-FileCopyrightText: 2022 Simon Wendel
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using System.Text.Json;
 using Domain;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Validation;

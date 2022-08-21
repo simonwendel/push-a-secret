@@ -1,3 +1,7 @@
+-- SPDX-FileCopyrightText: 2022 Simon Wendel
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
+
 module Secret exposing (Secret, decoder, encode)
 
 import Json.Decode as D exposing (Decoder)

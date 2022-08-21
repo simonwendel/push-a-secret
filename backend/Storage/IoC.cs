@@ -1,4 +1,7 @@
-﻿using Domain;
+﻿// SPDX-FileCopyrightText: 2022 Simon Wendel
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using Domain;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Storage;

@@ -1,3 +1,7 @@
+-- SPDX-FileCopyrightText: 2022 Simon Wendel
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
+
 module Render exposing (renderApp, renderContent, renderRow)
 
 import Html exposing (Html, a, div, footer, header, hr, img, node, section, span, text)
