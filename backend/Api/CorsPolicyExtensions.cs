@@ -15,8 +15,9 @@ public static class CorsPolicyExtensions
 
         var allowOrigins = GetSection("Api:CORS:AllowOrigins");
         var allowMethods = GetSection("Api:CORS:AllowMethods");
+        var allowHeaders = GetSection("Api:CORS:AllowHeaders");
         var exposeHeaders = GetSection("Api:CORS:ExposeHeaders");
-        if (!allowOrigins.Any() || !allowMethods.Any() || !exposeHeaders.Any())
+        if (!allowOrigins.Any() || !allowMethods.Any() || !allowHeaders.Any() || !exposeHeaders.Any())
         {
             throw new InvalidOperationException("CORS not configured correctly.");
         }
@@ -27,6 +28,7 @@ public static class CorsPolicyExtensions
             policy => policy
                 .WithOrigins(allowOrigins)
                 .WithMethods(allowMethods)
+                .WithHeaders(allowHeaders)
                 .WithExposedHeaders(exposeHeaders)
                 .Build()));
         return corsPolicyName;
