@@ -2,55 +2,56 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /* general */
-@default-color: #c94040;
-@default-color-complement-dark: #503232;
-@default-color-complement-light: #d6bdbd;
-@default-color-complement-accent-light: #ffd2d2;
-@default-color-complement-accent-dark: #9a6666;
+@default-color: #1B2430;
+@default-color-1: #1B2430;
+@default-color-2: #1B2430;
+@default-color-accent-1: #816797;
+@default-color-accent-2: #1B2430;
 
-@default-font-color: @default-color-complement-dark;
-@default-background-color: @default-color-complement-light;
+@default-font-color: @default-color-1;
+@default-background-color: @default-color-2;
 @default-error-color: #b30000;
 
 /* buttons */
-@button-font-color: @default-color-complement-dark;
+@button-font-color: @default-color-1;
 
 @ok-button-background-color: #9ccf31;
 @ok-button-background-color-hover: lighten(@ok-button-background-color, 10%);
-@ok-button-border-color: @default-color-complement-dark;
+@ok-button-border-color: @default-color-1;
 
 @cancel-button-background-color: #ef0000;
 @cancel-button-background-color-hover: lighten(@cancel-button-background-color, 10%);
-@cancel-button-border-color: @default-color-complement-dark;
+@cancel-button-border-color: @default-color-1;
 
 @neutral-button-background-color: #f7d708;
 @neutral-button-background-color-hover: lighten(@neutral-button-background-color, 10%);
-@neutral-button-border-color: @default-color-complement-dark;
+@neutral-button-border-color: @default-color-1;
 
 /* inputs */
 @input-background-color: #fff;
-@input-border-color: @default-color-complement-dark;
+@input-border-color: @default-color-1;
 @input-invalid-border-color: @default-error-color;
 
 /* dividers */
-@hr-accent-light: @default-color-complement-accent-light;
-@hr-accent-dark: @default-color-complement-accent-dark;
+@hr-accent-2: @default-color-accent-2;
+@hr-accent-1: @default-color-accent-1;
 
 /* links */
 @a-font-color-styled: @default-color;
 @a-font-color: #003eb3;
 
 /* header */
-@app-title-background-color-hover: lighten(@default-color-complement-accent-light, 20%);
-@app-title-border-color: @default-color-complement-light;
+@app-title-background-color: @default-color-accent-1;
+@app-title-background-color-hover: lighten(@app-title-background-color, 30%);
+@app-title-border-color: #fff;
 @header-background-color: #fff;
 @header-a-font-color-styled: @a-font-color-styled;
 
 /* main sections */
 @main-section-background-color: #fff;
-@main-section-border-color: @default-color-complement-accent-light;
+@main-section-border-color: @default-color-accent-2;
 
 /* footer */
 @footer-background-color: #fff;
 @footer-font-color: @default-color;
-@footer-a-font-color-styled: @default-color-complement-accent-light;
+@footer-a-font-color-styled: @default-color-accent-2;

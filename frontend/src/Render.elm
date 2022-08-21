@@ -27,11 +27,11 @@ renderRow =
 renderApp : RenderContent msg -> List (Html msg)
 renderApp content =
     [ renderHeader content.title
-    , hr [ class "accent-dark" ] []
-    , hr [ class "accent-light" ] []
+    , hr [ class "accent-1" ] []
+    , hr [ class "accent-2" ] []
     , renderPage content.page
-    , hr [ class "accent-light" ] []
-    , hr [ class "accent-dark" ] []
+    , hr [ class "accent-2" ] []
+    , hr [ class "accent-1" ] []
     , renderFooter
     ]
 
