@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 Simon Wendel
+﻿// SPDX-FileCopyrightText: 2022 Simon Wendel
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 using System.Reflection;
@@ -26,6 +26,8 @@ public static class SwaggerGenOptionsExtensions
 
         options.OperationFilter<RemoveDefaultResponse>();
         options.SchemaFilter<SecretSchemaFilter>();
+        options.SchemaFilter<ProblemDetailsSchemaFilter>();
+        options.SchemaFilter<UntrustedIdentifierSchemaFilter>();
 
         options.MapType<UntrustedValue<string>>(() => new OpenApiSchema {Type = "string"});
         options.MapType<UntrustedValue<Secret>>(() => new OpenApiSchema

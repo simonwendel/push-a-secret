@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2022 Simon Wendel
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+using System.Net.Mime;
 using Api;
 using Api.Swashbuckle;
 using Domain;
+using Microsoft.AspNetCore.Mvc;
 using Storage;
 using Validation;
 
@@ -15,7 +17,12 @@ builder.Services.AddSingleton(
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(
-    options => options.ModelBinderProviders.Insert(0, new UntrustedValueBinderProvider()));
+    options =>
+    {
+        options.ModelBinderProviders.Insert(0, new UntrustedValueBinderProvider());
+        options.Filters.Add(new ProducesAttribute(MediaTypeNames.Application.Json));
+        options.Filters.Add(new ConsumesAttribute(MediaTypeNames.Application.Json));
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => options.ConfigureSwaggerGen(apiVersion: "v1"));

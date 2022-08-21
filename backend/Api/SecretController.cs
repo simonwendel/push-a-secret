@@ -1,7 +1,6 @@
-// SPDX-FileCopyrightText: 2022 Simon Wendel
+﻿// SPDX-FileCopyrightText: 2022 Simon Wendel
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-using System.Net.Mime;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Validation;
@@ -10,6 +9,7 @@ namespace Api;
 
 [ApiController]
 [Route("[controller]")]
+[ProducesErrorResponseType(typeof(ProblemDetails))]
 public class SecretController : ControllerBase
 {
     private readonly IValidator validator;
@@ -37,7 +37,6 @@ public class SecretController : ControllerBase
     [ProducesResponseType(200, Type = default!)]
     [ProducesResponseType(400, Type = default!)]
     [ProducesResponseType(404, Type = default!)]
-    [Produces(MediaTypeNames.Application.Json)]
     public IActionResult Head([FromRoute] UntrustedValue<Identifier> identifier)
         => HandleRequestWith(
             identifier,
@@ -58,10 +57,9 @@ public class SecretController : ControllerBase
     /// <response code="409">A secret in storage matching supplied identifier does not pass validation.</response>
     [HttpGet("{identifier}")]
     [ProducesResponseType(200, Type = typeof(Secret))]
-    [ProducesResponseType(400, Type = default!)]
-    [ProducesResponseType(404, Type = default!)]
-    [ProducesResponseType(409, Type = default!)]
-    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(409)]
     public IActionResult Get([FromRoute] UntrustedValue<Identifier> identifier)
         => HandleRequestWith(
             identifier,
@@ -84,9 +82,7 @@ public class SecretController : ControllerBase
     /// <response code="400">Supplied secret has incorrect format, or request is otherwise invalid.</response>
     [HttpPost]
     [ProducesResponseType(201, Type = typeof(Secret))]
-    [ProducesResponseType(400, Type = default!)]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(400)]
     public IActionResult Post([FromBody] UntrustedValue<Secret> secret)
         => HandleRequestWith(
             secret,
@@ -110,9 +106,8 @@ public class SecretController : ControllerBase
     /// <response code="404">No secret in storage matches supplied identifier.</response>
     [HttpDelete("{identifier}")]
     [ProducesResponseType(204, Type = default!)]
-    [ProducesResponseType(400, Type = default!)]
-    [ProducesResponseType(404, Type = default!)]
-    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
     public IActionResult Delete([FromRoute] UntrustedValue<Identifier> identifier)
         => HandleRequestWith(
             identifier,
