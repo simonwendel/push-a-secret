@@ -1,16 +1,16 @@
 module Page.Loading exposing (view)
 
-import Html exposing (Html, div, img)
-import Html.Attributes exposing (id, src)
+import Html exposing (Html, div, span, text)
+import Html.Attributes exposing (id)
 import Render exposing (renderContent)
 
 
 view : Html msg
 view =
     renderContent
-        [ div [ id "spinner" ]
+        [ div [ id "loader" ]
             [ div []
-                [ img [ src "/loading.gif" ] []
+                [ span [] [ text "Loading..." ]
                 ]
             ]
         ]
