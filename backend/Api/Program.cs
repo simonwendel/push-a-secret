@@ -37,7 +37,11 @@ builder.Services
 var app = builder.Build();
 app.UseMiddleware<ServerErrorMiddleware>();
 app.UseSwagger();
-app.UseSwaggerUI();
+if(builder.Environment.IsDevelopment())
+{
+    app.UseSwaggerUI();
+}
+
 app.UseCors(corsPolicy);
 app.MapControllers();
 
