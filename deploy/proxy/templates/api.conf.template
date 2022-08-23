@@ -1,6 +1,15 @@
 # SPDX-FileCopyrightText: 2022 Simon Wendel
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+limit_req_zone $binary_remote_addr zone=ip:20m rate=1r/s;
+limit_req_status 429;
+limit_conn_status 429;
+
+map $status $retry_after {
+    default '';
+    429 '5';
+}
+
 server {
     listen              443 ssl;
     server_name         ${API_DOMAIN};
@@ -8,6 +17,9 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/${API_DOMAIN}/privkey.pem;
 
     location / {
+        limit_req zone=ip burst=6 delay=2;
+        add_header Retry-After $retry_after always;
+
         set             $api api;
         proxy_pass      http://$api;
     }
