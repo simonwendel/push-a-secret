@@ -1,7 +1,8 @@
+#!/bin/bash
+
 # SPDX-FileCopyrightText: 2018 Philipp Schmieder
 # SPDX-License-Identifier: MIT
 
-#!/bin/bash
 set -e
 
 # To view modifications from the original script, use this command:
