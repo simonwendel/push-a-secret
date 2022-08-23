@@ -40,7 +40,7 @@ To verify licensing, use the [REUSE] tool by issuing `reuse lint` in the repo ro
 
 Some prior art exists:
 
-* Favicon created using art from the awesome [Twemoji] project by Twitter.
+* Favicon and logo created using art from the awesome [Twemoji] project by Twitter. I don't claim copyright for the collection.
 * Bootstrap script adapted from an [article] and [code] by Philipp Schmieder
 
 [Twemoji]: https://twemoji.twitter.com
