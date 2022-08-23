@@ -24,22 +24,21 @@ header {
 
     #logo {
         .flex-item();
+        margin-left: auto;
         width: 180px;
     }
 
     #app-title {
         .flex-item();
-        margin-left: auto;
         font-size: 2.0rem;
         font-family: Arial, Helvetica, sans-serif;
-        border-style: solid;
-        border-color: @app-title-border-color;
-        border-width: 1px;
-        border-radius: 5px;
-        padding: 0px;
 
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid transparent;
         &:hover {
-            background-color: @app-title-background-color-hover;
+            border: 1px solid;
+            border-color: @app-title-background-color-hover;
         }
     }
 

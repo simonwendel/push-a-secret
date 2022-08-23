@@ -40,8 +40,8 @@ renderHeader : String -> Html msg
 renderHeader title =
     header
         []
-        [ img [ id "logo", src "/logo.png" ] []
-        , a [ id "app-title", href "/", alt "Go push a secret!" ] [ text title ]
+        [ a [ id "app-title", href "/", alt "Go push a secret!" ] [ text title ]
+        , img [ id "logo", src "/logo.png" ] []
         ]
 
 
