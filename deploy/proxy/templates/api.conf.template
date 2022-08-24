@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2022 Simon Wendel
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: CC0-1.0
 
 limit_req_zone $binary_remote_addr zone=ip:20m rate=1r/s;
 limit_req_status 429;
