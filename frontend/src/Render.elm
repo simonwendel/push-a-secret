@@ -41,7 +41,10 @@ renderHeader title =
     header
         []
         [ a [ id "app-title", href "/", alt "Go push a secret!" ] [ text title ]
-        , img [ id "logo", src "/logo.png" ] []
+        , img [ id "logo"
+              , src "/logo.png"
+              , alt="Push-a-Secret logotype, three monkeys, covering their ears, mouth, and eyes, respectively."
+              ] []
         ]
 
 
