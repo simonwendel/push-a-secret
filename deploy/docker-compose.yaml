@@ -9,6 +9,9 @@ services:
     image: nginx:1.23.1
     volumes:
     - ./proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+    - ./proxy/general.conf:/etc/nginx/include/general.conf:ro
+    - ./proxy/proxy.conf:/etc/nginx/include/proxy.conf:ro
+    - ./proxy/security.conf:/etc/nginx/include/security.conf:ro
     - ./proxy/templates:/etc/nginx/templates:ro
     - ./proxy/reload.sh:/docker-entrypoint.d/reload.sh:ro
     - certbot_conf_vol:/etc/letsencrypt:ro

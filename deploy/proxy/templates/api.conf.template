@@ -4,23 +4,36 @@
 limit_req_zone $binary_remote_addr zone=ip:20m rate=1r/s;
 limit_req_status 429;
 limit_conn_status 429;
-
+ 
 map $status $retry_after {
-    default '';
-    429 '5';
+     default '';
+     429 '5';
+}
+
+upstream api_server {
+    server                  api;
+    keepalive               8;
 }
 
 server {
-    listen              443 ssl;
-    server_name         ${API_DOMAIN};
-    ssl_certificate     /etc/letsencrypt/live/${API_DOMAIN}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${API_DOMAIN}/privkey.pem;
+    listen                  443 ssl;
+    server_name             ${API_DOMAIN};
+
+    ssl_certificate         /etc/letsencrypt/live/${API_DOMAIN}/fullchain.pem;
+    ssl_certificate_key     /etc/letsencrypt/live/${API_DOMAIN}/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/${API_DOMAIN}/chain.pem;
+    include                 /etc/nginx/include/security.conf;
+
+    add_header              Access-Control-Allow-Headers  "Content-Type" always;
+    add_header              Access-Control-Allow-Methods  "GET, POST, HEAD, DELETE" always;
+    add_header              Access-Control-Allow-Origin   "https://${APP_DOMAIN}" always;
+    add_header              Access-Control-Expose-Headers "Location";
 
     location / {
-        limit_req zone=ip burst=6 delay=2;
-        add_header Retry-After $retry_after always;
-
-        set             $api api;
-        proxy_pass      http://$api;
+        proxy_redirect      off;
+        proxy_pass          http://api_server$request_uri;
+        include             /etc/nginx/include/proxy.conf;
     }
+
+    include                 /etc/nginx/include/general.conf;
 }

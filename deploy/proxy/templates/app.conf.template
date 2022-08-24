@@ -1,14 +1,32 @@
 # SPDX-FileCopyrightText: 2022 Simon Wendel
 # SPDX-License-Identifier: CC0-1.0
 
+upstream app_server {
+    server                  app;
+    keepalive               8;
+}
+
 server {
-    listen              443 ssl;
-    server_name         ${APP_DOMAIN};
-    ssl_certificate     /etc/letsencrypt/live/${APP_DOMAIN}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${APP_DOMAIN}/privkey.pem;
+    listen                  443 ssl;
+    server_name             ${APP_DOMAIN};
+
+    ssl_certificate         /etc/letsencrypt/live/${APP_DOMAIN}/fullchain.pem;
+    ssl_certificate_key     /etc/letsencrypt/live/${APP_DOMAIN}/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/${APP_DOMAIN}/chain.pem;
+    include                 /etc/nginx/include/security.conf;
+
+    if ($request_method !~ ^(GET|OPTIONS)$) {
+        return              '405';
+    }
+
+    # needed for the SPA routing to work
+    proxy_intercept_errors  on;
+    error_page              404 = /index.html;
 
     location / {
-        set             $app app;
-        proxy_pass      http://$app;
+        proxy_pass          http://app_server;
+        include             /etc/nginx/include/proxy.conf;
     }
+
+    include                 /etc/nginx/include/general.conf;
 }
