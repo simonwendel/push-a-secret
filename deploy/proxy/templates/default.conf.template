@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: CC0-1.0
 
 server {
-    listen      80 default_server;
+    listen          80  default_server;
 
     location /.well-known/acme-challenge/ {
-        root    /var/www/certbot;
+        root        /var/www/certbot;
     }
 
     location / {
-        return  301 https://$host$request_uri;
+        return      301  https://$host$request_uri;
     }
 }
