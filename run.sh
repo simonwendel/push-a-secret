@@ -13,6 +13,7 @@ function help() {
   echo "Options:"
   echo "p     If provided, Let's Encrypt requests will be issued against production servers."
   echo "      (Use this when you want official certificates instead of test certs, ie, when releasing.)"
+  echo "b     Always rebuild sources when deploying."
   echo
   echo "h     Print this help message."
   echo
@@ -43,10 +44,14 @@ function reminder() {
 }
 
 production=0
-while getopts ph flag; do
+build=0
+while getopts pbh flag; do
   case "${flag}" in
   p)
     production=1
+    ;;
+  b)
+    build=1
     ;;
   h)
     help
@@ -85,4 +90,9 @@ if [ $production -eq 1 ]; then
   staging_arg=""
 fi
 
-env -C deploy ./bootstrap.sh -n "push-a-secret" -d "$APP_DOMAIN $API_DOMAIN" -e "$CERT_EMAIL" $staging_arg
+build_arg=""
+if [ $build -eq 1 ]; then
+  build_arg="-b"
+fi
+
+env -C deploy ./bootstrap.sh -n "push-a-secret" -d "$APP_DOMAIN $API_DOMAIN" -e "$CERT_EMAIL" $staging_arg $build_arg

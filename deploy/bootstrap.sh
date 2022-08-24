@@ -17,6 +17,7 @@ function help() {
    echo "n     Deployment name for Docker Compose. (Required)"
    echo "d     Whitespace separated list of domains to request certificates for. (Required)"
    echo "e     Email address to associate with Let's Encrypt certificates issued. (Required)"
+   echo "b     (Re-)build local Dockerfile:s when starting services."
    echo "s     If provided, Let's Encrypt requests will be issued against the staging servers."
    echo "      (Use this when debugging, default is off.)"
    echo
@@ -26,11 +27,12 @@ function help() {
 
 rsa_key_size=4096
 staging=0
+build=0
 domains=()
 email=""
 name=""
 
-while getopts n:d:e:sh flag; do
+while getopts n:d:e:bsh flag; do
   case "${flag}" in
   n)
     name=("${OPTARG}")
@@ -43,6 +45,9 @@ while getopts n:d:e:sh flag; do
     ;;
   s)
     staging=1
+    ;;
+  b)
+    build=1
     ;;
   h)
     help
@@ -159,7 +164,13 @@ function runOnCertbot() {
 
 function start() {
   services="$1"
-  docker compose --project-name "$name" up -d $services
+
+  build_arg=""
+  if [ $build -eq 1 ]; then
+    build_arg="--build"
+  fi
+  
+  docker compose --project-name "$name" up -d $services $build_arg
 }
 
 main
