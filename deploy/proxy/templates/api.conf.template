@@ -24,10 +24,11 @@ server {
     ssl_trusted_certificate /etc/letsencrypt/live/${API_DOMAIN}/chain.pem;
     include                 /etc/nginx/include/security.conf;
 
-    add_header              Access-Control-Allow-Headers  "Content-Type" always;
-    add_header              Access-Control-Allow-Methods  "GET, POST, HEAD, DELETE" always;
+    add_header              Access-Control-Allow-Headers  "content-type" always;
+    add_header              Access-Control-Allow-Methods  "OPTIONS, HEAD, GET, POST, DELETE" always;
     add_header              Access-Control-Allow-Origin   "https://${APP_DOMAIN}" always;
-    add_header              Access-Control-Expose-Headers "Location";
+    add_header              Access-Control-Expose-Headers "location";
+    add_header              Content-Security-Policy       "connect-src '${APP_DOMAIN}';" always;
 
     location / {
         proxy_redirect      off;
