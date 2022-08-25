@@ -36,5 +36,10 @@ server {
         include             /etc/nginx/include/proxy.conf;
     }
 
+    location = /favicon.ico {
+        log_not_found   off;
+        access_log      off;
+    }
+
     include                 /etc/nginx/include/general.conf;
 }
