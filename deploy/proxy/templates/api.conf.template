@@ -1,13 +1,13 @@
 # SPDX-FileCopyrightText: 2022 Simon Wendel
 # SPDX-License-Identifier: CC0-1.0
 
-limit_req_zone $binary_remote_addr zone=ip:20m rate=1r/s;
-limit_req_status 429;
-limit_conn_status 429;
+limit_req_zone $binary_remote_addr zone=ip:20m rate=2r/s;
+limit_req_status    429;
+limit_conn_status   429;
  
 map $status $retry_after {
-     default '';
-     429 '5';
+     default                '';
+     429                    '5';
 }
 
 upstream api_server {
@@ -30,15 +30,18 @@ server {
     add_header              Access-Control-Expose-Headers "location";
     add_header              Content-Security-Policy       "connect-src '${APP_DOMAIN}';" always;
 
+    limit_req               zone=ip burst=6 nodelay;
+    add_header              Retry-After $retry_after always;
+
+    location = /favicon.ico {
+        log_not_found       off;
+        access_log          off;
+    }
+
     location / {
         proxy_redirect      off;
         proxy_pass          http://api_server$request_uri;
         include             /etc/nginx/include/proxy.conf;
-    }
-
-    location = /favicon.ico {
-        log_not_found   off;
-        access_log      off;
     }
 
     include                 /etc/nginx/include/general.conf;
