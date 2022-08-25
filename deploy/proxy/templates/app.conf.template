@@ -16,7 +16,7 @@ server {
     include                 /etc/nginx/include/security.conf;
 
     if ($request_method !~ ^(GET|OPTIONS)$) {
-        return              '405';
+        return              405;
     }
 
     # needed for the SPA routing to work
