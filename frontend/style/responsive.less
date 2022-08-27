@@ -1,0 +1,28 @@
+// SPDX-FileCopyrightText: 2022 Simon Wendel
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+.set-responsive(@screen-size-threshold) {
+    .only-on-large-screens {
+        .use-on-small-screens({
+            display: none;
+        });
+    }
+
+    .only-on-small-screens {
+        .use-on-large-screens({
+            display: none;
+        });
+    }
+
+    .use-on-small-screens(@rules) {
+        @media screen and (max-width: (@screen-size-threshold - 1)) {
+            @rules();
+        }
+    }
+
+    .use-on-large-screens(@rules) {
+        @media screen and (min-width: @screen-size-threshold) {
+            @rules();
+        }
+    }
+}

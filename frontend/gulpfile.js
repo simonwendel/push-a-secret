@@ -7,6 +7,7 @@ const CONFIGURATION = {
     elmTests: 'tests/**/*.elm',
     elmBundleFile: 'app.js',
     logo: 'img/logos/logo.png',
+    logo_small: 'img/logos/logo_small.png',
     staticAssets: ['index.html', 'img/*', 'js/**/*.js'],
     lessFiles: ['style/**/*.less'],
     outputDirectory: 'dist/'
@@ -27,6 +28,12 @@ function cleanDistFolder() {
 function copyLogo() {
     return src(CONFIGURATION.logo)
         .pipe(rename('logo.png'))
+        .pipe(dest(CONFIGURATION.outputDirectory))
+}
+
+function copySmallLogo() {
+    return src(CONFIGURATION.logo_small)
+        .pipe(rename('logo_small.png'))
         .pipe(dest(CONFIGURATION.outputDirectory))
 }
 
@@ -56,7 +63,7 @@ function watchTests() {
     return shell.task('elm-test --watch')();
 }
 
-const buildTask = series(copyLogo, copyStaticAssets, makeCssFiles, makeElmBundle);
+const buildTask = series(copyLogo, copySmallLogo, copyStaticAssets, makeCssFiles, makeElmBundle);
 exports.build = buildTask;
 
 const testTask = runTests;

@@ -6,7 +6,11 @@
 @import (reference) 'colors.less';
 @import (reference) 'flex.less';
 @import (reference) 'tags.less';
-@import (reference) 'special.less';
+@import (reference) 'components.less';
+@import (reference) 'responsive.less';
+
+@screen-size-threshold: 768px;
+.set-responsive(@screen-size-threshold);
 
 body {
     .flex-container-col();
@@ -20,35 +24,18 @@ header {
     .flex-item();
     .flex-container-row();
 
-    .constructStyledLinks(@header-a-font-color-styled);
+    .set-styled-links(@header-a-font-color-styled);
 
-    #logo {
-        .flex-item();
-        margin-left: auto;
-        width: 180px;
-    }
-
-    #app-title {
-        .flex-item();
-        font-size: 2.0rem;
-        font-family: Arial, Helvetica, sans-serif;
-
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid transparent;
-        &:hover {
-            border: 1px solid;
-            border-color: @app-title-background-color-hover;
-        }
-    }
+    .app-title();
+    .app-logo();
 
     align-content: center;
     align-items: center;
     min-height: 60px;
     padding-bottom: 10px;
     padding-top: 10px;
-    padding-left: 90px;
-    padding-right: 90px;
+    padding-left: 10%;
+    padding-right: 10%;
     background-color: @header-background-color;
 }
 
@@ -57,20 +44,8 @@ main {
     .flex-grow();
     .flex-container-col();
 
-    .constructLoader();
-
-    section {
-        .flex-item();
-
-        width: min(75%, 600px);
-        min-height: 200px;
-        margin-left: auto;
-        margin-right: auto;
-        background-color: @main-section-background-color;
-        border: 3px solid @main-section-border-color;
-        border-radius: 10px;
-        padding: 30px;
-    }
+    .app-loader();
+    .app-section();
 
     .error {
         color: @default-error-color;
@@ -86,7 +61,7 @@ footer {
 
     .flex-item();
 
-    .constructStyledLinks(@footer-a-font-color-styled);
+    .set-styled-links(@footer-a-font-color-styled);
 
     #footer-symbol {
         font-size: @footer-symbol-size;

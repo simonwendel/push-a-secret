@@ -1,0 +1,61 @@
+// SPDX-FileCopyrightText: 2022 Simon Wendel
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+.app-title() {
+    #app-title {
+        .flex-item();
+        font-size: 2.0rem;
+        font-family: Arial, Helvetica, sans-serif;
+
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+
+        &:hover {
+            border: 1px solid;
+            border-color: @app-title-background-color-hover;
+        }
+    }
+}
+
+.app-loader() {
+    & #loader {
+        .flex-item();
+        .flex-grow();
+        .flex-container-row();
+
+        div {
+            .flex-container-col();
+
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+        }
+
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+    }
+}
+
+.app-section() {
+    section {
+        .flex-item();
+
+        width: min(75%, 600px);
+        min-height: 200px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: @main-section-background-color;
+        border: 3px solid @main-section-border-color;
+        border-radius: 10px;
+        padding: 30px;
+    }
+}
+
+.app-logo() {
+    .logo {
+        height: 45px;
+        margin-left: auto;
+    }
+}
