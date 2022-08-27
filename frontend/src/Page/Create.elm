@@ -95,7 +95,7 @@ view { id, visible, base_url, key, error_message } =
                         ++ "."
                         |> text
                     ]
-                , p []
+                , p [ class "only-on-large-screens" ]
                     [ em []
                         [ text "HINT: Click the 'show' icon to view the hidden text or hit the checkmark to encrypt your secret."
                         ]
