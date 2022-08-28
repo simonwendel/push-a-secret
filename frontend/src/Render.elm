@@ -19,9 +19,9 @@ renderContent =
     section [ class "content" ]
 
 
-renderRow : List (Html msg) -> Html msg
-renderRow =
-    div [ class "row-of-items" ]
+renderRow : List (Attribute msg) -> List (Html msg) -> Html msg
+renderRow attributes =
+    div (class "row-of-items" :: attributes)
 
 
 renderApp : RenderContent msg -> List (Html msg)

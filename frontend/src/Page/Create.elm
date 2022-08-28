@@ -100,7 +100,7 @@ view { id, visible, base_url, key, error_message } =
                         [ text "HINT: Click the 'show' icon to view the hidden text or hit the checkmark to encrypt your secret."
                         ]
                     ]
-                , renderRow
+                , renderRow []
                     [ label []
                         [ text "Secret: "
                         , input
