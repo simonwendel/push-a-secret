@@ -16,6 +16,7 @@ import Html exposing (Html, a, br, h1, p, section, text)
 import Html.Attributes exposing (class, href)
 import Page.Loading as Loading
 import Page.NotFound as NotFound
+import Render exposing (renderContent)
 import Route
 import Secret exposing (Secret)
 import Storage
@@ -63,7 +64,7 @@ view model =
                 link =
                     crossOrigin model.base_url [ Route.delete_path, model.id ] []
             in
-            section [ class "content" ]
+            renderContent
                 [ h1 [] [ value |> text ]
                 , p []
                     [ text "Use the following link to delete this secret:"
