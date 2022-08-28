@@ -13,9 +13,9 @@ module Page.Create exposing
 
 import Crypto
 import Html exposing (Html, a, button, em, h1, input, label, p, span, strong, text)
-import Html.Attributes exposing (autofocus, class, href, maxlength, minlength, required, type_)
+import Html.Attributes exposing (autofocus, class, href, maxlength, minlength, required)
 import Html.Events exposing (onClick, onInput)
-import Render exposing (renderContent, renderRow)
+import Render exposing (renderContent, renderRow, setValueVisible)
 import Route
 import Storage
 import String exposing (fromInt)
@@ -109,11 +109,7 @@ view { id, visible, base_url, key, error_message } =
                             , required True
                             , minlength secretConstraints.minLength
                             , maxlength secretConstraints.maxLength
-                            , if visible then
-                                type_ "text"
-
-                              else
-                                type_ "password"
+                            , setValueVisible visible
                             ]
                             []
                         ]
