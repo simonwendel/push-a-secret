@@ -77,7 +77,25 @@ view { id, visible, router, key, error_message } =
             in
             renderContent
                 [ h1 [] [ text "Secret created" ]
-                , p [] [ text "Please copy the following link and use it when distributing the secret:" ]
+                , p []
+                    [ "We've successfully encrypted your secret and will store it for you in our database for up to "
+                        ++ fromInt defaultTtl
+                        ++ " day"
+                        ++ (if defaultTtl > 1 then
+                                "s"
+
+                            else
+                                ""
+                           )
+                        ++ "."
+                        |> text
+                    ]
+                , p [] [ text "Please copy the link and give it to your friend." ]
+                , p [ class "only-on-large-screens" ]
+                    [ em []
+                        [ text "Tip: Remember that anyone with this link can view your secret."
+                        ]
+                    ]
                 , p [] [ a [ href link ] [ text link ] ]
                 ]
 
@@ -96,7 +114,7 @@ view { id, visible, router, key, error_message } =
                     ]
                 , p [ class "only-on-large-screens" ]
                     [ em []
-                        [ text "HINT: Click the 'show' icon to view the hidden text or hit the checkmark to encrypt your secret."
+                        [ text "Tip: Click the Show/Hide button to toggle displaying the secret. Hit the Create button to encrypt the secret."
                         ]
                     ]
                 , textarea

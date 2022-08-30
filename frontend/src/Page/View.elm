@@ -12,7 +12,7 @@ module Page.View exposing
     )
 
 import Crypto
-import Html exposing (Html, button, h1, text, textarea)
+import Html exposing (Html, button, em, h1, p, text, textarea)
 import Html.Attributes exposing (class, cols, readonly)
 import Html.Events exposing (onClick)
 import Page.Loading as Loading
@@ -67,15 +67,21 @@ view model =
         Just value ->
             renderContent
                 [ h1 [] [ text "View secret" ]
-                , renderRow []
-                    [ textarea
-                        [ readonly True
-                        , Html.Attributes.value value
-                        , setValueVisible model.visible
-                        , cols secretConstraints.maxLength
-                        ]
-                        []
+                , p []
+                    [ text "We've retrieved a secret previously stored in our database and decrypted it with your key."
                     ]
+                , p [ class "only-on-large-screens" ]
+                    [ em []
+                        [ text "Tip: Click the Show/Hide button to toggle displaying secret. Hit the Delete button to delete the secret forever."
+                        ]
+                    ]
+                , textarea
+                    [ readonly True
+                    , Html.Attributes.value value
+                    , setValueVisible model.visible
+                    , cols secretConstraints.maxLength
+                    ]
+                    []
                 , renderRow [ class "row-of-buttons" ]
                     [ button [ onClick Toggle, class "neutral" ]
                         [ text <|
