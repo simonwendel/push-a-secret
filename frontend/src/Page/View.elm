@@ -12,8 +12,8 @@ module Page.View exposing
     )
 
 import Crypto
-import Html exposing (Html, a, br, button, h1, input, p, text)
-import Html.Attributes exposing (class, href, readonly)
+import Html exposing (Html, button, h1, input, text)
+import Html.Attributes exposing (class, readonly)
 import Html.Events exposing (onClick)
 import Page.Loading as Loading
 import Page.NotFound as NotFound
@@ -21,7 +21,6 @@ import Render exposing (renderContent, renderRow, setValueVisible)
 import Route exposing (Router)
 import Secret exposing (Secret)
 import Storage
-import Url.Builder exposing (crossOrigin)
 
 
 type alias Model =
@@ -39,6 +38,7 @@ type Msg
     = Read (Maybe Secret)
     | Decrypted Crypto.DecryptionResponse
     | Toggle
+    | Delete
 
 
 subscriptions : Model -> Sub Msg
@@ -64,10 +64,6 @@ view : Model -> Html Msg
 view model =
     case model.cleartext of
         Just value ->
-            let
-                link =
-                    model.router.deleteLink model.id
-            in
             renderContent
                 [ h1 [] [ text "View secret..." ]
                 , renderRow []
@@ -87,12 +83,9 @@ view model =
                             else
                                 "Show"
                         ]
-                    ]
-                , p []
-                    [ text "Use the following link to delete this secret:"
-                    , br [] []
-                    , br [] []
-                    , a [ href link ] [ text link ]
+                    , button [ onClick Delete, class "cancel" ]
+                        [ text "Delete"
+                        ]
                     ]
                 ]
 
@@ -105,7 +98,7 @@ view model =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg ({ router, id } as model) =
     case msg of
         Read secret ->
             ( { model | lookup = secret, firstLoad = False }
@@ -130,3 +123,5 @@ update msg model =
         Toggle ->
             ( { model | visible = not model.visible }, Cmd.none )
 
+        Delete ->
+            ( model, router.delete id )

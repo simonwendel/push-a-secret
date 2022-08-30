@@ -27,18 +27,18 @@ delete_path =
 
 
 type alias Router msg =
-    { navigate : Url -> Cmd msg
+    { push : Url -> Cmd msg
     , load : String -> Cmd msg
     , viewLink : String -> String -> String
-    , deleteLink : String -> String
+    , delete : String -> Cmd msg
     }
 
 
 buildRouter : Nav.Key -> String -> Router msg
 buildRouter navKey base_url =
-    { navigate = \url -> Nav.pushUrl navKey (Url.toString url)
+    { push = \url -> Url.toString url |> Nav.pushUrl navKey
     , load = \url -> Nav.load url
-    , deleteLink = \id -> crossOrigin base_url [ delete_path, id ] []
+    , delete = \id -> crossOrigin base_url [ delete_path, id ] [] |> Nav.pushUrl navKey
     , viewLink = \id key -> crossOrigin base_url [ view_path, id, key ] []
     }
 

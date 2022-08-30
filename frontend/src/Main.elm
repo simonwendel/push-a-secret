@@ -110,7 +110,7 @@ update msg model =
                     ( model, router.load url )
 
                 Internal url ->
-                    ( model, router.navigate url )
+                    ( model, router.push url )
 
         ChangedUrl url ->
             updateUrl url model
