@@ -12,11 +12,12 @@ module Page.View exposing
     )
 
 import Crypto
-import Html exposing (Html, a, br, h1, p, section, text)
-import Html.Attributes exposing (class, href)
+import Html exposing (Html, a, br, button, h1, input, p, text)
+import Html.Attributes exposing (class, href, readonly)
+import Html.Events exposing (onClick)
 import Page.Loading as Loading
 import Page.NotFound as NotFound
-import Render exposing (renderContent)
+import Render exposing (renderContent, renderRow, setValueVisible)
 import Route
 import Secret exposing (Secret)
 import Storage
@@ -30,12 +31,14 @@ type alias Model =
     , lookup : Maybe Secret
     , cleartext : Maybe String
     , base_url : String
+    , visible : Bool
     }
 
 
 type Msg
     = Read (Maybe Secret)
     | Decrypted Crypto.DecryptionResponse
+    | Toggle
 
 
 subscriptions : Model -> Sub Msg
@@ -51,6 +54,7 @@ init id key base_url =
       , cleartext = Nothing
       , base_url = base_url
       , firstLoad = True
+      , visible = False
       }
     , Storage.retrieve id Read
     )
@@ -65,7 +69,25 @@ view model =
                     crossOrigin model.base_url [ Route.delete_path, model.id ] []
             in
             renderContent
-                [ h1 [] [ value |> text ]
+                [ h1 [] [ text "View secret..." ]
+                , renderRow []
+                    [ input
+                        [ readonly True
+                        , Html.Attributes.value value
+                        , setValueVisible model.visible
+                        ]
+                        []
+                    ]
+                , renderRow [ class "row-of-buttons" ]
+                    [ button [ onClick Toggle, class "neutral" ]
+                        [ text <|
+                            if model.visible then
+                                "Hide"
+
+                            else
+                                "Show"
+                        ]
+                    ]
                 , p []
                     [ text "Use the following link to delete this secret:"
                     , br [] []
@@ -104,3 +126,7 @@ update msg model =
 
         Decrypted { cleartext } ->
             ( { model | cleartext = Just cleartext }, Cmd.none )
+
+        Toggle ->
+            ( { model | visible = not model.visible }, Cmd.none )
+
