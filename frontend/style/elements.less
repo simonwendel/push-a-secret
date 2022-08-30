@@ -6,6 +6,16 @@
 
 @default-spacing: 5px;
 
+section {
+    * {
+        margin-bottom: 1.0rem;
+    }
+
+    > div:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
 /* headings */
 h1 {
     font-family: Arial, Helvetica, sans-serif;
@@ -22,13 +32,8 @@ strong {
     font-weight: bold;
 }
 
-p {
-    margin-top: 1.0rem;
-}
-
 .row-of-items {
     .flex-container-row();
-    margin-top: 1.0rem;
 }
 
 /* links */
@@ -60,8 +65,11 @@ hr {
 
 /* buttons */
 .row-of-buttons {
-    .flex-container-row();
     justify-content: space-around;
+
+    > button {
+        margin-bottom: 0;
+    }
 }
 
 button {
@@ -87,7 +95,6 @@ button {
 
     margin-right: min(@default-spacing * 5, 5%);
     margin-left: min(@default-spacing * 5, 5%);
-    margin-top: @default-spacing;
     padding: @default-spacing;
 }
 
