@@ -18,7 +18,7 @@ import Html.Events exposing (onClick)
 import Page.Loading as Loading
 import Page.NotFound as NotFound
 import Render exposing (renderContent, renderRow, setValueVisible)
-import Route
+import Route exposing (Router)
 import Secret exposing (Secret)
 import Storage
 import Url.Builder exposing (crossOrigin)
@@ -30,8 +30,8 @@ type alias Model =
     , firstLoad : Bool
     , lookup : Maybe Secret
     , cleartext : Maybe String
-    , base_url : String
     , visible : Bool
+    , router : Router Msg
     }
 
 
@@ -46,15 +46,15 @@ subscriptions _ =
     Crypto.receiveDecryption Decrypted
 
 
-init : String -> String -> String -> ( Model, Cmd Msg )
-init id key base_url =
+init : String -> String -> Router Msg -> ( Model, Cmd Msg )
+init id key router =
     ( { id = id
       , key = key
       , lookup = Nothing
       , cleartext = Nothing
-      , base_url = base_url
       , firstLoad = True
       , visible = False
+      , router = router
       }
     , Storage.retrieve id Read
     )
@@ -66,7 +66,7 @@ view model =
         Just value ->
             let
                 link =
-                    crossOrigin model.base_url [ Route.delete_path, model.id ] []
+                    model.router.deleteLink model.id
             in
             renderContent
                 [ h1 [] [ text "View secret..." ]

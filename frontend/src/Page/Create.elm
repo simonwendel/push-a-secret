@@ -16,10 +16,9 @@ import Html exposing (Html, a, br, button, em, h1, input, label, p, span, strong
 import Html.Attributes exposing (autocomplete, autofocus, class, href, maxlength, minlength, required)
 import Html.Events exposing (onClick, onInput)
 import Render exposing (renderContent, renderRow, setValueVisible)
-import Route
+import Route exposing (Router)
 import Storage
 import String exposing (fromInt)
-import Url.Builder exposing (crossOrigin)
 import Validation exposing (secretConstraints, validateSecret)
 
 
@@ -28,7 +27,7 @@ type alias Model =
     , cleartext : String
     , visible : Bool
     , key : Maybe Crypto.Key
-    , base_url : String
+    , router : Router Msg
     , error_message : Maybe String
     }
 
@@ -47,9 +46,9 @@ defaultTtl =
     1
 
 
-init : String -> ( Model, Cmd Msg )
-init base_url =
-    ( { base_url = base_url
+init : Router Msg -> ( Model, Cmd Msg )
+init router =
+    ( { router = router
       , visible = False
       , cleartext = ""
       , id = Nothing
@@ -69,12 +68,12 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view { id, visible, base_url, key, error_message } =
+view { id, visible, router, key, error_message } =
     case ( id, key ) of
         ( Just idValue, Just keyValue ) ->
             let
                 link =
-                    crossOrigin base_url [ Route.view_path, idValue, keyValue.key ] []
+                    router.viewLink idValue keyValue.key
             in
             renderContent
                 [ h1 [] [ text "Your secret has been created!" ]

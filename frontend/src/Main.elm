@@ -12,7 +12,7 @@ import Page.Delete as Delete
 import Page.NotFound as NotFound
 import Page.View as View
 import Render exposing (renderApp)
-import Route exposing (Route(..), toRoute)
+import Route exposing (Route(..), buildRouter, toRoute)
 import Url exposing (Url)
 
 
@@ -22,7 +22,7 @@ type alias Flags =
 
 type alias Model =
     { page : Page
-    , key : Nav.Key
+    , navKey : Nav.Key
     , base_url : String
     }
 
@@ -69,7 +69,7 @@ subscriptions model =
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init { base_url } url key =
-    updateUrl url { page = NotFound, key = key, base_url = base_url }
+    updateUrl url { page = NotFound, navKey = key, base_url = base_url }
 
 
 view : Model -> Document Msg
@@ -99,14 +99,18 @@ view { page } =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        router =
+            buildRouter model.navKey model.base_url
+    in
     case msg of
         ClickedLink urlRequest ->
             case urlRequest of
                 External url ->
-                    ( model, Nav.load url )
+                    ( model, router.load url )
 
                 Internal url ->
-                    ( model, Nav.pushUrl model.key (Url.toString url) )
+                    ( model, router.navigate url )
 
         ChangedUrl url ->
             updateUrl url model
@@ -152,16 +156,16 @@ toDelete model ( deleteModel, cmd ) =
 
 
 updateUrl : Url -> Model -> ( Model, Cmd Msg )
-updateUrl url model =
+updateUrl url ({ navKey, base_url } as model) =
     case toRoute url of
         Nothing ->
             ( { model | page = NotFound }, Cmd.none )
 
         Just CreateRoute ->
-            toCreate model (Create.init model.base_url)
+            toCreate model (Create.init (buildRouter navKey base_url))
 
         Just (ViewRoute id key) ->
-            toView model (View.init id key model.base_url)
+            toView model (View.init id key (buildRouter navKey base_url))
 
         Just (DeleteRoute id) ->
             toDelete model (Delete.init id)
