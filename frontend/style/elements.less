@@ -2,13 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 @import (reference) 'colors.less';
+@import (reference) 'flex.less';
 
-@default-margin: 5px;
-
-/* body */
-body {
-    overflow: hidden;
-}
+@default-spacing: 5px;
 
 /* headings */
 h1 {
@@ -31,6 +27,7 @@ p {
 }
 
 .row-of-items {
+    .flex-container-row();
     margin-top: 1.0rem;
 }
 
@@ -62,29 +59,36 @@ hr {
 }
 
 /* buttons */
+.row-of-buttons {
+    .flex-container-row();
+    justify-content: space-around;
+}
+
 button {
+    .flex-item();
+    flex: 1;
+    width: 0;
+
     .constructButtonClass(ok);
     .constructButtonClass(cancel);
     .constructButtonClass(neutral);
-
-    &:focus {
-        border-width: 2px;
-    }
 
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
     border-style: solid;
     border-width: 1px;
-    display: inline-block;
+
     cursor: pointer;
     color: @button-font-color;
     font-family: Arial;
     font-size: 1.2rem;
-    width: 30px;
-    height: 30px;
     text-align: center;
-    margin: @default-margin;
+
+    margin-right: min(@default-spacing * 5, 5%);
+    margin-left: min(@default-spacing * 5, 5%);
+    margin-top: @default-spacing;
+    padding: @default-spacing;
 }
 
 .constructButtonClass(@class) {
@@ -104,16 +108,8 @@ button {
 
 /* inputs */
 input {
-    .constructInput(40ch);
-}
-
-.constructInput(@width) {
     .normalBorder() {
         border-color: @input-border-color;
-    }
-
-    &:focus {
-        border-width: 2px;
     }
 
     &:invalid {
@@ -128,14 +124,11 @@ input {
         .normalBorder();
     }
 
-    width: @width;
-    margin: @default-margin;
     background-color: @input-background-color;
     border-color: @input-border-color;
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
-    height: 30px;
     box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.06);
     padding: 1ch;
 }
