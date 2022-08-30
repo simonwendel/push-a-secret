@@ -13,7 +13,7 @@ view : Html msg
 view =
     renderContent
         [ h1 []
-            [ text "Oops, nothing here!"
+            [ text "Oops!"
             ]
         , p []
             [ text

@@ -76,14 +76,14 @@ view { id, visible, router, key, error_message } =
                     router.viewLink idValue keyValue.key
             in
             renderContent
-                [ h1 [] [ text "Your secret has been created!" ]
+                [ h1 [] [ text "Secret created" ]
                 , p [] [ text "Please copy the following link and use it when distributing the secret:" ]
                 , p [] [ a [ href link ] [ text link ] ]
                 ]
 
         _ ->
             renderContent <|
-                [ h1 [] [ text "Create a secret!" ]
+                [ h1 [] [ text "Create secret" ]
                 , p []
                     [ text "Create your new secret by entering it in the password box below. A secret"
                     , strong [] [ text " MUST " ]

@@ -10,7 +10,7 @@ module Page.Delete exposing
     , view
     )
 
-import Html exposing (Html, button, h1, p, text)
+import Html exposing (Html, button, em, h1, p, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Page.Loading as Loading
@@ -77,7 +77,10 @@ view model =
         ( Just False, Just True, _ ) ->
             renderContent
                 [ h1 []
-                    [ text "Secret not deleted" ]
+                    [ text "Secret "
+                    , em [] [ text "not" ]
+                    , text " deleted"
+                    ]
                 , p []
                     [ text
                         """

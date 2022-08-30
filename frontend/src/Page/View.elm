@@ -65,7 +65,7 @@ view model =
     case model.cleartext of
         Just value ->
             renderContent
-                [ h1 [] [ text "View secret..." ]
+                [ h1 [] [ text "View secret" ]
                 , renderRow []
                     [ input
                         [ readonly True
