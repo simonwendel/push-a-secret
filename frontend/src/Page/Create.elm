@@ -11,6 +11,7 @@ module Page.Create exposing
     , view
     )
 
+import Aria exposing (ariaDescription, ariaLabel)
 import Crypto
 import Html exposing (Html, a, button, em, h1, p, span, text, textarea)
 import Html.Attributes exposing (autocomplete, autofocus, class, cols, href, maxlength, minlength, required, spellcheck)
@@ -127,6 +128,8 @@ view { id, visible, router, key, error_message } =
                     , setValueVisible visible
                     , cols secretConstraints.maxLength
                     , spellcheck False
+                    , ariaLabel "secret"
+                    , ariaDescription "Enter secret to encrypt"
                     ]
                     []
                 , renderRow [ class "row-of-buttons" ]

@@ -11,6 +11,7 @@ module Page.View exposing
     , view
     )
 
+import Aria exposing (ariaDescription, ariaLabel)
 import Crypto
 import Html exposing (Html, button, em, h1, p, text, textarea)
 import Html.Attributes exposing (class, cols, readonly)
@@ -80,6 +81,8 @@ view model =
                     , Html.Attributes.value value
                     , setValueVisible model.visible
                     , cols secretConstraints.maxLength
+                    , ariaLabel "secret"
+                    , ariaDescription "Showing decrypted secret"
                     ]
                     []
                 , renderRow [ class "row-of-buttons" ]
