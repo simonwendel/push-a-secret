@@ -12,8 +12,8 @@ module Page.View exposing
     )
 
 import Crypto
-import Html exposing (Html, button, h1, input, text)
-import Html.Attributes exposing (class, readonly)
+import Html exposing (Html, button, h1, text, textarea)
+import Html.Attributes exposing (class, cols, readonly)
 import Html.Events exposing (onClick)
 import Page.Loading as Loading
 import Page.NotFound as NotFound
@@ -21,6 +21,7 @@ import Render exposing (renderContent, renderRow, setValueVisible)
 import Route exposing (Router)
 import Secret exposing (Secret)
 import Storage
+import Validation exposing (secretConstraints)
 
 
 type alias Model =
@@ -67,10 +68,11 @@ view model =
             renderContent
                 [ h1 [] [ text "View secret" ]
                 , renderRow []
-                    [ input
+                    [ textarea
                         [ readonly True
                         , Html.Attributes.value value
                         , setValueVisible model.visible
+                        , cols secretConstraints.maxLength
                         ]
                         []
                     ]

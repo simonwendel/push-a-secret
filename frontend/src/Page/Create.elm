@@ -12,8 +12,8 @@ module Page.Create exposing
     )
 
 import Crypto
-import Html exposing (Html, a, br, button, em, h1, input, label, p, span, strong, text)
-import Html.Attributes exposing (autocomplete, autofocus, class, href, maxlength, minlength, required)
+import Html exposing (Html, a, button, em, h1, p, span, text, textarea)
+import Html.Attributes exposing (autocomplete, autofocus, class, cols, href, maxlength, minlength, required, spellcheck)
 import Html.Events exposing (onClick, onInput)
 import Render exposing (renderContent, renderRow, setValueVisible)
 import Route exposing (Router)
@@ -85,8 +85,8 @@ view { id, visible, router, key, error_message } =
             renderContent <|
                 [ h1 [] [ text "Create secret" ]
                 , p []
-                    [ text "Create your new secret by entering it in the password box below. A secret"
-                    , strong [] [ text " MUST " ]
+                    [ text "Create your new secret by entering it in the textbox below. A secret"
+                    , em [] [ text " must " ]
                     , "have a character length of at least "
                         ++ fromInt secretConstraints.minLength
                         ++ " and at most "
@@ -99,21 +99,18 @@ view { id, visible, router, key, error_message } =
                         [ text "HINT: Click the 'show' icon to view the hidden text or hit the checkmark to encrypt your secret."
                         ]
                     ]
-                , renderRow []
-                    [ label []
-                        [ text "Secret: "
-                        , input
-                            [ onInput UpdateText
-                            , autofocus True
-                            , required True
-                            , autocomplete False
-                            , minlength secretConstraints.minLength
-                            , maxlength secretConstraints.maxLength
-                            , setValueVisible visible
-                            ]
-                            []
-                        ]
+                , textarea
+                    [ onInput UpdateText
+                    , autofocus True
+                    , required True
+                    , autocomplete False
+                    , minlength secretConstraints.minLength
+                    , maxlength secretConstraints.maxLength
+                    , setValueVisible visible
+                    , cols secretConstraints.maxLength
+                    , spellcheck False
                     ]
+                    []
                 , renderRow [ class "row-of-buttons" ]
                     [ button [ onClick Toggle, class "neutral" ]
                         [ text <|

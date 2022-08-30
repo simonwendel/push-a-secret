@@ -107,7 +107,7 @@ button {
 }
 
 /* inputs */
-input {
+textarea {
     .normalBorder() {
         border-color: @input-border-color;
     }
@@ -131,4 +131,12 @@ input {
     border-radius: 5px;
     box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.06);
     padding: 1ch;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+
+    &.hidden {
+        color: transparent !important;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5) !important;
+    }
 }

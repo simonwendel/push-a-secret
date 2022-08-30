@@ -5,7 +5,7 @@
 module Render exposing (renderApp, renderContent, renderRow, setValueVisible)
 
 import Html exposing (Attribute, Html, a, div, footer, header, hr, img, node, section, span, text)
-import Html.Attributes exposing (alt, class, href, id, src, target, type_)
+import Html.Attributes exposing (alt, class, href, id, src, target)
 
 
 type alias RenderContent msg =
@@ -78,7 +78,7 @@ renderFooter =
 setValueVisible : Bool -> Attribute msg
 setValueVisible visible =
     if visible then
-        type_ "text"
+        class "not-hidden"
 
     else
-        type_ "password"
+        class "hidden"
