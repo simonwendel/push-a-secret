@@ -54,9 +54,10 @@ view model =
             renderContent
                 [ h1 [] [ text "Delete secret?" ]
                 , p [] [ text "Are you sure you want to delete this secret?" ]
+                , p [] [ text "After deletion we have no way to retrieve it ever again. Use with caution, you've been warned!" ]
                 , renderRow []
-                    [ button [ onClick DoDelete, class "ok" ] [ text "✔" ]
-                    , button [ onClick DontDelete, class "cancel" ] [ text "✖" ]
+                    [ button [ onClick DontDelete, class "cancel" ] [ text "Keep it" ]
+                    , button [ onClick DoDelete, class "ok" ] [ text "Delete" ]
                     ]
                 ]
 

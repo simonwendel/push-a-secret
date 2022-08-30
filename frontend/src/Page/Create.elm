@@ -12,7 +12,7 @@ module Page.Create exposing
     )
 
 import Crypto
-import Html exposing (Html, a, button, em, h1, input, label, p, span, strong, text)
+import Html exposing (Html, a, br, button, em, h1, input, label, p, span, strong, text)
 import Html.Attributes exposing (autocomplete, autofocus, class, href, maxlength, minlength, required)
 import Html.Events exposing (onClick, onInput)
 import Render exposing (renderContent, renderRow, setValueVisible)
@@ -114,8 +114,19 @@ view { id, visible, base_url, key, error_message } =
                             ]
                             []
                         ]
-                    , button [ onClick Toggle, class "neutral" ] [ text "👁" ]
-                    , button [ onClick Encrypt, class "ok" ] [ text "✔" ]
+                    ]
+                , renderRow [ class "row-of-buttons" ]
+                    [ button [ onClick Toggle, class "neutral" ]
+                        [ text <|
+                            if visible then
+                                "Hide"
+
+                            else
+                                "Show"
+                        ]
+                    , button [ onClick Encrypt, class "ok" ]
+                        [ text "Create"
+                        ]
                     ]
                 ]
                     ++ (case error_message of
