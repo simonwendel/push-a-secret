@@ -22,7 +22,6 @@ import Render exposing (renderContent, renderRow, setValueVisible)
 import Route exposing (Router)
 import Secret exposing (Secret)
 import Storage
-import Validation exposing (secretConstraints)
 
 
 type alias Model =
@@ -80,7 +79,7 @@ view model =
                     [ readonly True
                     , Html.Attributes.value value
                     , setValueVisible model.visible
-                    , cols secretConstraints.maxLength
+                    , cols 120
                     , ariaLabel "secret"
                     , ariaDescription "Showing decrypted secret"
                     ]

@@ -126,7 +126,7 @@ view { id, visible, router, key, error_message } =
                     , minlength secretConstraints.minLength
                     , maxlength secretConstraints.maxLength
                     , setValueVisible visible
-                    , cols secretConstraints.maxLength
+                    , cols 120
                     , spellcheck False
                     , ariaLabel "secret"
                     , ariaDescription "Enter secret to encrypt"
