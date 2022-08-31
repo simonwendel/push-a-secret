@@ -43,14 +43,14 @@ renderHeader title =
         [ a [ id "app-title", href "/", alt "Go push a secret!" ] [ text title ]
         , img
             [ class "logo"
-            , class "only-on-large-screens"
+            , class "only-on-wide-screens"
             , src "/logo.png"
             , alt "A monkey covering their mouth."
             ]
             []
         , img
             [ class "logo"
-            , class "only-on-small-screens"
+            , class "only-on-narrow-screens"
             , src "/logo_small.png"
             , alt "Three monkeys, covering their ears, mouth, and eyes, respectively."
             ]

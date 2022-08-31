@@ -92,7 +92,7 @@ view { id, visible, router, key, error_message } =
                         |> text
                     ]
                 , p [] [ text "Please copy the link and give it to your friend." ]
-                , p [ class "only-on-large-screens" ]
+                , p [ class "only-on-wide-screens" ]
                     [ em []
                         [ text "Tip: Remember that anyone with this link can view your secret."
                         ]
@@ -113,7 +113,7 @@ view { id, visible, router, key, error_message } =
                         ++ "."
                         |> text
                     ]
-                , p [ class "only-on-large-screens" ]
+                , p [ class "only-on-wide-screens" ]
                     [ em []
                         [ text "Tip: Click the Show/Hide button to toggle displaying the secret. Hit the Create button to encrypt the secret."
                         ]

@@ -9,9 +9,6 @@
 @import (reference) 'components.less';
 @import (reference) 'responsive.less';
 
-@screen-size-threshold: 768px;
-.set-responsive(@screen-size-threshold);
-
 body {
     .flex-container-col();
     height: 100vh;
@@ -54,7 +51,10 @@ main {
     }
 
     height: 1fr;
-    padding: max(5%, 10px);
+    padding: 10px;
+    .use-on-tall-screens({
+        padding: 5%;
+    });
 }
 
 footer {
@@ -62,8 +62,6 @@ footer {
     @footer-symbol-size: 2.0rem;
 
     .flex-item();
-
-    // height: @footer-symbol-size;
 
     .set-styled-links(@footer-a-font-color-styled);
 

@@ -71,7 +71,7 @@ view model =
                 , p []
                     [ text "We've retrieved a secret previously stored in our database and decrypted it with your key."
                     ]
-                , p [ class "only-on-large-screens" ]
+                , p [ class "only-on-wide-screens" ]
                     [ em []
                         [ text "Tip: Click the Show/Hide button to toggle displaying secret. Hit the Delete button to delete the secret forever."
                         ]

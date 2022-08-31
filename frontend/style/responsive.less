@@ -1,28 +1,41 @@
 // SPDX-FileCopyrightText: 2022 Simon Wendel
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-.set-responsive(@screen-size-threshold) {
-    .only-on-large-screens {
-        .use-on-small-screens({
-            display: none;
-        });
-    }
+@screen-width-threshold: 768px;
+@screen-height-threshold: 410px;
 
-    .only-on-small-screens {
-        .use-on-large-screens({
-            display: none;
-        });
-    }
+.only-on-wide-screens {
+    .use-on-narrow-screens({
+        display: none;
+    });
+}
 
-    .use-on-small-screens(@rules) {
-        @media screen and (max-width: (@screen-size-threshold - 1)) {
-            @rules();
-        }
-    }
+.only-on-narrow-screens {
+    .use-on-wide-screens({
+        display: none;
+    });
+}
 
-    .use-on-large-screens(@rules) {
-        @media screen and (min-width: @screen-size-threshold) {
-            @rules();
-        }
+.use-on-narrow-screens(@rules) {
+    @media screen and (max-width: (@screen-width-threshold - 1)) {
+        @rules();
+    }
+}
+
+.use-on-wide-screens(@rules) {
+    @media screen and (min-width: @screen-width-threshold) {
+        @rules();
+    }
+}
+
+.use-on-short-screens(@rules) {
+    @media screen and (max-height: (@screen-height-threshold - 1)) {
+        @rules();
+    }
+}
+
+.use-on-tall-screens(@rules) {
+    @media screen and (min-height: @screen-height-threshold) {
+        @rules();
     }
 }
