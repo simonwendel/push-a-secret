@@ -14,11 +14,9 @@
 
 body {
     .flex-container-col();
-
     height: 100vh;
     color: @default-font-color;
     background-color: @default-background-color;
-    overflow: hidden;
 }
 
 header {
@@ -33,6 +31,8 @@ header {
     align-content: center;
     align-items: center;
     min-height: 60px;
+    max-height: 100px;
+    height: 15%;
     padding-bottom: 10px;
     padding-top: 10px;
     padding-left: 10%;
@@ -41,9 +41,10 @@ header {
 }
 
 main {
+    .flex-container-col();
+    
     .flex-item();
     .flex-grow();
-    .flex-container-col();
 
     .app-loader();
     .app-section();
@@ -62,6 +63,8 @@ footer {
 
     .flex-item();
 
+    // height: @footer-symbol-size;
+
     .set-styled-links(@footer-a-font-color-styled);
 
     #footer-symbol {
@@ -72,7 +75,7 @@ footer {
     span {
         font-size: @footer-font-size;
         vertical-align: middle;
-        line-height: @footer-symbol-size; // we must match height of tallest node
+        line-height: @footer-symbol-size * 1.25; // prevent overflow
         font-style: italic;
     }
 
