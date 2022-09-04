@@ -9,25 +9,12 @@ SPDX-License-Identifier: GPL-3.0-or-later
 <head>
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico'/>
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
   <link href='/app.css' rel='stylesheet'>
-  <script src='/app.js'></script>
 </head>
 
 <body>
-  <script type='module'>
-
-    import { wireCrypto } from '/ports.js'
-
-    const app = Elm.Main.init({
-      flags: {
-        base_url: window.location.protocol + '//' + window.location.host
-      }
-    });
-
-    wireCrypto(app);
-
-  </script>
+  <script src='/app.js'></script>
 </body>
 
 </html>

@@ -1,11 +1,9 @@
 // SPDX-FileCopyrightText: 2022 Simon Wendel
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-export { wireCrypto }
+import { generate, encrypt, decrypt } from './crypto.js'
 
-import { generate, encrypt, decrypt } from '/crypto.js'
-
-const wireCrypto = app => {
+export const setup = app => {
     app.ports.requestKey.subscribe(async () => {
         const exported = await generate();
         app.ports.receiveKey.send({
@@ -28,4 +26,4 @@ const wireCrypto = app => {
             cleartext: decrypted.cleartext
         });
     });
-}
+};

@@ -3,7 +3,7 @@
 
 export { generate, encrypt, decrypt }
 
-import { strToUTF8Arr, UTF8ArrToStr, base64EncArr, base64DecToArr } from '/mdn.b64.js'
+import { strToUTF8Arr, UTF8ArrToStr, base64EncArr, base64DecToArr } from './mdn.b64.js'
 
 const subtle = window.crypto.subtle;
 const settings = {
