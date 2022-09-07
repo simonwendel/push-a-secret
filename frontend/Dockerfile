@@ -34,8 +34,6 @@ RUN envsubst < templates/Configuration.elm.template > src/Configuration.elm
 RUN npm install \
   && npx gulp
 
-RUN cat dist/app.js | grep -i api_url
-
 FROM nginx:1.23.1 AS final
 
 WORKDIR /srv/www
