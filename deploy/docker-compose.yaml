@@ -12,6 +12,7 @@ services:
     - ./proxy/general.conf:/etc/nginx/include/general.conf:ro
     - ./proxy/proxy.conf:/etc/nginx/include/proxy.conf:ro
     - ./proxy/security.conf:/etc/nginx/include/security.conf:ro
+    - ./proxy/log.conf:/etc/nginx/include/log.conf:ro
     - ./proxy/templates:/etc/nginx/templates:ro
     - ./proxy/reload.sh:/docker-entrypoint.d/reload.sh:ro
     - certbot_conf_vol:/etc/letsencrypt:ro

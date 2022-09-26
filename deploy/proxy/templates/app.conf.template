@@ -1,20 +1,6 @@
 # SPDX-FileCopyrightText: 2022 Simon Wendel
 # SPDX-License-Identifier: CC0-1.0
 
-map $request $app_request_redacted {
-    ~^(?<nokey>\w*\s\/v\/\w*\/)(?:\w|-|_)*(?<rest>.*)$ "${nokey}***KEY-REDACTED***${rest}";
-    default                     "$request";
-}
-
-map $http_referer $app_http_referer_redacted {
-    ~^(?<nokey>.*\/v\/\w*\/)(?:\w|-|_)*(?<rest>.*)$ "${nokey}***KEY-REDACTED***${rest}";
-    default                     $http_referer;
-}
-
-log_format app_redacted '$remote_addr - $remote_user [$time_local] '
-            '"$app_request_redacted" $status $body_bytes_sent '
-            '"$app_http_referer_redacted" "$http_user_agent"';
-
 upstream app_server {
     server                  app;
     keepalive               8;
@@ -33,7 +19,7 @@ server {
         return              405;
     }
 
-    access_log              /var/log/nginx/app_access.log app_redacted;
+    access_log              /var/log/nginx/app_access.log log_redacted;
     log_not_found           on;
 
     # needed for the SPA routing to work

@@ -4,7 +4,7 @@
 server {
     listen          80  default_server;
 
-    access_log              /var/log/nginx/default_access.log;
+    access_log              /var/log/nginx/default_access.log log_redacted;
     log_not_found           on;
 
     location /.well-known/acme-challenge/ {
