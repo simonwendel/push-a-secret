@@ -16,6 +16,7 @@ services:
     - ./proxy/reload.sh:/docker-entrypoint.d/reload.sh:ro
     - certbot_conf_vol:/etc/letsencrypt:ro
     - certbot_www_vol:/var/www/certbot:ro
+    - proxy_logs_vol:/var/log/nginx
     environment:
       - APP_DOMAIN=${APP_DOMAIN}
       - API_DOMAIN=${API_DOMAIN}
@@ -87,3 +88,4 @@ volumes:
   database_vol:
   certbot_conf_vol:
   certbot_www_vol:
+  proxy_logs_vol:

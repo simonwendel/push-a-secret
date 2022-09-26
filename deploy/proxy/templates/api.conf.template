@@ -1,13 +1,22 @@
 # SPDX-FileCopyrightText: 2022 Simon Wendel
 # SPDX-License-Identifier: CC0-1.0
 
-limit_req_zone $binary_remote_addr zone=ip:20m rate=2r/s;
-limit_req_status    429;
-limit_conn_status   429;
- 
+map $http_referer $api_http_referer_redacted {
+    ~^(?<nokey>.*\/v\/\w*\/)(?:\w|-|_)*(?<rest>.*)$ "${nokey}***KEY-REDACTED***${rest}";
+    default                     $http_referer;
+}
+
+log_format api_redacted '$remote_addr - $remote_user [$time_local] '
+            '"$request" $status $body_bytes_sent '
+            '"$api_http_referer_redacted" "$http_user_agent"';
+
+limit_req_zone          $binary_remote_addr zone=api_ip:20m rate=2r/s;
+limit_req_status        429;
+limit_conn_status       429;
+
 map $status $retry_after {
-     default                '';
-     429                    '5';
+    default                '';
+    429                    '5';
 }
 
 upstream api_server {
@@ -24,19 +33,17 @@ server {
     ssl_trusted_certificate /etc/letsencrypt/live/${API_DOMAIN}/chain.pem;
     include                 /etc/nginx/include/security.conf;
 
+    access_log              /var/log/nginx/api_access.log api_redacted;
+    log_not_found           on;
+
+    limit_req               zone=api_ip burst=6 nodelay;
+    add_header              Retry-After $retry_after always;
+
     add_header              Access-Control-Allow-Headers  "content-type" always;
     add_header              Access-Control-Allow-Methods  "OPTIONS, HEAD, GET, POST, DELETE" always;
     add_header              Access-Control-Allow-Origin   "https://${APP_DOMAIN}" always;
     add_header              Access-Control-Expose-Headers "location";
     add_header              Content-Security-Policy       "connect-src '${APP_DOMAIN}';" always;
-
-    limit_req               zone=ip burst=6 nodelay;
-    add_header              Retry-After $retry_after always;
-
-    location = /favicon.ico {
-        log_not_found       off;
-        access_log          off;
-    }
 
     location / {
         proxy_redirect      off;
