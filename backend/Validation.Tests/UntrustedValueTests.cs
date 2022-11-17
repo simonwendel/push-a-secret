@@ -51,11 +51,7 @@ public class UntrustedValueTests
     [Fact(Skip = "We don't use this in debug builds anymore.")]
     internal void ToString_Always_ThrowsExceptionInsteadOfReturningValue()
     {
-        var rendering = () =>
-        {
-            var _ = sut.ToString();
-        };
-
+        var rendering = () => sut.ToString();
         rendering.Should().Throw<InvalidOperationException>();
         value.ToStringCalled.Should().BeFalse();
     }

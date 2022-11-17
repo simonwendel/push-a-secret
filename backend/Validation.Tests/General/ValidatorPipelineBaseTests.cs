@@ -13,11 +13,7 @@ public class ValidatorPipelineBaseTests
     [Fact]
     internal void Ctor_GivenNoValidators_ThrowsException()
     {
-        var constructing = () =>
-        {
-            var pipeline = new TestPipeline();
-        };
-
+        var constructing = () => new TestPipeline();
         constructing.Should().Throw<ArgumentException>();
     }
 
