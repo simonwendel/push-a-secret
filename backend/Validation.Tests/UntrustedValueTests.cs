@@ -35,8 +35,8 @@ public class UntrustedValueTests
         @this.Equals(that).Should().Be(expected);
     }
 
-    [Theory, AutoData]
-    internal void Equals_GivenNull_ReturnsFalse(UntrustedValue<object> sut)
+    [Fact]
+    internal void Equals_GivenNull_ReturnsFalse()
     {
         sut.Equals(null).Should().BeFalse();
     }
