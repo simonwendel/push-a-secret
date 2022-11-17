@@ -19,7 +19,7 @@ const CONFIGURATION = {
     images: 'img/*',
 
     output: 'dist/'
-}
+};
 
 const {
     src,
