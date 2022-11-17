@@ -18,7 +18,8 @@ public class UntrustedSecretBinder : IModelBinder
         }
 
         var modelName = context.FieldName;
-        var value = await new StreamReader(context.HttpContext.Request.Body).ReadToEndAsync();
+        using var streamReader = new StreamReader(context.HttpContext.Request.Body);
+        var value = await streamReader.ReadToEndAsync();
         if (!string.IsNullOrEmpty(value))
         {
             try

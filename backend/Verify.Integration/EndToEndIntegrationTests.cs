@@ -62,7 +62,8 @@ internal static class FluentEndToEndIntegrationTestMethods
     public static async Task<(HttpClient, Uri, Secret)> VerifyItExists(this Task<(HttpClient, Uri, Secret)> chain)
         => await chain.Continue(async (client, location, _) =>
         {
-            var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, location));
+            using var request = new HttpRequestMessage(HttpMethod.Head, location);
+            var response = await client.SendAsync(request);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         });
 
