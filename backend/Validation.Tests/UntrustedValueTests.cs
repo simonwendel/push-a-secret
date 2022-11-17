@@ -48,7 +48,7 @@ public class UntrustedValueTests
         value.GetHashCodeCalled.Should().BeTrue();
     }
 
-    [Fact(Skip = "We don't use this in debug builds anymore.")]
+    [Fact]
     internal void ToString_Always_ThrowsExceptionInsteadOfReturningValue()
     {
         var rendering = () => sut.ToString();

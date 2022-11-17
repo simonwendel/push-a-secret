@@ -28,7 +28,6 @@ public class UntrustedValue<T> where T : notnull
     public sealed override int GetHashCode()
         => Value.GetHashCode();
 
-#if !DEBUG
     /// <remarks>
     /// In order to at least make it hard to bypass validation, ToString() will always throw an
     /// exception and is sealed to prevent such silliness.
@@ -36,5 +35,4 @@ public class UntrustedValue<T> where T : notnull
     /// <exception cref="InvalidOperationException">Always.</exception>
     public sealed override string ToString()
         => throw new InvalidOperationException("Bypassing validation by calling ToString() is not allowed.");
-#endif
 }
