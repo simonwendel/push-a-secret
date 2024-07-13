@@ -101,6 +101,9 @@ END
   runOnCertbot "$SCRIPT"
   echo
 
+  echo ">>> Starting internal services ..."
+  start "app api db"
+
   echo ">>> Starting proxy ..."
   docker compose --project-name "$name" up --force-recreate -d proxy
   echo
