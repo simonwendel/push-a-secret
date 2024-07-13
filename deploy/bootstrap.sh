@@ -95,6 +95,7 @@ SCRIPT=$(cat << END
         -keyout /etc/letsencrypt/live/\$d/privkey.pem \
         -out /etc/letsencrypt/live/\$d/fullchain.pem \
         -subj /CN=localhost
+      cp /etc/letsencrypt/live/\$d/fullchain.pem /etc/letsencrypt/live/\$d/chain.pem
     done
 END
 )
