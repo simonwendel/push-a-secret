@@ -9,7 +9,7 @@ import Result exposing (Result)
 
 secretConstraints : { minLength : Int, maxLength : Int }
 secretConstraints =
-    { minLength = 1, maxLength = 72 }
+    { minLength = 1, maxLength = 250 }
 
 
 validateSecret : String -> Result String String

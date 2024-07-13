@@ -8,7 +8,7 @@ namespace Validation.Specific;
 
 internal class CiphertextValidator : ValidatorPipelineBase<string>, ICiphertextValidator
 {
-    private const int MaxCleartextLength = 72;
+    private const int MaxCleartextLength = 250;
     private const int MinCleartextLength = 1;
     
     private const int MaxBytesPerCodePoint = 2;

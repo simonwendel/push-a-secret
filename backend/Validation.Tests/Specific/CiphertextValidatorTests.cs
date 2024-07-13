@@ -14,7 +14,7 @@ public class CiphertextValidatorTests
 {
     [Fact]
     internal void MaxCipherLength_AsPerConfiguration_ShouldBe216()
-        => CiphertextValidator.MaxCipherLength.Should().Be(216);
+        => CiphertextValidator.MaxCipherLength.Should().Be(688);
 
     [Fact]
     internal void MinCipherLength_AsPerConfiguration_ShouldBe24()
@@ -65,7 +65,7 @@ public class CiphertextValidatorTests
     [Theory, AutoData]
     internal void Validate_GivenLongestValidEncoding_ReturnsValue(CiphertextValidator sut)
     {
-        var encoded = GetValidEncodedCipherOfLength(72);
+        var encoded = GetValidEncodedCipherOfLength(250);
         sut.Validate(new UntrustedValue<string>(encoded)).Should().Be(encoded);
     }
 
