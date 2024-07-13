@@ -12,7 +12,6 @@ server {
 
     ssl_certificate         /etc/letsencrypt/live/${APP_DOMAIN}/fullchain.pem;
     ssl_certificate_key     /etc/letsencrypt/live/${APP_DOMAIN}/privkey.pem;
-    ssl_trusted_certificate /etc/letsencrypt/live/${APP_DOMAIN}/chain.pem;
     include                 /etc/nginx/include/security.conf;
 
     if ($request_method !~ ^(GET|OPTIONS)$) {
