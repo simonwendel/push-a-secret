@@ -1,7 +1,7 @@
 ﻿# SPDX-FileCopyrightText: 2022 Simon Wendel
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 LABEL \
   stage=intermediate
 
@@ -15,7 +15,7 @@ WORKDIR "/src/Api"
 RUN dotnet build "Api.csproj" -c Release -o /app/build
 RUN dotnet publish "Api.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 EXPOSE 80
 LABEL \
   stage=final \

@@ -55,8 +55,8 @@ internal static class FluentEndToEndIntegrationTestMethods
             return (client, response.Headers.Location, original);
         }
 
-        // weird inverted name of an exception, I know
-        throw new Xunit.Sdk.NotNullException();
+        Assert.Fail();
+        return default;
     }
 
     public static async Task<(HttpClient, Uri, Secret)> VerifyItExists(this Task<(HttpClient, Uri, Secret)> chain)
