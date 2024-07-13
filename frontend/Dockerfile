@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2022 Simon Wendel
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM node:18.7-alpine3.15 AS build
+FROM node:20-alpine3.19 AS build
 
 LABEL \
   stage=intermediate
@@ -31,10 +31,10 @@ COPY . .
 
 RUN envsubst < templates/Configuration.elm.template > src/Configuration.elm
 
-RUN npm install \
-  && npx gulp
+RUN npm install
+RUN npx gulp
 
-FROM nginx:1.23.1 AS final
+FROM nginx:1.27 AS final
 
 WORKDIR /srv/www
 COPY --from=build /work/dist .

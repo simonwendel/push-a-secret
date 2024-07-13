@@ -5,7 +5,7 @@
 module ValidationTests exposing (validationModuleTests)
 
 import Expect exposing (atLeast, err, ok)
-import Fuzzers.Unicode exposing (basicMultilingual)
+import Fuzz
 import Test exposing (Test, concat, describe, fuzz, test)
 import Validation as Sut
 
@@ -69,7 +69,7 @@ validationModuleTests =
                             |> Sut.validateSecret
                             |> ok
                     )
-                , fuzz (basicMultilingual ( Sut.secretConstraints.minLength, Sut.secretConstraints.maxLength ))
+                , fuzz (Fuzz.stringOfLengthBetween Sut.secretConstraints.minLength Sut.secretConstraints.maxLength)
                     "secret with length within allowed range is valid"
                     (Sut.validateSecret >> ok)
                 ]
@@ -83,3 +83,19 @@ validationModuleTests =
             , testValidSecrets
             ]
         ]
+
+
+
+-- {-| Fuzzing strings of a certain length using characters from the Basic Multilingual Plane,
+-- including the unused range [2FE0, 2FEF].
+-- -}
+-- basicMultilingual : ( Int, Int ) -> Fuzzer String
+-- basicMultilingual =
+--     fuzzString (Random.Char.char (Char.toCode '\u{0000}') (Char.toCode '\u{FFFF}'))
+-- fuzzString : Generator Char -> ( Int, Int ) -> Fuzzer String
+-- fuzzString characterGenerator ( min, max ) =
+--     let
+--         stringGenerator =
+--             rangeLengthString min max characterGenerator
+--     in
+--     Fuzz.custom stringGenerator Shrink.string

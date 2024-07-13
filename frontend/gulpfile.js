@@ -21,43 +21,43 @@ const CONFIGURATION = {
     output: 'dist/'
 };
 
-const {
-    src,
-    dest,
-    series,
-    watch,
-    parallel
-} = require('gulp');
+import {
+    src as gulp_src, 
+    dest as gulp_dest, 
+    series as gulp_series, 
+    watch as gulp_watch, 
+    parallel as gulp_parallel
+} from 'gulp';
 
-const less = require('gulp-less');
-const concat = require('gulp-concat');
-const del = require('del');
-const shell = require('gulp-shell');
-const rename = require('gulp-rename');
-const CleanCSS = require('clean-css');
-const minifier = require('html-minifier');
-const esbuild = require('gulp-esbuild');
-const ElmPlugin = require('esbuild-plugin-elm');
+import less from 'gulp-less';
+import concat from 'gulp-concat';
+import { deleteAsync } from 'del';
+import shell from'gulp-shell';
+import rename from 'gulp-rename';
+import CleanCSS from 'clean-css';
+import minifier from 'html-minifier';
+import esbuild from 'gulp-esbuild';
+import ElmPlugin from 'esbuild-plugin-elm';
 
-const clean = () =>
-    del(CONFIGURATION.output + '**');
+const clean = async () =>
+    await deleteAsync(CONFIGURATION.output + '**');
 
 const logo = () =>
-    src(CONFIGURATION.logo)
+    gulp_src(CONFIGURATION.logo, { encoding: false })
         .pipe(rename('logo.png'))
-        .pipe(dest(CONFIGURATION.output));
+        .pipe(gulp_dest(CONFIGURATION.output));
 
 const responsiveLogo = () =>
-    src(CONFIGURATION.smallLogo)
+    gulp_src(CONFIGURATION.smallLogo, { encoding: false })
         .pipe(rename('logo_small.png'))
-        .pipe(dest(CONFIGURATION.output));
+        .pipe(gulp_dest(CONFIGURATION.output));
 
 const favicon = () =>
-    src('img/favicon.ico')
-        .pipe(dest(CONFIGURATION.output));
+    gulp_src('img/favicon.ico', { encoding: false })
+        .pipe(gulp_dest(CONFIGURATION.output));
 
 const scripts = () =>
-    src(CONFIGURATION.entrypoint)
+    gulp_src(CONFIGURATION.entrypoint)
         .pipe(esbuild({
             outfile: CONFIGURATION.bundle,
             bundle: true,
@@ -89,10 +89,10 @@ const scripts = () =>
                 })
             ]
         }))
-        .pipe(dest(CONFIGURATION.output));
+        .pipe(gulp_dest(CONFIGURATION.output));
 
 const html = () =>
-    src(CONFIGURATION.html)
+    gulp_src(CONFIGURATION.html)
         .on('data', function (file) {
             const options = {
                 html5: true,
@@ -110,10 +110,10 @@ const html = () =>
             const buferFile = Buffer.from(minifier.minify(file.contents.toString(), options))
             return file.contents = buferFile
         })
-        .pipe(dest(CONFIGURATION.output));
+        .pipe(gulp_dest(CONFIGURATION.output));
 
 const css = () =>
-    src(CONFIGURATION.less)
+    gulp_src(CONFIGURATION.less)
         .pipe(less())
         .pipe(concat('app.css'))
         .on('data', function (file) {
@@ -126,25 +126,27 @@ const css = () =>
             const buffer = new CleanCSS(options).minify(file.contents)
             return file.contents = Buffer.from(buffer.styles)
         })
-        .pipe(dest(CONFIGURATION.output));
+        .pipe(gulp_dest(CONFIGURATION.output));
 
-const test = () =>
-    shell.task('elm-test')();
+const test = () => shell.task('elm-test')();
 
-exports.clean = clean;
-exports.css = css;
-exports.html = html;
-exports.scripts = scripts;
-exports.test = test;
+export {
+    clean,
+    css,
+    html,
+    scripts,
+    test,
+}
 
-const gfx = parallel(logo, responsiveLogo, favicon);
-const all = parallel(gfx, html, css, scripts);
+const gfx = gulp_parallel(logo, responsiveLogo, favicon);
+const all = gulp_parallel(gfx, html, css, scripts);
 
-exports.gfx = gfx;
-exports.all = all;
+export {
+    gfx,
+    all,
+}
 
-exports.default = series(test, clean, all);
-exports.watch = () => {
+export let watch = () => {
     const files = [
         CONFIGURATION.sources,
         CONFIGURATION.tests,
@@ -153,6 +155,8 @@ exports.watch = () => {
         CONFIGURATION.js];
     const settings = { ignoreInitial: false };
     clean();
-    watch(files, settings, all);
-    shell.task('elm-test --watch')();
+    gulp_watch(files, settings, all);
+    shell.task('elm-test --watch');
 };
+
+export default gulp_series(test, clean, all);

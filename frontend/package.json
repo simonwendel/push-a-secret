@@ -1,19 +1,20 @@
 {
+  "type": "module",
   "scripts": {
     "start": "concurrently -k \"npm:watch\" \"npm:serve\"",
     "watch": "npx gulp watch",
     "serve": "npx http-server-spa dist"
   },
   "devDependencies": {
-    "clean-css": "^5.3.1",
-    "concurrently": "^7.2.0",
-    "del": "^6.1.0",
-    "elm-format": "^0.8.5",
+    "clean-css": "^5.3.3",
+    "concurrently": "^8.2.2",
+    "del": "^7.1.0",
+    "elm-format": "^0.8.7",
     "elm-test": "^0.19.1-revision7",
-    "esbuild-plugin-elm": "^0.0.11-1",
-    "gulp": "^4.0.2",
+    "esbuild-plugin-elm": "^0.0.12",
+    "gulp": "^5.0.0",
     "gulp-concat": "^2.6.1",
-    "gulp-esbuild": "^0.10.5",
+    "gulp-esbuild": "^0.12.1",
     "gulp-less": "^5.0.0",
     "gulp-rename": "^2.0.0",
     "gulp-shell": "^0.8.0",
