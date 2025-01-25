@@ -59,7 +59,7 @@ services:
 
   db:
     restart: unless-stopped
-    image: mongo:5.0.8
+    image: mongo:8.0
     volumes:
     - database_vol:/data/db
     networks:
@@ -69,7 +69,7 @@ services:
 
   certbot:
     restart: unless-stopped
-    image: certbot/certbot:v2.11.0
+    image: certbot/certbot:v3.1.0
     entrypoint: |
       /bin/ash -c 'trap exit TERM; while true; do certbot renew; sleep 12h; done;'
     volumes:
